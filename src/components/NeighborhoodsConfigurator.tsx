@@ -9,10 +9,10 @@ import { Search, Map, List, Settings, Edit3, CheckCircle, XCircle, Info, Keyboar
 const LeafletMap = dynamic(() => import('./LeafletMap'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[550px] bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center">
+    <div className="w-full h-[550px] bg-slate-950 border border-slate-900 rounded-xl flex items-center justify-center">
       <div className="flex flex-col items-center space-y-3">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
-        <span className="text-sm text-slate-400 dark:text-slate-500">Iniciando mapa interativo...</span>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500"></div>
+        <span className="text-sm text-slate-500">Iniciando mapa interativo...</span>
       </div>
     </div>
   ),
@@ -111,12 +111,12 @@ export default function NeighborhoodsConfigurator({
   return (
     <div className="space-y-6 flex flex-col h-[100vh] overflow-hidden py-3">
       {/* Top Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-4 rounded-2xl shadow-sm">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-slate-900/30 border border-slate-900 p-4 rounded-2xl shadow-xl">
 
         {/* Unified Auto-Complete Search */}
         <div className="relative flex-1 max-w-md z-30">
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
             <input
               type="text"
               value={search}
@@ -127,12 +127,12 @@ export default function NeighborhoodsConfigurator({
                 setSearchFocused(true);
               }}
               placeholder="Pesquisar bairro por nome..."
-              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm shadow-sm"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-900 bg-slate-955 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm shadow-sm"
             />
           </div>
 
           {searchFocused && search.trim().length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 max-h-60 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/40 animate-fadeIn">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-850 rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto divide-y divide-slate-950 animate-fadeIn">
               {filteredNeighborhoods.slice(0, 8).map((n) => (
                 <button
                   key={n.id}
@@ -142,26 +142,26 @@ export default function NeighborhoodsConfigurator({
                     setSearch('');
                     setSearchFocused(false);
                   }}
-                  className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 flex items-center justify-between transition-colors cursor-pointer"
+                  className="w-full text-left px-4 py-3 hover:bg-slate-950/40 flex items-center justify-between transition-colors cursor-pointer"
                 >
                   <div className="flex flex-col">
-                    <span className="font-semibold text-sm text-slate-800 dark:text-white">
+                    <span className="font-semibold text-sm text-white">
                       {n.officialName}
                     </span>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-slate-500">
                       Fortaleza, CE
                     </span>
                   </div>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${n.deliveryEnabled
-                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400'
-                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800/60 dark:text-slate-400'
+                    ? 'bg-violet-950/30 text-violet-400 border border-violet-900/30'
+                    : 'bg-slate-950 text-slate-500 border border-slate-900'
                     }`}>
                     {n.deliveryEnabled ? `Ativo • R$ ${n.fee.toFixed(2)}` : 'Inativo'}
                   </span>
                 </button>
               ))}
               {filteredNeighborhoods.length === 0 && (
-                <div className="px-4 py-6 text-center text-xs text-slate-400">
+                <div className="px-4 py-6 text-center text-xs text-slate-500">
                   Nenhum bairro encontrado.
                 </div>
               )}
@@ -174,15 +174,15 @@ export default function NeighborhoodsConfigurator({
 
           {/* Mini Dashboard */}
           <div className="flex items-center space-x-3">
-            <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
-              <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">Cobertura</span>
-              <span className="text-sm font-extrabold text-slate-800 dark:text-white flex items-center gap-1.5 leading-tight">
-                {activeCount}/{totalCount} <span className="text-xs text-slate-455 dark:text-slate-500 font-semibold">({coveragePercent}%)</span>
+            <div className="bg-slate-950/40 border border-slate-900 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
+              <span className="text-[9px] text-slate-500 uppercase tracking-wider font-bold">Cobertura</span>
+              <span className="text-sm font-extrabold text-white flex items-center gap-1.5 leading-tight">
+                {activeCount}/{totalCount} <span className="text-xs text-slate-550 font-semibold">({coveragePercent}%)</span>
               </span>
             </div>
-            <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
-              <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">Frete Médio</span>
-              <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight">
+            <div className="bg-slate-950/40 border border-slate-900 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
+              <span className="text-[9px] text-slate-500 uppercase tracking-wider font-bold">Frete Médio</span>
+              <span className="text-sm font-extrabold text-indigo-400 leading-tight">
                 R$ {avgFee.toFixed(2)}
               </span>
             </div>
@@ -190,13 +190,13 @@ export default function NeighborhoodsConfigurator({
 
           <div className="flex items-center space-x-3 ml-auto lg:ml-0">
             {/* Tab Switcher */}
-            <div className="bg-slate-100 dark:bg-slate-850 p-1 rounded-xl flex items-center space-x-1 border border-slate-200/40 dark:border-slate-800/40">
+            <div className="bg-slate-950 p-1 rounded-xl flex items-center space-x-1 border border-slate-900">
               <button
                 type="button"
                 onClick={() => setActiveTab('map')}
                 className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'map'
-                  ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-800/30'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-350'
+                  ? 'bg-gradient-to-r from-violet-650 to-indigo-650 text-white shadow shadow-violet-650/10'
+                  : 'text-slate-400 hover:text-white'
                   }`}
               >
                 <Map className="h-4 w-4" />
@@ -206,8 +206,8 @@ export default function NeighborhoodsConfigurator({
                 type="button"
                 onClick={() => setActiveTab('list')}
                 className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'list'
-                  ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-800/30'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-350'
+                  ? 'bg-gradient-to-r from-violet-650 to-indigo-650 text-white shadow shadow-violet-650/10'
+                  : 'text-slate-400 hover:text-white'
                   }`}
               >
                 <List className="h-4 w-4" />
@@ -219,7 +219,7 @@ export default function NeighborhoodsConfigurator({
             <button
               type="button"
               onClick={() => setBulkEditOpen(true)}
-              className="bg-indigo-600 text-white hover:bg-indigo-500 font-bold px-4 py-2 rounded-xl text-sm flex items-center space-x-1.5 transition-colors cursor-pointer shadow-sm shadow-indigo-500/10 active:scale-95 border border-indigo-700/40"
+              className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-550 hover:to-indigo-550 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow shadow-violet-600/10 active:scale-95 border border-violet-755/30"
             >
               <Settings className="h-4 w-4" />
               <span>Editar em Massa</span>
@@ -239,16 +239,16 @@ export default function NeighborhoodsConfigurator({
                 onSelect={handleSelectNeighborhood}
                 dirtyName={dirtyName}
               />
-              <div className="flex items-center space-x-2 text-xs text-slate-400 dark:text-slate-500">
-                <Info className="h-3.5 w-3.5 text-slate-400" />
+              <div className="flex items-center space-x-2 text-xs text-slate-500">
+                <Info className="h-3.5 w-3.5 text-slate-500" />
                 <span>Clique em qualquer bairro no mapa para editar. Rótulos aparecem ao aproximar o zoom.</span>
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-sm flex flex-col max-h-[570px] border-b-4">
+            <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-xl flex flex-col max-h-[570px] border-b-4 border-b-slate-900">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-500 dark:text-slate-400">
-                  <thead className="bg-slate-50 dark:bg-slate-850/40 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase border-b border-slate-200 dark:border-slate-800">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead className="bg-slate-950/40 text-slate-350 font-bold uppercase border-b border-slate-900">
                     <tr>
                       <th className="px-6 py-4">Bairro</th>
                       <th className="px-6 py-4">Status de Entrega</th>
@@ -257,45 +257,45 @@ export default function NeighborhoodsConfigurator({
                       <th className="px-6 py-4 text-right">Ação</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40">
+                  <tbody className="divide-y divide-slate-950">
                     {filteredNeighborhoods.map((n) => (
                       <tr
                         key={n.id}
-                        className={`hover:bg-slate-50 dark:hover:bg-slate-850/10 transition-colors ${selectedName === n.name ? 'bg-indigo-50/20 dark:bg-indigo-950/10' : ''
+                        className={`hover:bg-slate-900/10 transition-colors ${selectedName === n.name ? 'bg-violet-950/15' : ''
                           }`}
                       >
-                        <td className="px-6 py-3 font-semibold text-slate-800 dark:text-white">
+                        <td className="px-6 py-3.5 font-semibold text-white">
                           {n.officialName}
                         </td>
-                        <td className="px-6 py-3">
-                          <span className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${n.deliveryEnabled
-                            ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400'
-                            : 'bg-rose-50 text-rose-800 dark:bg-rose-950/20 dark:text-rose-400'
+                        <td className="px-6 py-3.5">
+                          <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${n.deliveryEnabled
+                            ? 'bg-violet-950/30 text-violet-400 border-violet-900/30'
+                            : 'bg-rose-950/30 text-rose-450 border-rose-900/30'
                             }`}>
                             {n.deliveryEnabled ? (
                               <>
-                                <CheckCircle className="h-3 w-3" />
+                                <CheckCircle className="h-3 w-3 mr-0.5" />
                                 <span>Entregando</span>
                               </>
                             ) : (
                               <>
-                                <XCircle className="h-3 w-3" />
+                                <XCircle className="h-3 w-3 mr-0.5" />
                                 <span>Inativo</span>
                               </>
                             )}
                           </span>
                         </td>
-                        <td className="px-6 py-3 font-semibold text-slate-800 dark:text-white">
+                        <td className="px-6 py-3.5 font-mono font-semibold text-slate-100">
                           {n.deliveryEnabled ? `R$ ${Number(n.fee).toFixed(2)}` : '-'}
                         </td>
-                        <td className="px-6 py-3 text-slate-500 dark:text-slate-400">
+                        <td className="px-6 py-3.5 text-slate-400">
                           {n.deliveryEnabled ? n.deliveryTime : '-'}
                         </td>
-                        <td className="px-6 py-3 text-right">
+                        <td className="px-6 py-3.5 text-right">
                           <button
                             type="button"
                             onClick={() => handleSelectNeighborhood(n.name)}
-                            className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors inline-flex items-center space-x-1 cursor-pointer text-xs font-bold"
+                            className="text-violet-400 hover:text-violet-300 transition-colors inline-flex items-center space-x-1 cursor-pointer text-[11px] font-extrabold uppercase tracking-wide"
                           >
                             <Edit3 className="h-3.5 w-3.5" />
                             <span>Editar</span>
@@ -305,7 +305,7 @@ export default function NeighborhoodsConfigurator({
                     ))}
                     {filteredNeighborhoods.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                        <td colSpan={5} className="px-6 py-8 text-center text-slate-500 italic">
                           Nenhum bairro encontrado com o termo digitado.
                         </td>
                       </tr>
@@ -338,30 +338,30 @@ export default function NeighborhoodsConfigurator({
             />
           </div>
         ) : (
-          <div className="hidden lg:flex w-96 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex-col items-center justify-center p-8 text-center h-[550px] shadow-sm select-none">
-            <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/20 text-indigo-650 dark:text-indigo-400 mb-4 animate-pulse">
+          <div className="hidden lg:flex w-96 bg-slate-900/30 border border-slate-900 rounded-2xl flex-col items-center justify-center p-8 text-center h-[550px] shadow-xl select-none">
+            <div className="p-4 rounded-2xl bg-violet-500/10 text-violet-400 border border-violet-500/10 mb-4 animate-pulse">
               <Map className="h-8 w-8" />
             </div>
-            <h4 className="font-bold text-slate-800 dark:text-slate-200">Painel de Configuração</h4>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 max-w-xs leading-relaxed">
+            <h4 className="font-bold text-white uppercase tracking-wider text-xs">Painel de Configuração</h4>
+            <p className="text-[11px] text-slate-400 mt-2 max-w-xs leading-relaxed">
               Clique em um bairro no mapa ou use a barra de pesquisa para visualizar e configurar as taxas de entrega da sua loja.
             </p>
-            <div className="mt-8 border-t border-slate-100 dark:border-slate-800/80 pt-6 w-full flex flex-col space-y-2 text-left">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-550 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+            <div className="mt-8 border-t border-slate-950 pt-6 w-full flex flex-col space-y-2.5 text-left">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-1">
                 <Keyboard className="h-3.5 w-3.5" />
                 Atalhos Rápidos
               </span>
-              <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex justify-between text-xs text-slate-400">
                 <span>Buscar Bairros</span>
-                <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-[10px] font-bold">Pesquisar</kbd>
+                <kbd className="px-1.5 py-0.5 bg-slate-950 border border-slate-900 rounded text-[9px] font-bold">Pesquisar</kbd>
               </div>
-              <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex justify-between text-xs text-slate-400">
                 <span>Fechar Painel</span>
-                <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-[10px] font-bold">Esc</kbd>
+                <kbd className="px-1.5 py-0.5 bg-slate-950 border border-slate-900 rounded text-[9px] font-bold">Esc</kbd>
               </div>
-              <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex justify-between text-xs text-slate-400">
                 <span>Salvar Formulário</span>
-                <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-[10px] font-bold">Enter</kbd>
+                <kbd className="px-1.5 py-0.5 bg-slate-950 border border-slate-900 rounded text-[9px] font-bold">Enter</kbd>
               </div>
             </div>
           </div>

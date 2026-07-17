@@ -10,29 +10,68 @@ datasource db {
 }
 
 model Store {
-  id             String   @id @default(uuid())
-  name           String   @default("Minha Loja")
+  id             String         @id @default(uuid())
+  slug           String         @unique
+  name           String         @default("Minha Loja")
   logoUrl        String?
-  whatsapp       String   @default("5585999999999")
-  address        String   @default("Endereço da Loja, Fortaleza - CE")
-  operatingHours String   @default("Segunda a Sexta: 08:00 às 18:00")
-  pickupEnabled  Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  whatsapp       String         @default("5585999999999")
+  address        String         @default("Endereço da Loja, Fortaleza - CE")
+  operatingHours String         @default("Segunda a Sexta: 08:00 às 18:00")
+  pickupEnabled  Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  
+  neighborhoods  Neighborhood[]
+  searchEvents   SearchEvent[]
+}
+
+model BaseNeighborhood {
+  id            String         @id @default(uuid())
+  name          String         @unique // Normalized name for matching (lowercased, no accents, e.g. "aldeota")
+  officialName  String         // Display name (e.g. "Aldeota")
+  neighborhoods Neighborhood[]
+  searchEvents  SearchEvent[]
+  createdAt     DateTime       @default(now())
+
+  @@index([name])
 }
 
 model Neighborhood {
-  id                     String   @id @default(uuid())
-  name                   String   @unique // Normalized name for matching (lowercased, no accents, e.g. "aldeota")
-  officialName           String   // Display name (e.g. "Aldeota")
-  deliveryEnabled        Boolean  @default(false)
-  fee                    Decimal  @default(0.00) @db.Decimal(10, 2)
-  deliveryTime           String?  @default("24h")
-  minimumOrder           Decimal? @db.Decimal(10, 2)
-  freeDeliveryThreshold  Decimal? @db.Decimal(10, 2)
-  notes                  String?  @db.Text
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id                     String           @id @default(uuid())
+  storeId                String
+  store                  Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  baseNeighborhoodId     String
+  baseNeighborhood       BaseNeighborhood @relation(fields: [baseNeighborhoodId], references: [id], onDelete: Cascade)
+  deliveryEnabled        Boolean          @default(false)
+  fee                    Decimal          @default(0.00) @db.Decimal(10, 2)
+  deliveryTime           String?          @default("24h")
+  minimumOrder           Decimal?         @db.Decimal(10, 2)
+  freeDeliveryThreshold  Decimal?         @db.Decimal(10, 2)
+  notes                  String?          @db.Text
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
 
-  @@index([name])
+  @@unique([storeId, baseNeighborhoodId])
+}
+
+model SearchEvent {
+  id                   String            @id @default(uuid())
+  createdAt            DateTime          @default(now())
+  storeId              String
+  store                Store             @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  eventType            String            @db.VarChar(30)
+  searchType           String            @db.VarChar(20)
+  searchedValue        String            @db.VarChar(120)
+  searchedNeighborhood String?           @db.VarChar(80)
+  matchedNeighborhoodId String?
+  matchedNeighborhood  BaseNeighborhood? @relation(fields: [matchedNeighborhoodId], references: [id], onDelete: SetNull)
+  deliveryAvailable    Boolean
+  deliveryPrice        Decimal           @db.Decimal(10, 2)
+  responseTimeMs       Int
+  sessionId            String            @db.Uuid
+  ipHash               String            @db.VarChar(64)
+  userAgent            String            @db.Text
+
+  @@index([storeId])
+  @@index([createdAt])
 }

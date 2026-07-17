@@ -146,43 +146,93 @@ function normalizeName(str: string): string {
 async function main() {
   console.log("Seeding database...");
 
-  // Seed default store
-  const storeCount = await prisma.store.count();
-  if (storeCount === 0) {
-    await prisma.store.create({
-      data: {
-        name: "Fortal Express",
-        whatsapp: "5585999999999",
-        address: "Av. Beira Mar, 1000 - Meireles, Fortaleza - CE",
-        operatingHours: "Segunda a Sábado: 09:00 às 21:00",
-        pickupEnabled: true,
-      },
-    });
-    console.log("Default store created.");
-  }
-
-  // Seed neighborhoods
-  let createdCount = 0;
+  // 1. Seed base neighborhoods
+  console.log("Seeding base neighborhoods...");
+  const baseNeighborhoods = [];
   for (const officialName of rawNeighborhoods) {
     const normalizedName = normalizeName(officialName);
-
-    await prisma.neighborhood.upsert({
+    const bn = await prisma.baseNeighborhood.upsert({
       where: { name: normalizedName },
-      update: {
-        officialName,
-      },
+      update: { officialName },
       create: {
         name: normalizedName,
         officialName,
-        deliveryEnabled: false,
-        fee: 0.00,
-        deliveryTime: "24h",
       },
     });
-    createdCount++;
+    baseNeighborhoods.push(bn);
+  }
+  console.log(`Successfully seeded ${baseNeighborhoods.length} base neighborhoods.`);
+
+  // 2. Seed Stores
+  const storesToSeed = [
+    {
+      slug: "fortal-express",
+      name: "Fortal Express",
+      whatsapp: "5585999999999",
+      address: "Av. Beira Mar, 1000 - Meireles, Fortaleza - CE",
+      operatingHours: "Segunda a Sábado: 09:00 às 21:00",
+      pickupEnabled: true,
+    },
+    {
+      slug: "pizzaria-bella",
+      name: "Pizzaria Bella Fortaleza",
+      whatsapp: "5585988888888",
+      address: "Av. Dom Luís, 500 - Aldeota, Fortaleza - CE",
+      operatingHours: "Todos os dias: 18:00 às 23:30",
+      pickupEnabled: true,
+    }
+  ];
+
+  for (const storeData of storesToSeed) {
+    console.log(`Seeding store: ${storeData.name}...`);
+    const store = await prisma.store.upsert({
+      where: { slug: storeData.slug },
+      update: {
+        name: storeData.name,
+        whatsapp: storeData.whatsapp,
+        address: storeData.address,
+        operatingHours: storeData.operatingHours,
+        pickupEnabled: storeData.pickupEnabled,
+      },
+      create: storeData,
+    });
+
+    // 3. Seed neighborhood configs for this store
+    console.log(`Seeding configs for ${storeData.name}...`);
+    let configCount = 0;
+    for (const bn of baseNeighborhoods) {
+      // Check if config already exists
+      const existing = await prisma.neighborhood.findUnique({
+        where: {
+          storeId_baseNeighborhoodId: {
+            storeId: store.id,
+            baseNeighborhoodId: bn.id,
+          },
+        },
+      });
+
+      if (!existing) {
+        // Set deliveryEnabled = true with a default fee for a couple of neighborhoods to make testing interesting!
+        const isDefaultActive = ["aldeota", "meireles", "centro", "coco"].includes(bn.name);
+        const defaultFee = bn.name === "aldeota" ? 5.00 : (bn.name === "meireles" ? 7.00 : 10.00);
+
+        await prisma.neighborhood.create({
+          data: {
+            storeId: store.id,
+            baseNeighborhoodId: bn.id,
+            deliveryEnabled: isDefaultActive,
+            fee: isDefaultActive ? defaultFee : 0.00,
+            deliveryTime: "30-50 min",
+            notes: isDefaultActive ? "Taxa promocional" : null,
+          },
+        });
+        configCount++;
+      }
+    }
+    console.log(`Created ${configCount} new configs for ${storeData.name}.`);
   }
 
-  console.log(`Successfully seeded ${createdCount} neighborhoods.`);
+  console.log("Database seeding completed.");
 }
 
 main()

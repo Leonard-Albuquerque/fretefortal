@@ -5,6 +5,7 @@ import { lookupCep, lookupAddress } from '@/app/actions';
 import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2 } from 'lucide-react';
 
 interface PublicLookupProps {
+  storeSlug: string;
   storeName: string;
   storeWhatsapp: string;
   pickupEnabled: boolean;
@@ -13,6 +14,7 @@ interface PublicLookupProps {
 }
 
 export default function PublicLookup({
+  storeSlug,
   storeName,
   storeWhatsapp,
   pickupEnabled,
@@ -36,9 +38,9 @@ export default function PublicLookup({
     try {
       let res;
       if (mode === 'cep') {
-        res = await lookupCep(valueToQuery);
+        res = await lookupCep(storeSlug, valueToQuery);
       } else {
-        res = await lookupAddress(valueToQuery);
+        res = await lookupAddress(storeSlug, valueToQuery);
       }
 
       if (res.success) {
@@ -117,23 +119,25 @@ export default function PublicLookup({
   return (
     <div className="w-full max-w-lg mx-auto space-y-6">
       {/* Search Selection Tabs */}
-      <div className="bg-slate-200/50 dark:bg-slate-900/60 p-1 rounded-xl flex items-center space-x-1 border border-slate-300/30 dark:border-slate-800">
+      <div className="bg-slate-900/50 p-1 rounded-2xl flex items-center space-x-1 border border-slate-900">
         <button
+          type="button"
           onClick={() => switchMode('cep')}
-          className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             mode === 'cep'
-              ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+              ? 'bg-gradient-to-r from-violet-600 to-indigo-650 text-white shadow-lg shadow-violet-650/15'
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
           }`}
         >
           Pesquisar por CEP
         </button>
         <button
+          type="button"
           onClick={() => switchMode('address')}
-          className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             mode === 'address'
-              ? 'bg-white dark:bg-slate-850 text-slate-800 dark:text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+              ? 'bg-gradient-to-r from-violet-600 to-indigo-650 text-white shadow-lg shadow-violet-650/15'
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
           }`}
         >
           Não sei meu CEP
@@ -141,17 +145,17 @@ export default function PublicLookup({
       </div>
 
       {/* Main Search Card */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-6 shadow-md transition-all">
+      <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-6 shadow-xl relative overflow-hidden">
         <form onSubmit={handleFormSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
               {mode === 'cep' ? 'Digite seu CEP de Fortaleza' : 'Digite seu endereço em Fortaleza'}
             </label>
             <div className="relative">
               {mode === 'cep' ? (
-                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
               ) : (
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
               )}
               <input
                 type="text"
@@ -160,7 +164,7 @@ export default function PublicLookup({
                 onChange={handleInputChange}
                 maxLength={mode === 'cep' ? 9 : 100}
                 placeholder={mode === 'cep' ? 'Ex: 60150-160' : 'Rua, Avenida, Número, etc.'}
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 text-slate-855 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all font-medium text-sm"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all font-medium text-sm"
               />
             </div>
           </div>
@@ -168,11 +172,11 @@ export default function PublicLookup({
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-emerald-500 text-slate-900 hover:bg-emerald-400 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md text-sm"
+            className="w-full bg-gradient-to-r from-violet-550 to-indigo-550 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg shadow-violet-500/10 active:scale-98 text-sm"
           >
             {loading ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin text-white" />
                 <span>Buscando taxa...</span>
               </>
             ) : (
@@ -187,11 +191,11 @@ export default function PublicLookup({
 
       {/* Error Alert */}
       {error && !result && (
-        <div className="bg-rose-50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 p-4 rounded-xl flex items-start space-x-3 text-sm animate-fadeIn">
+        <div className="bg-rose-950/20 text-rose-450 border border-rose-900/30 p-4 rounded-xl flex items-start space-x-3 text-sm animate-fadeIn">
           <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5 text-rose-500" />
           <div>
             <span className="font-semibold block">Erro na consulta</span>
-            <span className="text-xs text-rose-600 dark:text-rose-400/80 mt-0.5 block">{error}</span>
+            <span className="text-xs text-rose-400 mt-0.5 block">{error}</span>
           </div>
         </div>
       )}
@@ -201,21 +205,21 @@ export default function PublicLookup({
         <div className="animate-fadeIn">
           {result.deliveryEnabled ? (
             /* DELIVERABLE */
-            <div className="bg-white dark:bg-slate-900 border-2 border-emerald-500 dark:border-emerald-500/80 rounded-2xl overflow-hidden shadow-lg">
-              <div className="bg-emerald-500 dark:bg-emerald-600 p-4 flex items-center justify-between">
-                <span className="font-bold text-slate-900 dark:text-white text-sm">Entregamos no seu Bairro!</span>
-                <span className="bg-slate-900/10 dark:bg-white/20 text-slate-900 dark:text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <div className="bg-slate-900/30 border-2 border-violet-500/80 rounded-2xl overflow-hidden shadow-2xl shadow-violet-550/5">
+              <div className="bg-gradient-to-r from-violet-650 to-indigo-650 p-4 flex items-center justify-between">
+                <span className="font-bold text-white text-sm">Entregamos no seu Bairro!</span>
+                <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                   Fortaleza
                 </span>
               </div>
               <div className="p-6 space-y-6">
-                <div className="flex items-start space-x-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
-                  <div className="bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-xl text-emerald-500">
+                <div className="flex items-start space-x-4 border-b border-slate-900 pb-4">
+                  <div className="bg-violet-500/10 p-3 rounded-xl text-violet-400 border border-violet-500/10 flex-shrink-0">
                     <Map className="h-6 w-6" />
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-semibold block uppercase">Localização Identificada</span>
-                    <span className="text-lg font-bold text-slate-800 dark:text-white mt-0.5 block">
+                    <span className="text-xs text-slate-500 font-semibold block uppercase">Localização Identificada</span>
+                    <span className="text-lg font-bold text-white mt-0.5 block">
                       {result.bairro}
                     </span>
                     {result.street && (
@@ -227,15 +231,15 @@ export default function PublicLookup({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 p-4 rounded-xl">
-                    <span className="text-xs text-slate-400 font-semibold block">Taxa de Frete</span>
-                    <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                  <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
+                    <span className="text-xs text-slate-500 font-semibold block">Taxa de Frete</span>
+                    <span className="text-xl font-bold text-violet-400 mt-1 block">
                       {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
                     </span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 p-4 rounded-xl">
-                    <span className="text-xs text-slate-400 font-semibold block">Prazo de Entrega</span>
-                    <span className="text-xl font-bold text-slate-850 dark:text-white mt-1 block">
+                  <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
+                    <span className="text-xs text-slate-500 font-semibold block">Prazo de Entrega</span>
+                    <span className="text-xl font-bold text-white mt-1 block">
                       {result.deliveryTime}
                     </span>
                   </div>
@@ -243,12 +247,12 @@ export default function PublicLookup({
 
                 {/* Additional criteria */}
                 {(result.minimumOrder || result.freeDeliveryThreshold || result.notes) && (
-                  <div className="bg-slate-50 dark:bg-slate-950/10 border border-slate-100 dark:border-slate-850 p-4 rounded-xl text-xs space-y-1.5 text-slate-500 dark:text-slate-400">
+                  <div className="bg-slate-950/20 border border-slate-900 p-4 rounded-xl text-xs space-y-1.5 text-slate-400">
                     {result.minimumOrder && (
-                      <p>• Pedido mínimo para entrega: <strong className="text-slate-700 dark:text-slate-350">R$ {result.minimumOrder.toFixed(2)}</strong></p>
+                      <p>• Pedido mínimo para entrega: <strong className="text-white">R$ {result.minimumOrder.toFixed(2)}</strong></p>
                     )}
                     {result.freeDeliveryThreshold && (
-                      <p>• Frete grátis para compras acima de: <strong className="text-slate-700 dark:text-slate-350">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong></p>
+                      <p>• Frete grátis para compras acima de: <strong className="text-white">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong></p>
                     )}
                     {result.notes && (
                       <p>• Observações: <span className="italic">{result.notes}</span></p>
@@ -259,38 +263,38 @@ export default function PublicLookup({
                 <a
                   href={getWhatsAppLink()}
                   target="_blank"
-                  className="w-full bg-emerald-500 text-slate-900 hover:bg-emerald-400 font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md text-sm cursor-pointer"
+                  className="w-full bg-gradient-to-r from-violet-550 to-indigo-550 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-violet-500/10 text-sm cursor-pointer active:scale-98"
                 >
-                  <MessageSquare className="h-5 w-5 fill-current" />
+                  <MessageSquare className="h-5 w-5 fill-current text-white" />
                   <span>Enviar Pedido via WhatsApp</span>
                 </a>
               </div>
             </div>
           ) : (
             /* NON-DELIVERABLE */
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg p-6 space-y-6">
-              <div className="flex items-start space-x-3 text-rose-500">
+            <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-6 space-y-6">
+              <div className="flex items-start space-x-3 text-rose-450">
                 <AlertTriangle className="h-6 w-6 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-bold text-slate-800 dark:text-white text-base">Sem Entrega para este Bairro</h4>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Infelizmente {storeName} ainda não realiza entregas no bairro <strong className="text-slate-800 dark:text-slate-200">{result.bairro}</strong>.
+                  <h4 className="font-bold text-white text-base">Sem Entrega para este Bairro</h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Infelizmente {storeName} ainda não realiza entregas no bairro <strong className="text-white">{result.bairro}</strong>.
                   </p>
                 </div>
               </div>
 
               {result.pickupEnabled ? (
-                <div className="border-t border-slate-100 dark:border-slate-850 pt-5 space-y-4">
+                <div className="border-t border-slate-900 pt-5 space-y-4">
                   <div className="flex items-start space-x-4">
-                    <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-xl text-slate-500">
+                    <div className="bg-slate-950 p-3 rounded-xl text-slate-400 border border-slate-900">
                       <Building className="h-6 w-6" />
                     </div>
                     <div>
-                      <span className="text-xs text-slate-400 font-semibold block uppercase">Opção: Retirada no Local</span>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <span className="text-xs text-slate-500 font-semibold block uppercase">Opção: Retirada no Local</span>
+                      <p className="text-xs text-slate-400 mt-1">
                         Você pode retirar seu pedido diretamente em nossa loja física sem custo de entrega:
                       </p>
-                      <span className="text-sm font-bold text-slate-800 dark:text-white mt-2 block">
+                      <span className="text-sm font-bold text-white mt-2 block">
                         {result.storeAddress || storeAddress}
                       </span>
                     </div>
@@ -301,14 +305,14 @@ export default function PublicLookup({
                       `Olá! Gostaria de fazer um pedido para retirada na loja física.`
                     )}`}
                     target="_blank"
-                    className="w-full bg-slate-900 dark:bg-slate-800 text-white hover:bg-slate-800 dark:hover:bg-slate-700 font-semibold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-sm cursor-pointer"
+                    className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-sm cursor-pointer active:scale-98"
                   >
                     <MessageSquare className="h-5 w-5" />
                     <span>Combinar Retirada via WhatsApp</span>
                   </a>
                 </div>
               ) : (
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/20 text-center text-xs text-slate-400">
+                <div className="p-4 rounded-xl bg-slate-955 text-center text-xs text-slate-500 border border-slate-900">
                   Caso queira falar com um atendente, entre em contato pelo WhatsApp.
                 </div>
               )}

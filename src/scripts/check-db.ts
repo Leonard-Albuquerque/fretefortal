@@ -8,8 +8,8 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const count = await prisma.neighborhood.count();
-  console.log(`Total neighborhoods in DB: ${count}`);
+  const count = await prisma.baseNeighborhood.count();
+  console.log(`Total base neighborhoods in DB: ${count}`);
 
   const testNames = [
     "parque santa rosa",
@@ -25,7 +25,7 @@ async function main() {
   ];
 
   for (const name of testNames) {
-    const record = await prisma.neighborhood.findUnique({
+    const record = await prisma.baseNeighborhood.findUnique({
       where: { name }
     });
     console.log(`Lookup '${name}': ${record ? `FOUND (officialName: "${record.officialName}")` : 'NOT FOUND'}`);

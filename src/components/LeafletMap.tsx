@@ -56,7 +56,7 @@ function CustomZoomControls() {
       <button
         type="button"
         onClick={() => map.zoomIn()}
-        className="w-8 h-8 flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all text-lg font-semibold cursor-pointer shadow"
+        className="w-8 h-8 flex items-center justify-center bg-slate-900 border border-slate-800 text-slate-200 rounded-lg hover:bg-slate-850 active:scale-95 transition-all text-lg font-semibold cursor-pointer shadow"
         title="Aumentar Zoom"
       >
         +
@@ -64,7 +64,7 @@ function CustomZoomControls() {
       <button
         type="button"
         onClick={() => map.zoomOut()}
-        className="w-8 h-8 flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all text-lg font-semibold cursor-pointer shadow"
+        className="w-8 h-8 flex items-center justify-center bg-slate-900 border border-slate-800 text-slate-200 rounded-lg hover:bg-slate-850 active:scale-95 transition-all text-lg font-semibold cursor-pointer shadow"
         title="Diminuir Zoom"
       >
         −
@@ -80,8 +80,8 @@ export default function LeafletMap({
   dirtyName
 }: LeafletMapProps) {
   const [geojsonData, setGeojsonData] = useState<any>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const geojsonRef = useRef<any>(null);
+  const isDarkMode = true; // Forced dark theme map
 
   // Sync Leaflet default icon paths (required inside Next.js)
   useEffect(() => {
@@ -92,30 +92,6 @@ export default function LeafletMap({
         iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
       });
-    }
-  }, []);
-
-  // Monitor Dark Mode changes
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const checkDark = () => {
-        const isDarkClass = document.documentElement.classList.contains('dark');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setIsDarkMode(isDarkClass || prefersDark);
-      };
-
-      checkDark();
-
-      const observer = new MutationObserver(checkDark);
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      mediaQuery.addEventListener('change', checkDark);
-
-      return () => {
-        observer.disconnect();
-        mediaQuery.removeEventListener('change', checkDark);
-      };
     }
   }, []);
 
@@ -136,28 +112,28 @@ export default function LeafletMap({
         const isSelected = selectedName === name;
         const isDirty = dirtyName === name;
 
-        let fillColor = '#cbd5e1'; // Gray for unconfigured/missing
-        let fillOpacity = 0.15;
-        let color = '#94a3b8';
+        let fillColor = '#1e293b'; // slate-800 for unconfigured/missing
+        let fillOpacity = 0.2;
+        let color = '#475569'; // slate-600 border
         let weight = 1;
         let dashArray = undefined;
 
         if (dbNeighborhood) {
           if (dbNeighborhood.deliveryEnabled) {
-            fillColor = '#10b981'; // Green for active delivery
+            fillColor = '#8b5cf6'; // Violet active delivery
             fillOpacity = 0.35;
-            color = '#059669';
+            color = '#a78bfa'; // violet-400 border
             weight = 1.5;
           } else {
-            fillColor = '#f59e0b'; // Amber for inactive delivery
-            fillOpacity = 0.25;
-            color = '#d97706';
-            weight = 1.5;
+            fillColor = '#f43f5e'; // Soft Rose for inactive
+            fillOpacity = 0.15;
+            color = '#fda4af'; // rose-300 border
+            weight = 1;
           }
         }
 
         if (isSelected) {
-          color = '#6366f1'; // Premium Indigo highlight for selected
+          color = '#d946ef'; // Fuchsia neon for selected
           weight = 3;
           fillOpacity = 0.55;
           if (isDirty) {
@@ -183,10 +159,10 @@ export default function LeafletMap({
 
   if (!geojsonData) {
     return (
-      <div className="w-full h-[550px] bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center">
+      <div className="w-full h-[550px] bg-slate-950 border border-slate-900 rounded-xl flex items-center justify-center">
         <div className="flex flex-col items-center space-y-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
-          <span className="text-sm text-slate-400 dark:text-slate-500">Carregando mapa de Fortaleza...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500"></div>
+          <span className="text-sm text-slate-500">Carregando mapa de Fortaleza...</span>
         </div>
       </div>
     );
@@ -215,7 +191,7 @@ export default function LeafletMap({
           l.setStyle({
             fillOpacity: isSelected ? 0.7 : 0.45,
             weight: isSelected ? 3.5 : 2,
-            color: isSelected ? '#6366f1' : '#818cf8',
+            color: isSelected ? '#d946ef' : '#f472b6', // pink highlight on hover
           });
         }
       },
@@ -225,28 +201,28 @@ export default function LeafletMap({
         const isSelected = selectedName === name;
         const isDirty = dirtyName === name;
 
-        let fillColor = '#cbd5e1';
-        let fillOpacity = 0.15;
-        let color = '#94a3b8';
+        let fillColor = '#1e293b';
+        let fillOpacity = 0.2;
+        let color = '#475569';
         let weight = 1;
         let dashArray = undefined;
 
         if (dbNeighborhood) {
           if (dbNeighborhood.deliveryEnabled) {
-            fillColor = '#10b981';
+            fillColor = '#8b5cf6';
             fillOpacity = 0.35;
-            color = '#059669';
+            color = '#a78bfa';
             weight = 1.5;
           } else {
-            fillColor = '#f59e0b';
-            fillOpacity = 0.25;
-            color = '#d97706';
-            weight = 1.5;
+            fillColor = '#f43f5e';
+            fillOpacity = 0.15;
+            color = '#fda4af';
+            weight = 1;
           }
         }
 
         if (isSelected) {
-          color = '#6366f1';
+          color = '#d946ef';
           weight = 3;
           fillOpacity = 0.55;
           if (isDirty) {
@@ -270,19 +246,17 @@ export default function LeafletMap({
     });
   };
 
-  const tileUrl = isDarkMode
-    ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
+  const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png';
 
   return (
-    <div className="w-full h-[550px] overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800/80 relative shadow-sm">
+    <div className="w-full h-[550px] overflow-hidden rounded-xl border border-slate-900 relative shadow-xl">
       <MapContainer
         center={[-3.7319, -38.5267]} // Fortaleza center
         zoom={12}
         minZoom={11}
         maxZoom={16}
         maxBounds={FORTALEZA_BOUNDS}
-        className={`w-full h-full ${isDarkMode ? 'dark' : ''}`}
+        className="w-full h-full dark"
         zoomControl={false}
       >
         <TileLayer
@@ -299,23 +273,23 @@ export default function LeafletMap({
       </MapContainer>
 
       {/* Modern Minimal Map Legend */}
-      <div className="absolute top-4 left-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-medium transition-all">
-        <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">Legenda</span>
+      <div className="absolute top-4 left-4 bg-slate-900/95 backdrop-blur border border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-medium transition-all text-slate-350">
+        <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">Legenda</span>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-emerald-500/20 border border-emerald-500 rounded-md"></span>
-          <span className="text-slate-650 dark:text-slate-350">Entrega Habilitada</span>
+          <span className="w-3 h-3 bg-violet-500/20 border border-violet-500 rounded-md"></span>
+          <span>Entrega Habilitada</span>
         </div>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-amber-500/20 border border-amber-500 rounded-md"></span>
-          <span className="text-slate-650 dark:text-slate-350">Entrega Desativada</span>
+          <span className="w-3 h-3 bg-rose-500/20 border border-rose-500 rounded-md"></span>
+          <span>Entrega Desativada</span>
         </div>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-slate-300/20 border border-slate-400 dark:bg-slate-800/20 dark:border-slate-700 rounded-md"></span>
-          <span className="text-slate-650 dark:text-slate-350">Não Configurado</span>
+          <span className="w-3 h-3 bg-slate-800/20 border border-slate-700 rounded-md"></span>
+          <span>Não Configurado</span>
         </div>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-indigo-500/20 border border-indigo-500 rounded-md"></span>
-          <span className="text-slate-650 dark:text-slate-350">Selecionado</span>
+          <span className="w-3 h-3 bg-fuchsia-500/20 border border-fuchsia-500 rounded-md"></span>
+          <span>Selecionado</span>
         </div>
       </div>
     </div>
