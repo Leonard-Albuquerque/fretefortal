@@ -81,7 +81,6 @@ export default function LeafletMap({
 }: LeafletMapProps) {
   const [geojsonData, setGeojsonData] = useState<any>(null);
   const geojsonRef = useRef<any>(null);
-  const isDarkMode = true; // Forced dark theme map
 
   // Sync Leaflet default icon paths (required inside Next.js)
   useEffect(() => {
@@ -103,55 +102,65 @@ export default function LeafletMap({
       .catch((err) => console.error('Error loading GeoJSON:', err));
   }, []);
 
+  const getStyleForLayer = (name: string, isSelected: boolean, isDirty: boolean) => {
+    const dbNeighborhood = neighborhoods.find(n => n.name === name);
+
+    let fillColor = '#1E3A5F'; // Petroleum Blue (institucional) default for unconfigured
+    let fillOpacity = 0.15;
+    let color = '#FFFFFF'; // Clean White borders dividing polygons
+    let weight = 1.2;
+    let dashArray = undefined;
+
+    if (dbNeighborhood) {
+      if (dbNeighborhood.deliveryEnabled) {
+        fillOpacity = 0.45;
+        // Dynamic fee-based logistics range mapping
+        if (dbNeighborhood.fee <= 5) {
+          fillColor = '#DCC8A5'; // Areia: low fee / point of origin
+        } else if (dbNeighborhood.fee <= 12) {
+          fillColor = '#5FC9C8'; // Turquesa: medium fee / transition zone
+        } else {
+          fillColor = '#2F7DBB'; // Azul Oceano: high fee / expansion zone
+        }
+      } else {
+        fillColor = '#1E3A5F'; // Inactive: Petroleum Blue
+        fillOpacity = 0.1; // Muted Petroleum Blue
+      }
+    }
+
+    if (isSelected) {
+      color = '#5FC9C8'; // Turquesa highlight border for selected
+      weight = 3;
+      fillOpacity = 0.65;
+      if (isDirty) {
+        dashArray = '5, 5';
+      }
+    } else if (isDirty) {
+      dashArray = '5, 5';
+      weight = 2;
+    }
+
+    return {
+      fillColor,
+      fillOpacity,
+      color,
+      weight,
+      dashArray,
+    };
+  };
+
   // Update styles on data / state changes
   useEffect(() => {
     if (geojsonRef.current) {
       geojsonRef.current.eachLayer((layer: any) => {
         const name = layer.feature.properties.name;
-        const dbNeighborhood = neighborhoods.find(n => n.name === name);
         const isSelected = selectedName === name;
         const isDirty = dirtyName === name;
 
-        let fillColor = '#1e293b'; // slate-800 for unconfigured/missing
-        let fillOpacity = 0.2;
-        let color = '#475569'; // slate-600 border
-        let weight = 1;
-        let dashArray = undefined;
-
-        if (dbNeighborhood) {
-          if (dbNeighborhood.deliveryEnabled) {
-            fillColor = '#8b5cf6'; // Violet active delivery
-            fillOpacity = 0.35;
-            color = '#a78bfa'; // violet-400 border
-            weight = 1.5;
-          } else {
-            fillColor = '#f43f5e'; // Soft Rose for inactive
-            fillOpacity = 0.15;
-            color = '#fda4af'; // rose-300 border
-            weight = 1;
-          }
-        }
-
-        if (isSelected) {
-          color = '#d946ef'; // Fuchsia neon for selected
-          weight = 3;
-          fillOpacity = 0.55;
-          if (isDirty) {
-            dashArray = '5, 5';
-          }
-        } else if (isDirty) {
-          dashArray = '5, 5';
-          weight = 2;
-        }
+        const styles = getStyleForLayer(name, isSelected, isDirty);
 
         if (layer.setStyle && typeof layer.setStyle === 'function') {
-          layer.setStyle({
-            fillColor,
-            fillOpacity,
-            color,
-            weight,
-            dashArray,
-          });
+          layer.setStyle(styles);
         }
       });
     }
@@ -161,7 +170,7 @@ export default function LeafletMap({
     return (
       <div className="w-full h-[550px] bg-slate-950 border border-slate-900 rounded-xl flex items-center justify-center">
         <div className="flex flex-col items-center space-y-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-400"></div>
           <span className="text-sm text-slate-500">Carregando mapa de Fortaleza...</span>
         </div>
       </div>
@@ -189,58 +198,21 @@ export default function LeafletMap({
         if (l.setStyle && typeof l.setStyle === 'function') {
           const isSelected = selectedName === name;
           l.setStyle({
-            fillOpacity: isSelected ? 0.7 : 0.45,
+            fillOpacity: isSelected ? 0.75 : 0.55,
             weight: isSelected ? 3.5 : 2,
-            color: isSelected ? '#d946ef' : '#f472b6', // pink highlight on hover
+            color: isSelected ? '#5FC9C8' : '#FFFFFF',
           });
         }
       },
       mouseout: (e: any) => {
         const l = e.target;
-        const dbNeighborhood = neighborhoods.find(n => n.name === name);
         const isSelected = selectedName === name;
         const isDirty = dirtyName === name;
 
-        let fillColor = '#1e293b';
-        let fillOpacity = 0.2;
-        let color = '#475569';
-        let weight = 1;
-        let dashArray = undefined;
-
-        if (dbNeighborhood) {
-          if (dbNeighborhood.deliveryEnabled) {
-            fillColor = '#8b5cf6';
-            fillOpacity = 0.35;
-            color = '#a78bfa';
-            weight = 1.5;
-          } else {
-            fillColor = '#f43f5e';
-            fillOpacity = 0.15;
-            color = '#fda4af';
-            weight = 1;
-          }
-        }
-
-        if (isSelected) {
-          color = '#d946ef';
-          weight = 3;
-          fillOpacity = 0.55;
-          if (isDirty) {
-            dashArray = '5, 5';
-          }
-        } else if (isDirty) {
-          dashArray = '5, 5';
-          weight = 2;
-        }
+        const styles = getStyleForLayer(name, isSelected, isDirty);
 
         if (l.setStyle && typeof l.setStyle === 'function') {
-          l.setStyle({
-            fillColor,
-            fillOpacity,
-            color,
-            weight,
-            dashArray,
-          });
+          l.setStyle(styles);
         }
       }
     });
@@ -272,24 +244,28 @@ export default function LeafletMap({
         <CustomZoomControls />
       </MapContainer>
 
-      {/* Modern Minimal Map Legend */}
-      <div className="absolute top-4 left-4 bg-slate-900/95 backdrop-blur border border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-medium transition-all text-slate-350">
-        <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">Legenda</span>
+      {/* Modern Minimal Map Legend (Theme Accents Refactored) */}
+      <div className="absolute top-4 left-4 bg-slate-900/95 backdrop-blur border border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-semibold transition-all text-slate-300">
+        <span className="text-slate-500 block text-[9px] uppercase tracking-wider font-bold">Legenda de Frete</span>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-violet-500/20 border border-violet-500 rounded-md"></span>
-          <span>Entrega Habilitada</span>
+          <span className="w-3.5 h-3.5 bg-[#DCC8A5]/45 border border-[#DCC8A5] rounded-md"></span>
+          <span>Econômico (≤ R$ 5,00)</span>
         </div>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-rose-500/20 border border-rose-500 rounded-md"></span>
-          <span>Entrega Desativada</span>
+          <span className="w-3.5 h-3.5 bg-[#5FC9C8]/45 border border-[#5FC9C8] rounded-md"></span>
+          <span>Intermediário (R$ 6 - R$ 12)</span>
         </div>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-slate-800/20 border border-slate-700 rounded-md"></span>
-          <span>Não Configurado</span>
+          <span className="w-3.5 h-3.5 bg-[#2F7DBB]/45 border border-[#2F7DBB] rounded-md"></span>
+          <span>Distante (&gt; R$ 12,00)</span>
         </div>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3 h-3 bg-fuchsia-500/20 border border-fuchsia-500 rounded-md"></span>
-          <span>Selecionado</span>
+          <span className="w-3.5 h-3.5 bg-[#1E3A5F]/15 border border-[#1E3A5F] rounded-md"></span>
+          <span>Sem entrega / Inativo</span>
+        </div>
+        <div className="flex items-center space-x-2.5 border-t border-slate-800/80 pt-1.5 mt-1">
+          <span className="w-3.5 h-3.5 bg-slate-900 border-2 border-[#5FC9C8] rounded-md"></span>
+          <span>Selecionado (Editar)</span>
         </div>
       </div>
     </div>

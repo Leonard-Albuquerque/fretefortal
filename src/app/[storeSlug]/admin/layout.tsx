@@ -39,7 +39,7 @@ export default async function AdminLayout({
             </span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-violet-400 bg-violet-500/10 border border-violet-500/10 px-2.5 py-1 rounded-full shadow-lg shadow-violet-500/5">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5FC9C8] bg-[#5FC9C8]/10 border border-[#5FC9C8]/10 px-2.5 py-1 rounded-full shadow-lg shadow-[#5FC9C8]/5">
               Fortaleza - CE
             </span>
           </div>

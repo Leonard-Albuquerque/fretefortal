@@ -90,12 +90,12 @@ export default function BulkEditModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-      <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-fadeIn">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-955/80 backdrop-blur-sm p-4 animate-fadeIn">
+      <div className="bg-slate-900 rounded-2xl border border-slate-805 shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-slate-950 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-violet-550/10 border border-violet-500/10 p-2.5 rounded-xl text-violet-400">
+            <div className="bg-[#1E3A5F]/20 border border-[#2F7DBB]/10 p-2.5 rounded-xl text-[#5FC9C8]">
               <Settings className="h-6 w-6" />
             </div>
             <div>
@@ -128,7 +128,7 @@ export default function BulkEditModal({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Pesquisar bairro..."
-              className="w-full px-3.5 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all mb-3 text-sm"
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all mb-3 text-sm"
             />
 
             <div className="flex items-center space-x-2 mb-3">
@@ -154,19 +154,19 @@ export default function BulkEditModal({
                     key={n.id}
                     onClick={() => toggleSelect(n.id)}
                     className={`w-full flex items-center justify-between p-2 rounded-xl transition-all text-left text-sm ${isSelected
-                        ? 'bg-violet-950/30 text-violet-400 font-semibold'
+                        ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] font-semibold'
                         : 'hover:bg-slate-950/30 text-slate-350'
                       }`}
                   >
                     <span>{n.officialName}</span>
                     {isSelected ? (
-                      <span className="bg-violet-500 text-white rounded-full p-0.5">
+                      <span className="bg-[#5FC9C8] text-slate-950 rounded-full p-0.5">
                         <Check className="h-3.5 w-3.5" />
                       </span>
                     ) : (
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${n.deliveryEnabled
-                          ? 'bg-violet-950/30 text-violet-400 border-violet-900/30'
-                          : 'bg-rose-950/30 text-rose-450 border-rose-900/30'
+                          ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border-[#5FC9C8]/20'
+                          : 'bg-rose-955 text-rose-455 border-rose-900/30'
                         }`}>
                         {n.deliveryEnabled ? 'Ativo' : 'Inativo'}
                       </span>
@@ -193,8 +193,8 @@ export default function BulkEditModal({
                   <button
                     onClick={() => setUpdateDelivery(true)}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-center border ${updateDelivery === true
-                        ? 'bg-violet-600 text-white border-transparent shadow shadow-violet-500/20'
-                        : 'bg-slate-950/40 text-slate-400 border-slate-950 hover:bg-slate-955'
+                        ? 'bg-[#2F7DBB] text-white border-transparent shadow shadow-[#2F7DBB]/20'
+                        : 'bg-slate-955/40 text-slate-400 border-slate-950 hover:bg-slate-950/70'
                       }`}
                   >
                     Habilitar
@@ -203,7 +203,7 @@ export default function BulkEditModal({
                     onClick={() => setUpdateDelivery(false)}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-center border ${updateDelivery === false
                         ? 'bg-rose-500 text-white border-transparent shadow shadow-rose-500/20'
-                        : 'bg-slate-950/40 text-slate-400 border-slate-950 hover:bg-slate-955'
+                        : 'bg-slate-955/40 text-slate-400 border-slate-950 hover:bg-slate-950/70'
                       }`}
                   >
                     Desabilitar
@@ -212,7 +212,7 @@ export default function BulkEditModal({
                     onClick={() => setUpdateDelivery(null)}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-center border ${updateDelivery === null
                         ? 'bg-slate-950 text-white border-slate-900'
-                        : 'bg-slate-950/40 text-slate-400 border-slate-950 hover:bg-slate-955'
+                        : 'bg-slate-955/40 text-slate-400 border-slate-950 hover:bg-slate-950/70'
                       }`}
                   >
                     Manter Atual
@@ -232,7 +232,7 @@ export default function BulkEditModal({
                   value={fee}
                   onChange={(e) => setFee(e.target.value)}
                   placeholder="Ex: 10.00"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
                 />
               </div>
 
@@ -246,7 +246,7 @@ export default function BulkEditModal({
                   value={deliveryTime}
                   onChange={(e) => setDeliveryTime(e.target.value)}
                   placeholder="Ex: 24h, 2 horas"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-955 bg-slate-955/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-955 bg-slate-955/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
                 />
               </div>
 
@@ -262,7 +262,7 @@ export default function BulkEditModal({
                   value={minimumOrder}
                   onChange={(e) => setMinimumOrder(e.target.value)}
                   placeholder="Ex: 30.00"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
                 />
               </div>
 
@@ -278,7 +278,7 @@ export default function BulkEditModal({
                   value={freeDeliveryThreshold}
                   onChange={(e) => setFreeDeliveryThreshold(e.target.value)}
                   placeholder="Ex: 80.00"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-950 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
                 />
               </div>
             </div>
@@ -295,7 +295,7 @@ export default function BulkEditModal({
                 type="button"
                 onClick={handleSave}
                 disabled={loading || selectedIds.length === 0}
-                className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-500 hover:to-indigo-500 text-white transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center space-x-2 shadow shadow-violet-650/15 border border-violet-755/30"
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center space-x-2 shadow shadow-[#1E3A5F]/15 border border-[#2F7DBB]/30"
               >
                 <Save className="h-4.5 w-4.5 text-white" />
                 <span>{loading ? 'Atualizando...' : 'Atualizar Selecionados'}</span>

@@ -11,7 +11,7 @@ const LeafletMap = dynamic(() => import('./LeafletMap'), {
   loading: () => (
     <div className="w-full h-[550px] bg-slate-950 border border-slate-900 rounded-xl flex items-center justify-center">
       <div className="flex flex-col items-center space-y-3">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5FC9C8]"></div>
         <span className="text-sm text-slate-500">Iniciando mapa interativo...</span>
       </div>
     </div>
@@ -109,7 +109,7 @@ export default function NeighborhoodsConfigurator({
     : 0;
 
   return (
-    <div className="space-y-6 flex flex-col h-[100vh] overflow-hidden py-3">
+    <div className="space-y-6 flex flex-col h-[100vh] overflow-hidden py-3 animate-fadeIn">
       {/* Top Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-slate-900/30 border border-slate-900 p-4 rounded-2xl shadow-xl">
 
@@ -127,12 +127,12 @@ export default function NeighborhoodsConfigurator({
                 setSearchFocused(true);
               }}
               placeholder="Pesquisar bairro por nome..."
-              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-900 bg-slate-955 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm shadow-sm"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-900 bg-slate-955 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm shadow-sm"
             />
           </div>
 
           {searchFocused && search.trim().length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-850 rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto divide-y divide-slate-950 animate-fadeIn">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-850 rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto divide-y divide-slate-950 animate-fadeIn animate-duration-150">
               {filteredNeighborhoods.slice(0, 8).map((n) => (
                 <button
                   key={n.id}
@@ -153,7 +153,7 @@ export default function NeighborhoodsConfigurator({
                     </span>
                   </div>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${n.deliveryEnabled
-                    ? 'bg-violet-950/30 text-violet-400 border border-violet-900/30'
+                    ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/20'
                     : 'bg-slate-950 text-slate-500 border border-slate-900'
                     }`}>
                     {n.deliveryEnabled ? `Ativo • R$ ${n.fee.toFixed(2)}` : 'Inativo'}
@@ -161,7 +161,7 @@ export default function NeighborhoodsConfigurator({
                 </button>
               ))}
               {filteredNeighborhoods.length === 0 && (
-                <div className="px-4 py-6 text-center text-xs text-slate-500">
+                <div className="px-4 py-6 text-center text-xs text-slate-550">
                   Nenhum bairro encontrado.
                 </div>
               )}
@@ -174,15 +174,15 @@ export default function NeighborhoodsConfigurator({
 
           {/* Mini Dashboard */}
           <div className="flex items-center space-x-3">
-            <div className="bg-slate-950/40 border border-slate-900 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
+            <div className="bg-slate-955 border border-slate-900 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
               <span className="text-[9px] text-slate-500 uppercase tracking-wider font-bold">Cobertura</span>
               <span className="text-sm font-extrabold text-white flex items-center gap-1.5 leading-tight">
                 {activeCount}/{totalCount} <span className="text-xs text-slate-550 font-semibold">({coveragePercent}%)</span>
               </span>
             </div>
-            <div className="bg-slate-950/40 border border-slate-900 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
+            <div className="bg-slate-955 border border-slate-900 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
               <span className="text-[9px] text-slate-500 uppercase tracking-wider font-bold">Frete Médio</span>
-              <span className="text-sm font-extrabold text-indigo-400 leading-tight">
+              <span className="text-sm font-extrabold text-[#2F7DBB] leading-tight">
                 R$ {avgFee.toFixed(2)}
               </span>
             </div>
@@ -190,12 +190,12 @@ export default function NeighborhoodsConfigurator({
 
           <div className="flex items-center space-x-3 ml-auto lg:ml-0">
             {/* Tab Switcher */}
-            <div className="bg-slate-950 p-1 rounded-xl flex items-center space-x-1 border border-slate-900">
+            <div className="bg-slate-955 p-1 rounded-xl flex items-center space-x-1 border border-slate-900">
               <button
                 type="button"
                 onClick={() => setActiveTab('map')}
                 className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'map'
-                  ? 'bg-gradient-to-r from-violet-650 to-indigo-650 text-white shadow shadow-violet-650/10'
+                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
                   : 'text-slate-400 hover:text-white'
                   }`}
               >
@@ -206,7 +206,7 @@ export default function NeighborhoodsConfigurator({
                 type="button"
                 onClick={() => setActiveTab('list')}
                 className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'list'
-                  ? 'bg-gradient-to-r from-violet-650 to-indigo-650 text-white shadow shadow-violet-650/10'
+                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
                   : 'text-slate-400 hover:text-white'
                   }`}
               >
@@ -219,7 +219,7 @@ export default function NeighborhoodsConfigurator({
             <button
               type="button"
               onClick={() => setBulkEditOpen(true)}
-              className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-550 hover:to-indigo-550 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow shadow-violet-600/10 active:scale-95 border border-violet-755/30"
+              className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow shadow-[#1E3A5F]/15 active:scale-95 border border-[#2F7DBB]/30"
             >
               <Settings className="h-4 w-4" />
               <span>Editar em Massa</span>
@@ -261,7 +261,7 @@ export default function NeighborhoodsConfigurator({
                     {filteredNeighborhoods.map((n) => (
                       <tr
                         key={n.id}
-                        className={`hover:bg-slate-900/10 transition-colors ${selectedName === n.name ? 'bg-violet-950/15' : ''
+                        className={`hover:bg-slate-900/10 transition-colors ${selectedName === n.name ? 'bg-[#5FC9C8]/5' : ''
                           }`}
                       >
                         <td className="px-6 py-3.5 font-semibold text-white">
@@ -269,17 +269,17 @@ export default function NeighborhoodsConfigurator({
                         </td>
                         <td className="px-6 py-3.5">
                           <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${n.deliveryEnabled
-                            ? 'bg-violet-950/30 text-violet-400 border-violet-900/30'
-                            : 'bg-rose-950/30 text-rose-450 border-rose-900/30'
+                            ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border-[#5FC9C8]/20'
+                            : 'bg-rose-955 text-rose-455 border-rose-900/30'
                             }`}>
                             {n.deliveryEnabled ? (
                               <>
-                                <CheckCircle className="h-3 w-3 mr-0.5" />
+                                <CheckCircle className="h-3 w-3 mr-0.5 text-[#5FC9C8]" />
                                 <span>Entregando</span>
                               </>
                             ) : (
                               <>
-                                <XCircle className="h-3 w-3 mr-0.5" />
+                                <XCircle className="h-3 w-3 mr-0.5 text-rose-500" />
                                 <span>Inativo</span>
                               </>
                             )}
@@ -288,14 +288,14 @@ export default function NeighborhoodsConfigurator({
                         <td className="px-6 py-3.5 font-mono font-semibold text-slate-100">
                           {n.deliveryEnabled ? `R$ ${Number(n.fee).toFixed(2)}` : '-'}
                         </td>
-                        <td className="px-6 py-3.5 text-slate-400">
+                        <td className="px-6 py-3.5 text-slate-450">
                           {n.deliveryEnabled ? n.deliveryTime : '-'}
                         </td>
                         <td className="px-6 py-3.5 text-right">
                           <button
                             type="button"
                             onClick={() => handleSelectNeighborhood(n.name)}
-                            className="text-violet-400 hover:text-violet-300 transition-colors inline-flex items-center space-x-1 cursor-pointer text-[11px] font-extrabold uppercase tracking-wide"
+                            className="text-[#5FC9C8] hover:text-[#2F7DBB] transition-colors inline-flex items-center space-x-1 cursor-pointer text-[11px] font-extrabold uppercase tracking-wide"
                           >
                             <Edit3 className="h-3.5 w-3.5" />
                             <span>Editar</span>
@@ -339,7 +339,7 @@ export default function NeighborhoodsConfigurator({
           </div>
         ) : (
           <div className="hidden lg:flex w-96 bg-slate-900/30 border border-slate-900 rounded-2xl flex-col items-center justify-center p-8 text-center h-[550px] shadow-xl select-none">
-            <div className="p-4 rounded-2xl bg-violet-500/10 text-violet-400 border border-violet-500/10 mb-4 animate-pulse">
+            <div className="p-4 rounded-2xl bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/10 mb-4 animate-pulse">
               <Map className="h-8 w-8" />
             </div>
             <h4 className="font-bold text-white uppercase tracking-wider text-xs">Painel de Configuração</h4>
@@ -353,15 +353,15 @@ export default function NeighborhoodsConfigurator({
               </span>
               <div className="flex justify-between text-xs text-slate-400">
                 <span>Buscar Bairros</span>
-                <kbd className="px-1.5 py-0.5 bg-slate-950 border border-slate-900 rounded text-[9px] font-bold">Pesquisar</kbd>
+                <kbd className="px-1.5 py-0.5 bg-slate-955 border border-slate-900 rounded text-[9px] font-bold">Pesquisar</kbd>
               </div>
               <div className="flex justify-between text-xs text-slate-400">
                 <span>Fechar Painel</span>
-                <kbd className="px-1.5 py-0.5 bg-slate-950 border border-slate-900 rounded text-[9px] font-bold">Esc</kbd>
+                <kbd className="px-1.5 py-0.5 bg-slate-955 border border-slate-900 rounded text-[9px] font-bold">Esc</kbd>
               </div>
               <div className="flex justify-between text-xs text-slate-400">
                 <span>Salvar Formulário</span>
-                <kbd className="px-1.5 py-0.5 bg-slate-950 border border-slate-900 rounded text-[9px] font-bold">Enter</kbd>
+                <kbd className="px-1.5 py-0.5 bg-slate-955 border border-slate-900 rounded text-[9px] font-bold">Enter</kbd>
               </div>
             </div>
           </div>

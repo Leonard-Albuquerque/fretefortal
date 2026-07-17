@@ -54,11 +54,11 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         <div
           className={`p-4 rounded-xl flex items-center space-x-3 text-sm font-semibold animate-fadeIn ${
             message.type === 'success'
-              ? 'bg-violet-955 text-violet-400 border border-violet-900/30'
+              ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/20'
               : 'bg-rose-955 text-rose-450 border border-rose-900/30'
           }`}
         >
-          {message.type === 'success' && <CheckCircle className="h-5 w-5 text-violet-400" />}
+          {message.type === 'success' && <CheckCircle className="h-5 w-5 text-[#5FC9C8]" />}
           <span>{message.text}</span>
         </div>
       )}
@@ -72,7 +72,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           required
           value={store.name}
           onChange={(e) => setStore({ ...store, name: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
           placeholder="Ex: Pizzaria Bella Fortaleza"
         />
       </div>
@@ -86,7 +86,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           required
           value={store.whatsapp}
           onChange={(e) => setStore({ ...store, whatsapp: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
           placeholder="Ex: 85999999999"
         />
         <p className="text-xs text-slate-500 leading-normal">
@@ -103,7 +103,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           rows={3}
           value={store.address}
           onChange={(e) => setStore({ ...store, address: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm resize-none"
+          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm resize-none"
           placeholder="Ex: Av. Beira Mar, 1000 - Meireles, Fortaleza - CE"
         />
       </div>
@@ -117,7 +117,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           required
           value={store.operatingHours}
           onChange={(e) => setStore({ ...store, operatingHours: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
           placeholder="Ex: Segunda a Sábado: 18:00 às 23:00"
         />
       </div>
@@ -135,7 +135,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setStore({ ...store, pickupEnabled: !store.pickupEnabled })}
           className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-            store.pickupEnabled ? 'bg-violet-650' : 'bg-slate-800'
+            store.pickupEnabled ? 'bg-[#2F7DBB]' : 'bg-slate-800'
           }`}
         >
           <span
@@ -150,7 +150,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         <button
           type="submit"
           disabled={loading}
-          className="bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-500 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer shadow shadow-violet-600/10 active:scale-95 border border-violet-755/30"
+          className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer shadow shadow-[#1E3A5F]/10 active:scale-95 border border-[#2F7DBB]/30"
         >
           <Save className="h-5 w-5" />
           <span>{loading ? 'Salvando...' : 'Salvar Configurações'}</span>

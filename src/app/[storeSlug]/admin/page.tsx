@@ -47,28 +47,28 @@ export default async function AdminDashboard({ params }: PageProps) {
       value: activeCount,
       description: 'Atendidos pela loja',
       icon: CheckCircle,
-      color: 'text-violet-400 bg-violet-950/30 border border-violet-900/20'
+      color: 'text-[#5FC9C8] bg-[#5FC9C8]/10 border border-[#5FC9C8]/10'
     },
     {
       name: 'Bairros sem Entrega',
       value: inactiveCount,
       description: 'Não atendidos pela loja',
       icon: XCircle,
-      color: 'text-rose-450 bg-rose-950/30 border border-rose-900/20'
+      color: 'text-[#1E3A5F] bg-[#1E3A5F]/10 border border-[#1E3A5F]/10'
     },
     {
       name: 'Frete Médio',
       value: `R$ ${avgFee.toFixed(2)}`,
       description: 'Entre bairros ativos',
       icon: DollarSign,
-      color: 'text-indigo-400 bg-indigo-950/30 border border-indigo-900/20'
+      color: 'text-[#2F7DBB] bg-[#2F7DBB]/10 border border-[#2F7DBB]/10'
     },
     {
       name: 'Última Atualização',
       value: lastUpdated.split(',')[0] || 'Hoje',
       description: lastUpdated.split(',')[1] ? `Hora: ${lastUpdated.split(',')[1].trim()}` : 'Sem registros',
       icon: Clock,
-      color: 'text-amber-400 bg-amber-950/30 border border-amber-900/20'
+      color: 'text-[#DCC8A5] bg-[#DCC8A5]/10 border border-[#DCC8A5]/10'
     }
   ];
 

@@ -22,12 +22,12 @@ export default async function HomePage() {
       <header className="bg-slate-950/80 backdrop-blur border-b border-slate-900 py-4 sticky top-0 z-50 transition-colors">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-violet-500 to-indigo-500 p-1.5 rounded-lg text-white">
+            <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-1.5 rounded-lg text-white">
               <Motorbike className="h-5 w-5" />
             </div>
             <span className="font-bold text-lg text-white tracking-tight">FreteFortal</span>
           </div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-violet-400 bg-violet-500/10 border border-violet-500/10 px-2.5 py-1 rounded-full">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5FC9C8] bg-[#5FC9C8]/10 border border-[#5FC9C8]/10 px-2.5 py-1 rounded-full">
             Fortaleza - CE
           </span>
         </div>
@@ -36,7 +36,7 @@ export default async function HomePage() {
       {/* Main Container */}
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-16 flex flex-col justify-center space-y-12">
         <div className="text-center space-y-4 max-w-xl mx-auto">
-          <span className="bg-violet-500/10 text-violet-400 text-[10px] font-bold tracking-widest px-3 py-1 rounded-full border border-violet-500/10 uppercase">
+          <span className="bg-[#5FC9C8]/10 text-[#5FC9C8] text-[10px] font-bold tracking-widest px-3 py-1 rounded-full border border-[#5FC9C8]/10 uppercase">
             ESTABELECIMENTOS
           </span>
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">

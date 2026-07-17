@@ -125,7 +125,7 @@ export default function PublicLookup({
           onClick={() => switchMode('cep')}
           className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             mode === 'cep'
-              ? 'bg-gradient-to-r from-violet-600 to-indigo-650 text-white shadow-lg shadow-violet-650/15'
+              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
           }`}
         >
@@ -136,7 +136,7 @@ export default function PublicLookup({
           onClick={() => switchMode('address')}
           className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             mode === 'address'
-              ? 'bg-gradient-to-r from-violet-600 to-indigo-650 text-white shadow-lg shadow-violet-650/15'
+              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
           }`}
         >
@@ -164,7 +164,7 @@ export default function PublicLookup({
                 onChange={handleInputChange}
                 maxLength={mode === 'cep' ? 9 : 100}
                 placeholder={mode === 'cep' ? 'Ex: 60150-160' : 'Rua, Avenida, Número, etc.'}
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all font-medium text-sm"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-900 bg-slate-955 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm"
               />
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function PublicLookup({
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-violet-550 to-indigo-550 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg shadow-violet-500/10 active:scale-98 text-sm"
+            className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg shadow-[#1E3A5F]/15 active:scale-98 text-sm"
           >
             {loading ? (
               <>
@@ -191,7 +191,7 @@ export default function PublicLookup({
 
       {/* Error Alert */}
       {error && !result && (
-        <div className="bg-rose-950/20 text-rose-450 border border-rose-900/30 p-4 rounded-xl flex items-start space-x-3 text-sm animate-fadeIn">
+        <div className="bg-rose-955 text-rose-450 border border-rose-900/30 p-4 rounded-xl flex items-start space-x-3 text-sm animate-fadeIn">
           <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5 text-rose-500" />
           <div>
             <span className="font-semibold block">Erro na consulta</span>
@@ -205,8 +205,8 @@ export default function PublicLookup({
         <div className="animate-fadeIn">
           {result.deliveryEnabled ? (
             /* DELIVERABLE */
-            <div className="bg-slate-900/30 border-2 border-violet-500/80 rounded-2xl overflow-hidden shadow-2xl shadow-violet-550/5">
-              <div className="bg-gradient-to-r from-violet-650 to-indigo-650 p-4 flex items-center justify-between">
+            <div className="bg-slate-900/30 border-2 border-[#2F7DBB]/85 rounded-2xl overflow-hidden shadow-2xl shadow-[#2F7DBB]/10">
+              <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-4 flex items-center justify-between">
                 <span className="font-bold text-white text-sm">Entregamos no seu Bairro!</span>
                 <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                   Fortaleza
@@ -214,11 +214,11 @@ export default function PublicLookup({
               </div>
               <div className="p-6 space-y-6">
                 <div className="flex items-start space-x-4 border-b border-slate-900 pb-4">
-                  <div className="bg-violet-500/10 p-3 rounded-xl text-violet-400 border border-violet-500/10 flex-shrink-0">
+                  <div className="bg-[#5FC9C8]/10 p-3 rounded-xl text-[#5FC9C8] border border-[#5FC9C8]/10 flex-shrink-0">
                     <Map className="h-6 w-6" />
                   </div>
                   <div>
-                    <span className="text-xs text-slate-500 font-semibold block uppercase">Localização Identificada</span>
+                    <span className="text-xs text-slate-550 font-semibold block uppercase">Localização Identificada</span>
                     <span className="text-lg font-bold text-white mt-0.5 block">
                       {result.bairro}
                     </span>
@@ -231,13 +231,13 @@ export default function PublicLookup({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
+                  <div className="bg-slate-955 border border-slate-900 p-4 rounded-xl">
                     <span className="text-xs text-slate-500 font-semibold block">Taxa de Frete</span>
-                    <span className="text-xl font-bold text-violet-400 mt-1 block">
+                    <span className="text-xl font-bold text-[#5FC9C8] mt-1 block">
                       {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
                     </span>
                   </div>
-                  <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
+                  <div className="bg-slate-955 border border-slate-900 p-4 rounded-xl">
                     <span className="text-xs text-slate-500 font-semibold block">Prazo de Entrega</span>
                     <span className="text-xl font-bold text-white mt-1 block">
                       {result.deliveryTime}
@@ -247,7 +247,7 @@ export default function PublicLookup({
 
                 {/* Additional criteria */}
                 {(result.minimumOrder || result.freeDeliveryThreshold || result.notes) && (
-                  <div className="bg-slate-950/20 border border-slate-900 p-4 rounded-xl text-xs space-y-1.5 text-slate-400">
+                  <div className="bg-slate-955 border border-slate-900 p-4 rounded-xl text-xs space-y-1.5 text-slate-400">
                     {result.minimumOrder && (
                       <p>• Pedido mínimo para entrega: <strong className="text-white">R$ {result.minimumOrder.toFixed(2)}</strong></p>
                     )}
@@ -263,7 +263,7 @@ export default function PublicLookup({
                 <a
                   href={getWhatsAppLink()}
                   target="_blank"
-                  className="w-full bg-gradient-to-r from-violet-550 to-indigo-550 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-violet-500/10 text-sm cursor-pointer active:scale-98"
+                  className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#1E3A5F]/15 text-sm cursor-pointer active:scale-98"
                 >
                   <MessageSquare className="h-5 w-5 fill-current text-white" />
                   <span>Enviar Pedido via WhatsApp</span>
@@ -286,7 +286,7 @@ export default function PublicLookup({
               {result.pickupEnabled ? (
                 <div className="border-t border-slate-900 pt-5 space-y-4">
                   <div className="flex items-start space-x-4">
-                    <div className="bg-slate-950 p-3 rounded-xl text-slate-400 border border-slate-900">
+                    <div className="bg-slate-955 p-3 rounded-xl text-slate-400 border border-slate-905">
                       <Building className="h-6 w-6" />
                     </div>
                     <div>

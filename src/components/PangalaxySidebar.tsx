@@ -43,12 +43,12 @@ export default function PangalaxySidebar() {
       }`}>
         {isMounted && !isCollapsed && (
           <div className="flex items-center space-x-3 overflow-hidden flex-1 animate-fadeIn">
-            <div className="bg-gradient-to-r from-violet-500 to-indigo-500 p-2 rounded-lg text-white flex-shrink-0">
+            <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-2 rounded-lg text-white flex-shrink-0">
               <Globe className="h-6 w-6" />
             </div>
             <div className="flex flex-col flex-shrink-0">
-              <h1 className="font-bold text-base leading-none bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">Pangalaxy</h1>
-              <span className="text-[10px] text-violet-400 font-bold mt-1 tracking-wider uppercase">Telemetria</span>
+              <h1 className="font-bold text-base leading-none bg-gradient-to-r from-[#5FC9C8] to-[#2F7DBB] bg-clip-text text-transparent">Pangalaxy</h1>
+              <span className="text-[10px] text-[#5FC9C8] font-bold mt-1 tracking-wider uppercase">Telemetria</span>
             </div>
           </div>
         )}
@@ -77,7 +77,7 @@ export default function PangalaxySidebar() {
                 isCollapsed ? 'justify-center' : 'space-x-3'
               } ${
                 isActive
-                  ? 'bg-gradient-to-r from-violet-600 to-indigo-655 text-white shadow-lg shadow-violet-600/10'
+                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow-lg shadow-[#1E3A5F]/20'
                   : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent hover:border-slate-900'
               }`}
             >

@@ -40,7 +40,7 @@ export default async function StoreHome({ params }: PageProps) {
       <header className="bg-slate-950/80 backdrop-blur border-b border-slate-900 sticky top-0 z-50 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-violet-500 to-indigo-500 p-1.5 rounded-lg text-white">
+            <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-1.5 rounded-lg text-white">
               <Motorbike className="h-5 w-5" />
             </div>
             <span className="font-bold text-lg text-white tracking-tight">{store.name}</span>
@@ -69,12 +69,12 @@ export default async function StoreHome({ params }: PageProps) {
           {/* Quick Stats/Hours */}
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-xs font-semibold text-slate-400">
             <div className="flex items-center space-x-1.5 bg-slate-900/40 px-3.5 py-1.5 rounded-full border border-slate-900 shadow-sm">
-              <Clock className="h-3.5 w-3.5 text-violet-400" />
+              <Clock className="h-3.5 w-3.5 text-[#5FC9C8]" />
               <span>{store.operatingHours}</span>
             </div>
             {store.pickupEnabled && (
               <div className="flex items-center space-x-1.5 bg-slate-900/40 px-3.5 py-1.5 rounded-full border border-slate-900 shadow-sm">
-                <MapPin className="h-3.5 w-3.5 text-violet-400" />
+                <MapPin className="h-3.5 w-3.5 text-[#5FC9C8]" />
                 <span>Retirada no Local Habilitada</span>
               </div>
             )}

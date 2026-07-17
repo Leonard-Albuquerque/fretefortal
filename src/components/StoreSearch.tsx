@@ -29,7 +29,7 @@ export default function StoreSearch({ initialStores }: StoreSearchProps) {
     <div className="w-full max-w-2xl mx-auto space-y-8 animate-fadeIn">
       {/* Search Input Container */}
       <div className="relative group">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500 to-indigo-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-focus-within:opacity-40"></div>
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-focus-within:opacity-40"></div>
         <div className="relative bg-slate-900/50 border border-slate-900 rounded-2xl p-2 shadow-2xl flex items-center">
           <Search className="h-6 w-6 text-slate-500 ml-4 flex-shrink-0" />
           <input
@@ -64,18 +64,18 @@ export default function StoreSearch({ initialStores }: StoreSearchProps) {
               <Link
                 key={store.id}
                 href={`/${store.slug}`}
-                className="group relative block bg-slate-900/30 border border-slate-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 active:scale-[0.99] overflow-hidden hover:border-violet-500/20"
+                className="group relative block bg-slate-900/30 border border-slate-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 active:scale-[0.99] overflow-hidden hover:border-[#5FC9C8]/25"
               >
-                {/* Visual Accent Hover Glow */}
-                <div className="absolute -inset-px bg-gradient-to-r from-violet-500/0 via-violet-500/5 to-indigo-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-550 pointer-events-none"></div>
+                {/* Visual Accent Hover Glow (Refactored to new palette) */}
+                <div className="absolute -inset-px bg-gradient-to-r from-[#2F7DBB]/0 via-[#5FC9C8]/5 to-[#2F7DBB]/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-550 pointer-events-none"></div>
 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative">
                   <div className="space-y-3 flex-1">
                     <div className="flex items-center space-x-3">
-                      <div className="bg-gradient-to-r from-violet-500/10 to-indigo-500/10 p-2.5 rounded-xl text-violet-400 flex-shrink-0 group-hover:scale-105 transition-transform duration-300 border border-violet-500/10">
+                      <div className="bg-gradient-to-r from-[#1E3A5F]/10 to-[#2F7DBB]/10 p-2.5 rounded-xl text-[#5FC9C8] flex-shrink-0 group-hover:scale-105 transition-transform duration-300 border border-[#5FC9C8]/10">
                         <StoreIcon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-bold text-lg text-white group-hover:text-violet-400 transition-colors">
+                      <h3 className="font-bold text-lg text-white group-hover:text-[#5FC9C8] transition-colors">
                         {store.name}
                       </h3>
                     </div>
@@ -98,7 +98,7 @@ export default function StoreSearch({ initialStores }: StoreSearchProps) {
                         Retirada Habilitada
                       </span>
                     )}
-                    <div className="bg-gradient-to-r from-violet-550 to-indigo-550 text-white p-2.5 rounded-xl transition-all shadow-lg shadow-violet-500/10 group-hover:translate-x-1 duration-300 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white p-2.5 rounded-xl transition-all shadow-lg shadow-[#1E3A5F]/10 group-hover:translate-x-1 duration-300 flex items-center justify-center">
                       <ArrowRight className="h-4 w-4" />
                     </div>
                   </div>

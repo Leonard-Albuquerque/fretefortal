@@ -40,19 +40,19 @@ export default function AdminSidebar() {
   const widthClass = !isMounted ? 'w-64' : (isCollapsed ? 'w-20' : 'w-64');
 
   return (
-    <aside className={`${widthClass} bg-slate-950 text-slate-100 flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-20 flex-shrink-0 border-r border-slate-900`}>
+    <aside className={`${widthClass} bg-slate-955 text-slate-100 flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-20 flex-shrink-0 border-r border-slate-900`}>
       {/* Sidebar Header with Toggle Button on the Left */}
       <div className={`border-b border-slate-900 flex items-center overflow-hidden transition-all duration-300 ${isMounted && isCollapsed ? 'p-4 justify-center' : 'p-6 space-x-3'
         }`}>
 
         {isMounted && !isCollapsed && (
           <div className="flex items-center space-x-3 overflow-hidden flex-1 animate-fadeIn">
-            <div className="bg-gradient-to-r from-violet-500 to-indigo-500 p-2 rounded-lg text-white flex-shrink-0">
+            <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-2 rounded-lg text-white flex-shrink-0">
               <Motorbike className="h-6 w-6" />
             </div>
             <div className="flex flex-col flex-shrink-0">
               <h1 className="font-bold text-base leading-none text-white">FreteFortal</h1>
-              <span className="text-[10px] text-violet-400 font-bold mt-1 tracking-wider uppercase">Painel Admin</span>
+              <span className="text-[10px] text-[#5FC9C8] font-bold mt-1 tracking-wider uppercase">Painel Admin</span>
             </div>
           </div>
         )}
@@ -60,7 +60,7 @@ export default function AdminSidebar() {
         <button
           type="button"
           onClick={handleToggle}
-          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-900 hover:text-white transition-colors cursor-pointer flex-shrink-0 active:scale-95 border border-transparent hover:border-slate-800"
+          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-900 hover:text-white transition-colors cursor-pointer flex-shrink-0 active:scale-95 border border-transparent hover:border-slate-850"
           title={isCollapsed ? "Expandir menu" : "Recolher menu"}
         >
           {isMounted && isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -79,7 +79,7 @@ export default function AdminSidebar() {
               title={isCollapsed ? item.name : undefined}
               className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all ${isCollapsed ? 'justify-center' : 'space-x-3'
                 } ${isActive
-                  ? 'bg-gradient-to-r from-violet-650 to-indigo-650 text-white shadow-lg shadow-violet-600/10'
+                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow-lg shadow-[#1E3A5F]/20'
                   : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent hover:border-slate-900'
                 }`}
             >
