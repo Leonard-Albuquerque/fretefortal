@@ -103,7 +103,7 @@ export default function LeafletMap({
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         setIsDarkMode(isDarkClass || prefersDark);
       };
-      
+
       checkDark();
 
       const observer = new MutationObserver(checkDark);
@@ -224,7 +224,7 @@ export default function LeafletMap({
         const dbNeighborhood = neighborhoods.find(n => n.name === name);
         const isSelected = selectedName === name;
         const isDirty = dirtyName === name;
-        
+
         let fillColor = '#cbd5e1';
         let fillOpacity = 0.15;
         let color = '#94a3b8';
@@ -299,7 +299,7 @@ export default function LeafletMap({
       </MapContainer>
 
       {/* Modern Minimal Map Legend */}
-      <div className="absolute bottom-4 left-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-medium transition-all">
+      <div className="absolute top-4 left-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-medium transition-all">
         <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">Legenda</span>
         <div className="flex items-center space-x-2.5">
           <span className="w-3 h-3 bg-emerald-500/20 border border-emerald-500 rounded-md"></span>

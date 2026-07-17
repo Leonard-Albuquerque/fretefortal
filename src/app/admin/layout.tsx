@@ -26,7 +26,7 @@ export default function AdminLayout({
             </span>
           </div>
         </header>
-        <div className="flex-1 p-8">
+        <div className="flex-1 px-8 pt-4 h-[100dvh]">
           {children}
         </div>
       </main>

@@ -20,8 +20,7 @@ export default async function SettingsPage() {
     });
   }
 
-  // Convert decimal/other fields if necessary. 
-  // Our Prisma model uses String and Boolean, which matches our frontend props perfectly.
+  // Convert fields for props serialization
   const serializedStore = {
     id: store.id,
     name: store.name,
@@ -32,15 +31,17 @@ export default async function SettingsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Configurações da Loja</h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-2">
+    <div className="max-w-2xl mx-auto flex flex-col justify-center min-h-[calc(100vh-12rem)] space-y-6 py-4">
+      <div className="text-center">
+        <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">Configurações da Loja</h1>
+        {/* <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm max-w-md mx-auto leading-relaxed">
           Defina as informações de contato, endereço físico e horário de funcionamento da loja.
-        </p>
+        </p> */}
       </div>
 
-      <SettingsForm initialStore={serializedStore} />
+      <div className="w-full">
+        <SettingsForm initialStore={serializedStore} />
+      </div>
     </div>
   );
 }

@@ -25,7 +25,7 @@ export default function BulkEditModal({
 }: BulkEditModalProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
-  
+
   // Field values to update
   const [updateDelivery, setUpdateDelivery] = useState<boolean | null>(null);
   const [fee, setFee] = useState('');
@@ -119,7 +119,7 @@ export default function BulkEditModal({
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">
               1. Selecionar Bairros ({selectedIds.length} selecionados)
             </span>
-            
+
             <input
               type="text"
               value={search}
@@ -143,18 +143,17 @@ export default function BulkEditModal({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto border border-slate-100 dark:border-slate-850 rounded-lg p-2 space-y-1">
+            <div className="flex-1 overflow-y-none border border-slate-100 dark:border-slate-850 rounded-lg p-2 space-y-1">
               {filtered.map((n) => {
                 const isSelected = selectedIds.includes(n.id);
                 return (
                   <button
                     key={n.id}
                     onClick={() => toggleSelect(n.id)}
-                    className={`w-full flex items-center justify-between p-2 rounded-md transition-colors text-left text-sm ${
-                      isSelected
+                    className={`w-full flex items-center justify-between p-2 rounded-md transition-colors text-left text-sm ${isSelected
                         ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-400 font-medium'
                         : 'hover:bg-slate-50 dark:hover:bg-slate-800/40 text-slate-700 dark:text-slate-300'
-                    }`}
+                      }`}
                   >
                     <span>{n.officialName}</span>
                     {isSelected ? (
@@ -162,11 +161,10 @@ export default function BulkEditModal({
                         <Check className="h-3.5 w-3.5" />
                       </span>
                     ) : (
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        n.deliveryEnabled 
-                          ? 'bg-emerald-100/50 text-emerald-700 dark:bg-emerald-900/10 dark:text-emerald-400' 
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${n.deliveryEnabled
+                          ? 'bg-emerald-100/50 text-emerald-700 dark:bg-emerald-900/10 dark:text-emerald-400'
                           : 'bg-rose-100/50 text-rose-700 dark:bg-rose-900/10 dark:text-rose-400'
-                      }`}>
+                        }`}>
                         {n.deliveryEnabled ? 'Ativo' : 'Inativo'}
                       </span>
                     )}
@@ -191,31 +189,28 @@ export default function BulkEditModal({
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => setUpdateDelivery(true)}
-                    className={`py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center ${
-                      updateDelivery === true
+                    className={`py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center ${updateDelivery === true
                         ? 'bg-emerald-500 text-slate-900 border-transparent shadow'
                         : 'bg-slate-50 dark:bg-slate-950/30 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800'
-                    }`}
+                      }`}
                   >
                     Habilitar
                   </button>
                   <button
                     onClick={() => setUpdateDelivery(false)}
-                    className={`py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center ${
-                      updateDelivery === false
+                    className={`py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center ${updateDelivery === false
                         ? 'bg-rose-500 text-slate-900 border-transparent shadow'
                         : 'bg-slate-50 dark:bg-slate-950/30 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800'
-                    }`}
+                      }`}
                   >
                     Desabilitar
                   </button>
                   <button
                     onClick={() => setUpdateDelivery(null)}
-                    className={`py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center ${
-                      updateDelivery === null
+                    className={`py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer text-center ${updateDelivery === null
                         ? 'bg-slate-500 text-white border-transparent shadow'
                         : 'bg-slate-50 dark:bg-slate-950/30 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800'
-                    }`}
+                      }`}
                   >
                     Manter Atual
                   </button>

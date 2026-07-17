@@ -73,7 +73,7 @@ export default function NeighborhoodsConfigurator({
   const handleSaveAndNext = (currentName: string) => {
     const listToUse = neighborhoods;
     const currentIndex = listToUse.findIndex((n) => n.name === currentName);
-    
+
     if (currentIndex !== -1 && listToUse.length > 1) {
       const nextIndex = (currentIndex + 1) % listToUse.length;
       setSelectedName(listToUse[nextIndex].name);
@@ -102,17 +102,17 @@ export default function NeighborhoodsConfigurator({
   const totalCount = neighborhoods.length;
   const activeCount = neighborhoods.filter((n) => n.deliveryEnabled).length;
   const coveragePercent = totalCount ? Math.round((activeCount / totalCount) * 100) : 0;
-  
+
   const activeWithFee = neighborhoods.filter((n) => n.deliveryEnabled && n.fee > 0);
   const avgFee = activeWithFee.length
     ? activeWithFee.reduce((acc, curr) => acc + curr.fee, 0) / activeWithFee.length
     : 0;
 
   return (
-    <div className="space-y-6 flex flex-col h-[calc(100vh-10rem)]">
+    <div className="space-y-6 flex flex-col h-[100vh] overflow-hidden py-3">
       {/* Top Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-4 rounded-2xl shadow-sm">
-        
+
         {/* Unified Auto-Complete Search */}
         <div className="relative flex-1 max-w-md z-30">
           <div className="relative">
@@ -152,11 +152,10 @@ export default function NeighborhoodsConfigurator({
                       Fortaleza, CE
                     </span>
                   </div>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                    n.deliveryEnabled
-                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400'
-                      : 'bg-slate-100 text-slate-500 dark:bg-slate-800/60 dark:text-slate-400'
-                  }`}>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${n.deliveryEnabled
+                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400'
+                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800/60 dark:text-slate-400'
+                    }`}>
                     {n.deliveryEnabled ? `Ativo • R$ ${n.fee.toFixed(2)}` : 'Inativo'}
                   </span>
                 </button>
@@ -172,7 +171,7 @@ export default function NeighborhoodsConfigurator({
 
         {/* Coverage Mini Dashboard & Actions */}
         <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 justify-between lg:justify-end">
-          
+
           {/* Mini Dashboard */}
           <div className="flex items-center space-x-3">
             <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80 px-4 py-2 rounded-xl flex flex-col min-w-[120px]">
@@ -195,11 +194,10 @@ export default function NeighborhoodsConfigurator({
               <button
                 type="button"
                 onClick={() => setActiveTab('map')}
-                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'map'
-                    ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-800/30'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-350'
-                }`}
+                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'map'
+                  ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-800/30'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-350'
+                  }`}
               >
                 <Map className="h-4 w-4" />
                 <span>Mapa</span>
@@ -207,11 +205,10 @@ export default function NeighborhoodsConfigurator({
               <button
                 type="button"
                 onClick={() => setActiveTab('list')}
-                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'list'
-                    ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-800/30'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-350'
-                }`}
+                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'list'
+                  ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-800/30'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-350'
+                  }`}
               >
                 <List className="h-4 w-4" />
                 <span>Lista</span>
@@ -233,7 +230,7 @@ export default function NeighborhoodsConfigurator({
 
       {/* Main Container - Side by Side with Sidebar */}
       <div className="flex-1 flex overflow-hidden gap-6 min-h-0">
-        <div className="flex-1 overflow-y-auto min-w-0">
+        <div className="flex-1 overflow-y-none min-w-0">
           {activeTab === 'map' ? (
             <div className="space-y-4">
               <LeafletMap
@@ -264,19 +261,17 @@ export default function NeighborhoodsConfigurator({
                     {filteredNeighborhoods.map((n) => (
                       <tr
                         key={n.id}
-                        className={`hover:bg-slate-50 dark:hover:bg-slate-850/10 transition-colors ${
-                          selectedName === n.name ? 'bg-indigo-50/20 dark:bg-indigo-950/10' : ''
-                        }`}
+                        className={`hover:bg-slate-50 dark:hover:bg-slate-850/10 transition-colors ${selectedName === n.name ? 'bg-indigo-50/20 dark:bg-indigo-950/10' : ''
+                          }`}
                       >
                         <td className="px-6 py-3 font-semibold text-slate-800 dark:text-white">
                           {n.officialName}
                         </td>
                         <td className="px-6 py-3">
-                          <span className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            n.deliveryEnabled
-                              ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400'
-                              : 'bg-rose-50 text-rose-800 dark:bg-rose-950/20 dark:text-rose-400'
-                          }`}>
+                          <span className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${n.deliveryEnabled
+                            ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400'
+                            : 'bg-rose-50 text-rose-800 dark:bg-rose-950/20 dark:text-rose-400'
+                            }`}>
                             {n.deliveryEnabled ? (
                               <>
                                 <CheckCircle className="h-3 w-3" />
