@@ -41,18 +41,9 @@ export default function AdminSidebar() {
   return (
     <aside className={`${widthClass} bg-slate-900 text-white flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-20 flex-shrink-0`}>
       {/* Sidebar Header with Toggle Button on the Left */}
-      <div className={`border-b border-slate-800 flex items-center overflow-hidden transition-all duration-300 ${
-        isMounted && isCollapsed ? 'p-4 justify-center' : 'p-6 space-x-3'
-      }`}>
-        <button
-          type="button"
-          onClick={handleToggle}
-          className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer flex-shrink-0 active:scale-95"
-          title={isCollapsed ? "Expandir menu" : "Recolher menu"}
-        >
-          {isMounted && isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-        </button>
-        
+      <div className={`border-b border-slate-800 flex items-center overflow-hidden transition-all duration-300 ${isMounted && isCollapsed ? 'p-4 justify-center' : 'p-6 space-x-3'
+        }`}>
+
         {isMounted && !isCollapsed && (
           <div className="flex items-center space-x-3 overflow-hidden flex-1 animate-fadeIn">
             <div className="bg-emerald-500 p-2 rounded-lg text-slate-900 flex-shrink-0">
@@ -64,8 +55,17 @@ export default function AdminSidebar() {
             </div>
           </div>
         )}
+
+        <button
+          type="button"
+          onClick={handleToggle}
+          className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer flex-shrink-0 active:scale-95"
+          title={isCollapsed ? "Expandir menu" : "Recolher menu"}
+        >
+          {isMounted && isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+        </button>
       </div>
-      
+
       {/* Sidebar Navigation */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
@@ -76,13 +76,11 @@ export default function AdminSidebar() {
               key={item.href}
               href={item.href}
               title={isCollapsed ? item.name : undefined}
-              className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                isCollapsed ? 'justify-center' : 'space-x-3'
-              } ${
-                isActive
+              className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all ${isCollapsed ? 'justify-center' : 'space-x-3'
+                } ${isActive
                   ? 'bg-emerald-500 text-slate-900 shadow-md shadow-emerald-500/10'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
+                }`}
             >
               <Icon className="h-5 w-5 flex-shrink-0" />
               {isMounted && !isCollapsed && (
@@ -99,9 +97,8 @@ export default function AdminSidebar() {
           href="/"
           target="_blank"
           title={isCollapsed ? "Ver site público" : undefined}
-          className={`flex items-center rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all ${
-            isCollapsed ? 'justify-center p-3' : 'justify-between px-4 py-3'
-          }`}
+          className={`flex items-center rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all ${isCollapsed ? 'justify-center p-3' : 'justify-between px-4 py-3'
+            }`}
         >
           <div className={`flex items-center ${isCollapsed ? '' : 'space-x-3'}`}>
             <ExternalLink className="h-5 w-5 flex-shrink-0" />
