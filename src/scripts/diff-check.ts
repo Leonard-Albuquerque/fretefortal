@@ -1,12 +1,7 @@
-import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '@prisma/client';
-import pg from 'pg';
+import fs from 'fs';
+import path from 'path';
 
-const connectionString = process.env.DATABASE_URL;
-const pool = new pg.Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
-
+// Define the rawNeighborhoods from seed.ts manually or load them
 const rawNeighborhoods = [
   "Aerolândia",
   "Aeroporto",
@@ -17,13 +12,11 @@ const rawNeighborhoods = [
   "Amadeu Furtado",
   "Ancuri",
   "Antônio Bezerra",
-  "Aracapé",
   "Autran Nunes",
   "Barra do Ceará",
   "Barroso",
   "Bela Vista",
   "Benfica",
-  "Boa Vista/Castelão",
   "Bom Futuro",
   "Bom Jardim",
   "Bonsucesso",
@@ -32,6 +25,7 @@ const rawNeighborhoods = [
   "Cambeba",
   "Canindezinho",
   "Carlito Pamplona",
+  "Castelão",
   "Centro",
   "Cidade 2000",
   "Cidade dos Funcionários",
@@ -51,7 +45,6 @@ const rawNeighborhoods = [
   "Dias Macedo",
   "Dom Lustosa",
   "Edson Queiroz",
-  "Ellery",
   "Engenheiro Luciano Cavalcante",
   "Dionísio Torres",
   "Farias Brito",
@@ -62,7 +55,7 @@ const rawNeighborhoods = [
   "Granja Lisboa",
   "Granja Portugal",
   "Guajeru",
-  "Guararapes",
+  "Guarapes", // Typo in seed, should be Guararapes?
   "Henrique Jorge",
   "Itaóca",
   "Itaperi",
@@ -79,6 +72,7 @@ const rawNeighborhoods = [
   "José Bonifácio",
   "José de Alencar",
   "Lagoa Redonda",
+  "Sapiranga",
   "Manoel Sátiro",
   "Manuel Dias Branco",
   "Maraponga",
@@ -87,10 +81,7 @@ const rawNeighborhoods = [
   "Mondubim",
   "Monte Castelo",
   "Montese",
-  "Moura Brasil",
   "Mucuripe",
-  "Novo Mondubim",
-  "Olavo Oliveira",
   "Padre Andrade",
   "Panamericano",
   "Papicu",
@@ -100,7 +91,6 @@ const rawNeighborhoods = [
   "Parque Iracema",
   "Parque Manibura",
   "Parque Presidente Vargas",
-  "Parque Santa Maria",
   "Parque Santa Rosa",
   "Parque São José",
   "Parquelândia",
@@ -117,19 +107,17 @@ const rawNeighborhoods = [
   "Prefeito José Walter",
   "Presidente Kennedy",
   "Quintino Cunha",
-  "Rachel de Queiroz",
   "Rodolfo Teófilo",
   "Sabiaguaba",
   "Salinas",
   "São Bento",
-  "São Gerardo",
   "São João do Tauape",
-  "Sapiranga / Coité",
   "Serrinha",
   "Siqueira",
   "Varjota",
   "Vicente Pinzon",
-  "Vila Peri",
+  "Vila Ellery",
+  "Vila Pery", // Typo in seed, should be Vila Peri?
   "Vila União",
   "Vila Velha"
 ];
@@ -143,54 +131,34 @@ function normalizeName(str: string): string {
     .trim();
 }
 
-async function main() {
-  console.log("Seeding database...");
+const geojsonPath = path.join(process.cwd(), 'public', 'bairros-fortaleza.geojson');
+const geojson = JSON.parse(fs.readFileSync(geojsonPath, 'utf8'));
 
-  // Seed default store
-  const storeCount = await prisma.store.count();
-  if (storeCount === 0) {
-    await prisma.store.create({
-      data: {
-        name: "Fortal Express",
-        whatsapp: "5585999999999",
-        address: "Av. Beira Mar, 1000 - Meireles, Fortaleza - CE",
-        operatingHours: "Segunda a Sábado: 09:00 às 21:00",
-        pickupEnabled: true,
-      },
-    });
-    console.log("Default store created.");
+const geojsonBairros = geojson.features.map((f: any) => ({
+  name: f.properties.name,
+  officialName: f.properties.officialName
+}));
+
+const dbNormalized = new Set(rawNeighborhoods.map(normalizeName));
+const geojsonNormalized = new Set(geojsonBairros.map((b: any) => b.name));
+
+console.log("=== IN GEOJSON BUT NOT IN SEED.TS ===");
+const missingInSeed: any[] = [];
+for (const b of geojsonBairros) {
+  if (!dbNormalized.has(b.name)) {
+    missingInSeed.push(b);
   }
-
-  // Seed neighborhoods
-  let createdCount = 0;
-  for (const officialName of rawNeighborhoods) {
-    const normalizedName = normalizeName(officialName);
-
-    await prisma.neighborhood.upsert({
-      where: { name: normalizedName },
-      update: {
-        officialName,
-      },
-      create: {
-        name: normalizedName,
-        officialName,
-        deliveryEnabled: false,
-        fee: 0.00,
-        deliveryTime: "24h",
-      },
-    });
-    createdCount++;
-  }
-
-  console.log(`Successfully seeded ${createdCount} neighborhoods.`);
 }
+// Remove duplicates from missingInSeed
+const uniqueMissing = Array.from(new Map(missingInSeed.map(item => [item.name, item])).values());
+console.log(JSON.stringify(uniqueMissing, null, 2));
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-    await pool.end();
-  });
+console.log("\n=== IN SEED.TS BUT NOT IN GEOJSON ===");
+const missingInGeojson: string[] = [];
+for (const name of rawNeighborhoods) {
+  const norm = normalizeName(name);
+  if (!geojsonNormalized.has(norm)) {
+    missingInGeojson.push(name);
+  }
+}
+console.log(JSON.stringify(missingInGeojson, null, 2));
