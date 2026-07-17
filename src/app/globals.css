@@ -37,6 +37,70 @@ body {
   height: 100%;
   border-radius: 0.75rem;
   z-index: 1;
+  background-color: #fafafa !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .leaflet-container {
+    background-color: #0b0f19 !important;
+  }
+}
+
+/* Custom Tooltip style for Neighborhood Labels */
+.leaflet-container .neighborhood-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #475569 !important;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: -0.01em;
+  text-shadow: 0 0 3px #ffffff, 0 0 3px #ffffff, 0 0 3px #ffffff;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.leaflet-container.dark .neighborhood-label {
+  color: #cbd5e1 !important;
+  text-shadow: 0 0 3px #0f172a, 0 0 3px #0f172a, 0 0 3px #0f172a;
+}
+
+/* Show labels at zoom >= 13 */
+.leaflet-zoom-13 .neighborhood-label,
+.leaflet-zoom-14 .neighborhood-label,
+.leaflet-zoom-15 .neighborhood-label,
+.leaflet-zoom-16 .neighborhood-label {
+  opacity: 0.75 !important;
+}
+
+/* Custom animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Custom scrollbars */
@@ -56,3 +120,9 @@ body {
     background: #475569;
   }
 }
+
+/* SVG polygon transition styling */
+.leaflet-interactive {
+  transition: fill-opacity 0.2s ease, stroke-width 0.2s ease, stroke 0.2s ease, fill 0.2s ease;
+}
+
