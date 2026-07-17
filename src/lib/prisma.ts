@@ -4,8 +4,11 @@ import pg from 'pg';
 
 let prisma: PrismaClient;
 
-// Read database URL from environment variables, fallback to Neon if not set
-const connectionString = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_wpPiGeT05VWo@ep-patient-water-aw0gs90g-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is not set in environment variables. Please check your .env file.');
+}
 
 const globalForPrisma = global as unknown as {
   prisma: PrismaClient | undefined;
