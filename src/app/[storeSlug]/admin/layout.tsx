@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 
 export const metadata = {
-  title: 'FreteFortal Admin - Painel de Controle',
+  title: 'Cobertura085 Admin - Painel de Controle',
   description: 'Gerenciamento de taxas de frete por bairro em Fortaleza',
 };
 

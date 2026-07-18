@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import PublicLookup from '@/components/PublicLookup';
-import { Motorbike, Clock, MapPin, Settings } from 'lucide-react';
+import { Motorbike, Clock, MapPin, Settings, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -27,7 +27,10 @@ export default async function StoreHome({ params }: PageProps) {
 
   // Get store details
   const store = await prisma.store.findUnique({
-    where: { slug: storeSlug }
+    where: { slug: storeSlug },
+    include: {
+      pickupPoints: true
+    }
   });
 
   if (!store) {
@@ -54,15 +57,30 @@ export default async function StoreHome({ params }: PageProps) {
     notes: n.notes
   }));
 
+  const serializedPickupPoints = store.pickupPoints.map((p) => ({
+    id: p.id,
+    name: p.name || '',
+    address: p.address,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    instructions: p.instructions || ''
+  }));
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100 transition-colors">
       {/* Top Navbar */}
       <header className="bg-slate-950/80 backdrop-blur border-b border-slate-900 sticky top-0 z-50 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-1.5 rounded-lg text-white">
-              <Motorbike className="h-5 w-5" />
-            </div>
+            {store.logoUrl ?
+              <div className="flex items-center">
+                <img src={store.logoUrl} alt={store.name} className=" object-contain  w-10 max-h-8 rounded-full text-white flex items-center justify-center" />
+              </div>
+              :
+              <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-1.5 rounded-lg text-white">
+                <Building2 className="h-5 w-5" />
+              </div>
+            }
             <span className="font-bold text-lg text-white tracking-tight">{store.name}</span>
           </Link>
         </div>
@@ -78,6 +96,18 @@ export default async function StoreHome({ params }: PageProps) {
           storeAddress={store.address}
           operatingHours={store.operatingHours}
           initialNeighborhoods={initialNeighborhoods}
+          logoUrl={store.logoUrl}
+          bannerUrl={store.bannerUrl}
+          description={store.description}
+          instagram={store.instagram}
+          catalogUrl={store.catalogUrl}
+          websiteUrl={store.websiteUrl}
+          deliveryTimeDefault={store.deliveryTimeDefault}
+          deliveryAvailableMsg={store.deliveryAvailableMsg}
+          deliveryUnavailableMsg={store.deliveryUnavailableMsg}
+          sameDayCutoff={store.sameDayCutoff}
+          cutoffMessage={store.cutoffMessage}
+          pickupPoints={serializedPickupPoints}
         />
       </main>
     </div>

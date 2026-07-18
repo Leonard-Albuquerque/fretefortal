@@ -13,7 +13,10 @@ export default async function SettingsPage({ params }: PageProps) {
 
   // Find the store
   const store = await prisma.store.findUnique({
-    where: { slug: storeSlug }
+    where: { slug: storeSlug },
+    include: {
+      pickupPoints: true
+    }
   });
 
   if (!store) {
@@ -28,6 +31,26 @@ export default async function SettingsPage({ params }: PageProps) {
     address: store.address,
     operatingHours: store.operatingHours,
     pickupEnabled: store.pickupEnabled,
+    logoUrl: store.logoUrl,
+    bannerUrl: store.bannerUrl,
+    description: store.description,
+    instagram: store.instagram,
+    catalogUrl: store.catalogUrl,
+    websiteUrl: store.websiteUrl,
+    operatingHoursJson: store.operatingHoursJson ? JSON.parse(JSON.stringify(store.operatingHoursJson)) : null,
+    deliveryTimeDefault: store.deliveryTimeDefault,
+    deliveryAvailableMsg: store.deliveryAvailableMsg,
+    deliveryUnavailableMsg: store.deliveryUnavailableMsg,
+    sameDayCutoff: store.sameDayCutoff,
+    cutoffMessage: store.cutoffMessage,
+    pickupPoints: store.pickupPoints.map(p => ({
+      id: p.id,
+      name: p.name || '',
+      address: p.address,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      instructions: p.instructions || ''
+    }))
   };
 
   return (

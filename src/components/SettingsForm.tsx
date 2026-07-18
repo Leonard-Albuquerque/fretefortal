@@ -2,8 +2,39 @@
 
 import { useState } from 'react';
 import { updateStoreSettings } from '@/app/admin/settings/actions';
-import { Save, CheckCircle } from 'lucide-react';
+import {
+  Save,
+  CheckCircle,
+  Building2,
+  Globe,
+  MapPin,
+  Clock,
+  Truck,
+  Trash2,
+  Plus,
+  Copy,
+  Upload,
+  AlertTriangle,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
+import AddressAutocomplete from './AddressAutocomplete';
+
+interface PickupPoint {
+  id?: string;
+  name: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  instructions: string;
+}
+
+interface OperatingHourDay {
+  day: number;
+  label: string;
+  open: boolean;
+  openTime: string;
+  closeTime: string;
+}
 
 interface Store {
   id: string;
@@ -12,27 +43,210 @@ interface Store {
   address: string;
   operatingHours: string;
   pickupEnabled: boolean;
+  logoUrl?: string | null;
+  bannerUrl?: string | null;
+  description?: string | null;
+  instagram?: string | null;
+  catalogUrl?: string | null;
+  websiteUrl?: string | null;
+  operatingHoursJson?: OperatingHourDay[] | null;
+  deliveryTimeDefault?: string;
+  deliveryAvailableMsg?: string | null;
+  deliveryUnavailableMsg?: string | null;
+  sameDayCutoff?: string | null;
+  cutoffMessage?: string | null;
+  pickupPoints?: PickupPoint[];
 }
+
+const DEFAULT_HOURS: OperatingHourDay[] = [
+  { day: 1, label: 'Segunda-feira', open: true, openTime: '08:00', closeTime: '18:00' },
+  { day: 2, label: 'Terça-feira', open: true, openTime: '08:00', closeTime: '18:00' },
+  { day: 3, label: 'Quarta-feira', open: true, openTime: '08:00', closeTime: '18:00' },
+  { day: 4, label: 'Quinta-feira', open: true, openTime: '08:00', closeTime: '18:00' },
+  { day: 5, label: 'Sexta-feira', open: true, openTime: '08:00', closeTime: '18:00' },
+  { day: 6, label: 'Sábado', open: true, openTime: '08:00', closeTime: '12:00' },
+  { day: 0, label: 'Domingo', open: false, openTime: '08:00', closeTime: '18:00' },
+];
 
 export default function SettingsForm({ initialStore }: { initialStore: Store }) {
   const params = useParams();
   const storeSlug = params?.storeSlug as string;
-  const [store, setStore] = useState(initialStore);
+
+  // Initialize tabs
+  const [activeTab, setActiveTab] = useState<'loja' | 'canais' | 'retirada' | 'horarios' | 'entrega'>('loja');
+
+  // Form states
+  const [name, setName] = useState(initialStore.name);
+  const [whatsapp, setWhatsapp] = useState(initialStore.whatsapp);
+  const [description, setDescription] = useState(initialStore.description || '');
+  const [logoUrl, setLogoUrl] = useState(initialStore.logoUrl || '');
+  const [bannerUrl, setBannerUrl] = useState(initialStore.bannerUrl || '');
+
+  const [instagram, setInstagram] = useState(initialStore.instagram || '');
+  const [catalogUrl, setCatalogUrl] = useState(initialStore.catalogUrl || '');
+  const [websiteUrl, setWebsiteUrl] = useState(initialStore.websiteUrl || '');
+
+  const [pickupEnabled, setPickupEnabled] = useState(initialStore.pickupEnabled);
+  const [pickupPoints, setPickupPoints] = useState<PickupPoint[]>(initialStore.pickupPoints || []);
+
+  const [operatingHours, setOperatingHours] = useState<OperatingHourDay[]>(
+    initialStore.operatingHoursJson || DEFAULT_HOURS
+  );
+
+  const [deliveryTimeDefault, setDeliveryTimeDefault] = useState(initialStore.deliveryTimeDefault || '2 horas');
+  const [deliveryAvailableMsg, setDeliveryAvailableMsg] = useState(initialStore.deliveryAvailableMsg || '');
+  const [deliveryUnavailableMsg, setDeliveryUnavailableMsg] = useState(initialStore.deliveryUnavailableMsg || '');
+  const [sameDayCutoff, setSameDayCutoff] = useState(initialStore.sameDayCutoff || '');
+  const [cutoffMessage, setCutoffMessage] = useState(initialStore.cutoffMessage || '');
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Resize and compress uploaded images to Base64
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'banner') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size first (before compression just in case)
+    if (file.size > 8 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'A imagem deve ter no máximo 8MB.' });
+      return;
+    }
+
+    const maxWidth = type === 'logo' ? 300 : 1200;
+    const maxHeight = type === 'logo' ? 300 : 400;
+
+    try {
+      const base64 = await resizeImage(file, maxWidth, maxHeight);
+      if (type === 'logo') {
+        setLogoUrl(base64);
+      } else {
+        setBannerUrl(base64);
+      }
+      setMessage({ type: 'success', text: `${type === 'logo' ? 'Logo' : 'Banner'} carregado com sucesso!` });
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage({ type: 'error', text: 'Falha ao processar a imagem.' });
+    }
+  };
+
+  const resizeImage = (file: File, maxWidth: number, maxHeight: number): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  // Pickup Points manipulation
+  const addPickupPoint = () => {
+    setPickupPoints([
+      ...pickupPoints,
+      { name: '', address: '', latitude: null, longitude: null, instructions: '' },
+    ]);
+  };
+
+  const removePickupPoint = (index: number) => {
+    setPickupPoints(pickupPoints.filter((_, i) => i !== index));
+  };
+
+  const updatePickupPoint = (index: number, key: keyof PickupPoint, value: any) => {
+    const updated = [...pickupPoints];
+    updated[index] = { ...updated[index], [key]: value };
+    setPickupPoints(updated);
+  };
+
+  // Copy Monday's operating hours to all other days
+  const copyHoursToAllDays = () => {
+    const mondayHours = operatingHours.find((h) => h.day === 1);
+    if (!mondayHours) return;
+
+    const newHours = operatingHours.map((h) => {
+      if (h.day === 0) {
+        // Keep Sunday closed as default or copy too? Let's copy but let Sunday closed if preferred, or copy everything.
+        // Copying everything is cleaner, the admin can just toggle Sunday back if needed.
+        return {
+          ...h,
+          open: mondayHours.open,
+          openTime: mondayHours.openTime,
+          closeTime: mondayHours.closeTime,
+        };
+      }
+      return {
+        ...h,
+        open: mondayHours.open,
+        openTime: mondayHours.openTime,
+        closeTime: mondayHours.closeTime,
+      };
+    });
+    setOperatingHours(newHours);
+    setMessage({ type: 'success', text: 'Horários copiados da Segunda-feira para todos os dias!' });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  const handleDayHoursChange = (index: number, key: keyof OperatingHourDay, value: any) => {
+    const updated = [...operatingHours];
+    updated[index] = { ...updated[index], [key]: value };
+    setOperatingHours(updated);
+  };
+
+  // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
     const formData = new FormData();
-    formData.append('id', store.id);
-    formData.append('name', store.name);
-    formData.append('whatsapp', store.whatsapp);
-    formData.append('address', store.address);
-    formData.append('operatingHours', store.operatingHours);
-    formData.append('pickupEnabled', String(store.pickupEnabled));
+    formData.append('id', initialStore.id);
+    formData.append('name', name);
+    formData.append('whatsapp', whatsapp);
+    formData.append('address', initialStore.address); // keep original address as fallback
+    formData.append('pickupEnabled', String(pickupEnabled));
+
+    formData.append('logoUrl', logoUrl);
+    formData.append('bannerUrl', bannerUrl);
+    formData.append('description', description);
+    formData.append('instagram', instagram);
+    formData.append('catalogUrl', catalogUrl);
+    formData.append('websiteUrl', websiteUrl);
+
+    formData.append('deliveryTimeDefault', deliveryTimeDefault);
+    formData.append('deliveryAvailableMsg', deliveryAvailableMsg);
+    formData.append('deliveryUnavailableMsg', deliveryUnavailableMsg);
+    formData.append('sameDayCutoff', sameDayCutoff);
+    formData.append('cutoffMessage', cutoffMessage);
+
+    formData.append('operatingHoursJson', JSON.stringify(operatingHours));
+    formData.append('pickupPoints', JSON.stringify(pickupPoints));
 
     try {
       const result = await updateStoreSettings(formData, storeSlug);
@@ -49,110 +263,528 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl bg-slate-900/30 border border-slate-900 rounded-2xl p-8 shadow-xl animate-fadeIn">
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl bg-slate-900/30 border border-slate-900 rounded-2xl p-4 md:p-8 shadow-xl animate-fadeIn space-y-6">
       {message && (
         <div
-          className={`p-4 rounded-xl flex items-center space-x-3 text-sm font-semibold animate-fadeIn ${
-            message.type === 'success'
+          className={`p-4 rounded-xl flex items-center space-x-3 text-sm font-semibold animate-fadeIn ${message.type === 'success'
               ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/20'
               : 'bg-rose-955 text-rose-450 border border-rose-900/30'
-          }`}
+            }`}
         >
-          {message.type === 'success' && <CheckCircle className="h-5 w-5 text-[#5FC9C8]" />}
+          {message.type === 'success' && <CheckCircle className="h-5 w-5 text-[#5FC9C8] flex-shrink-0" />}
           <span>{message.text}</span>
         </div>
       )}
 
-      <div className="space-y-2">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-          Nome da Loja
-        </label>
-        <input
-          type="text"
-          required
-          value={store.name}
-          onChange={(e) => setStore({ ...store, name: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
-          placeholder="Ex: Pizzaria Bella Fortaleza"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-          WhatsApp da Loja (com DDD)
-        </label>
-        <input
-          type="text"
-          required
-          value={store.whatsapp}
-          onChange={(e) => setStore({ ...store, whatsapp: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
-          placeholder="Ex: 85999999999"
-        />
-        <p className="text-xs text-slate-500 leading-normal">
-          Apenas números. Os links para envio de mensagens serão criados automaticamente usando este número.
-        </p>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-          Endereço Físico (para Retiradas)
-        </label>
-        <textarea
-          required
-          rows={3}
-          value={store.address}
-          onChange={(e) => setStore({ ...store, address: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm resize-none"
-          placeholder="Ex: Av. Beira Mar, 1000 - Meireles, Fortaleza - CE"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-          Horário de Funcionamento
-        </label>
-        <input
-          type="text"
-          required
-          value={store.operatingHours}
-          onChange={(e) => setStore({ ...store, operatingHours: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all text-sm"
-          placeholder="Ex: Segunda a Sábado: 18:00 às 23:00"
-        />
-      </div>
-
-      <div className="flex items-center justify-between p-4 border border-slate-900 rounded-xl bg-slate-950/40">
-        <div className="space-y-0.5">
-          <label className="text-sm font-bold text-white block">
-            Habilitar Retirada no Local
-          </label>
-          <span className="text-xs text-slate-550 leading-normal block max-w-md">
-            Permite que o cliente veja a opção de retirar o pedido caso a entrega não esteja disponível no bairro dele.
-          </span>
-        </div>
+      {/* Tabs list */}
+      <div className="flex flex-wrap gap-1 bg-slate-950/60 p-1.5 rounded-xl border border-slate-900">
         <button
           type="button"
-          onClick={() => setStore({ ...store, pickupEnabled: !store.pickupEnabled })}
-          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-            store.pickupEnabled ? 'bg-[#2F7DBB]' : 'bg-slate-800'
-          }`}
-        >
-          <span
-            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-              store.pickupEnabled ? 'translate-x-5' : 'translate-x-0'
+          onClick={() => setActiveTab('loja')}
+          className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'loja'
+              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
+              : 'text-slate-400 hover:text-white'
             }`}
-          />
+        >
+          <Building2 className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Dados da Loja</span>
+          <span className="sm:hidden">Loja</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('canais')}
+          className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'canais'
+              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
+              : 'text-slate-400 hover:text-white'
+            }`}
+        >
+          <Globe className="h-3.5 w-3.5" />
+          <span>Canais</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('retirada')}
+          className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'retirada'
+              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
+              : 'text-slate-400 hover:text-white'
+            }`}
+        >
+          <MapPin className="h-3.5 w-3.5" />
+          <span>Retirada</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('horarios')}
+          className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'horarios'
+              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
+              : 'text-slate-400 hover:text-white'
+            }`}
+        >
+          <Clock className="h-3.5 w-3.5" />
+          <span>Funcionamento</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('entrega')}
+          className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'entrega'
+              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
+              : 'text-slate-400 hover:text-white'
+            }`}
+        >
+          <Truck className="h-3.5 w-3.5" />
+          <span>Entrega</span>
         </button>
       </div>
 
+      {/* Tab Contents */}
+      <div className="pt-2">
+        {/* LOJA TAB */}
+        {activeTab === 'loja' && (
+          <div className="space-y-5 animate-fadeIn">
+            <h3 className="text-sm font-extrabold text-white border-b border-slate-900 pb-2">
+              🏪 Dados Cadastrais da Loja
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Nome da Loja
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  placeholder="Nome comercial"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  WhatsApp (com DDD, apenas números)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  placeholder="Ex: 85999999999"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                Descrição Curta (exibida na página pública)
+              </label>
+              <textarea
+                rows={2}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium resize-none"
+                placeholder="Ex.: A melhor hamburgueria artesanal do Cocó. Peça agora!"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              {/* Logo Upload */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Logo da Loja
+                </label>
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 rounded-full border border-slate-800 bg-slate-950/40 flex items-center justify-center overflow-hidden flex-shrink-0 relative group">
+                    {logoUrl ? (
+                      <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <Building2 className="h-6 w-6 text-slate-700" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label className="inline-flex items-center space-x-2 bg-slate-950 hover:bg-slate-900 border border-slate-850 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white cursor-pointer transition-colors active:scale-98">
+                      <Upload className="h-4 w-4 text-[#5FC9C8]" />
+                      <span>Selecionar Logo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageFileChange(e, 'logo')}
+                        className="hidden"
+                      />
+                    </label>
+                    <p className="text-[10px] text-slate-500 mt-1.5">PNG, JPG de até 8MB. Será redimensionado.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Banner Upload */}
+              {/* <div className="space-y-3">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Banner de Fundo
+                </label>
+                <div className="flex items-center space-x-4">
+                  <div className="w-24 h-16 rounded-xl border border-slate-800 bg-slate-950/40 flex items-center justify-center overflow-hidden flex-shrink-0 relative group">
+                    {bannerUrl ? (
+                      <img src={bannerUrl} alt="Banner" className="w-full h-full object-cover" />
+                    ) : (
+                      <Globe className="h-6 w-6 text-slate-700" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label className="inline-flex items-center space-x-2 bg-slate-950 hover:bg-slate-900 border border-slate-850 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white cursor-pointer transition-colors active:scale-98">
+                      <Upload className="h-4 w-4 text-[#5FC9C8]" />
+                      <span>Selecionar Banner</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageFileChange(e, 'banner')}
+                        className="hidden"
+                      />
+                    </label>
+                    <p className="text-[10px] text-slate-500 mt-1.5">PNG, JPG de até 8MB. Proporção 3:1 recomendada.</p>
+                  </div>
+                </div>
+              </div> */}
+            </div>
+          </div>
+        )}
+
+        {/* CANAIS TAB */}
+        {activeTab === 'canais' && (
+          <div className="space-y-5 animate-fadeIn">
+            <h3 className="text-sm font-extrabold text-white border-b border-slate-900 pb-2">
+              🌐 Redes Sociais e Canais de Contato
+            </h3>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Instagram (Nome de usuário ou Link)
+                </label>
+                <input
+                  type="text"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  placeholder="Ex: @minhaloja ou https://instagram.com/minhaloja"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Link do Catálogo (WhatsApp, Nuvemshop, Shopify, etc.)
+                </label>
+                <input
+                  type="text"
+                  value={catalogUrl}
+                  onChange={(e) => setCatalogUrl(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  placeholder="Ex: https://catalogo.sualoja.com.br"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Site Principal (Opcional)
+                </label>
+                <input
+                  type="text"
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  placeholder="Ex: https://www.sualoja.com.br"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* RETIRADA TAB */}
+        {activeTab === 'retirada' && (
+          <div className="space-y-5 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-slate-900 pb-2">
+              <h3 className="text-sm font-extrabold text-white">
+                📍 Configuração de Retiradas
+              </h3>
+              <button
+                type="button"
+                onClick={() => setPickupEnabled(!pickupEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${pickupEnabled ? 'bg-[#2F7DBB]' : 'bg-slate-800'
+                  }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${pickupEnabled ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                />
+              </button>
+            </div>
+
+            {pickupEnabled ? (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-450 font-semibold">
+                    Gerencie os locais disponíveis para o cliente buscar o pedido.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={addPickupPoint}
+                    className="flex items-center space-x-1.5 bg-[#1E3A5F]/20 hover:bg-[#1E3A5F]/35 border border-[#2F7DBB]/30 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#5FC9C8] transition-colors cursor-pointer"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Novo Ponto</span>
+                  </button>
+                </div>
+
+                {pickupPoints.length === 0 ? (
+                  <div className="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500 bg-slate-950/20">
+                    Nenhum ponto de retirada cadastrado. Adicione pelo menos um local físico.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {pickupPoints.map((point, index) => (
+                      <div
+                        key={index}
+                        className="bg-slate-950/40 border border-slate-900 rounded-xl p-4 space-y-4 relative animate-fadeIn"
+                      >
+                        <div className="flex items-center justify-between border-b border-slate-900 pb-2">
+                          <span className="text-xs font-extrabold text-white uppercase tracking-wider">
+                            Ponto #{index + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removePickupPoint(index)}
+                            className="text-slate-500 hover:text-rose-450 p-1.5 rounded-lg hover:bg-slate-900/60 transition-all cursor-pointer"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase block">
+                              Nome do Ponto (ex.: "Loja Aldeota")
+                            </label>
+                            <input
+                              type="text"
+                              value={point.name}
+                              onChange={(e) => updatePickupPoint(index, 'name', e.target.value)}
+                              className="w-full px-3 py-2 rounded-lg border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs"
+                              placeholder="Identificação opcional"
+                            />
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase block">
+                              Instruções de Retirada (opcional)
+                            </label>
+                            <input
+                              type="text"
+                              value={point.instructions}
+                              onChange={(e) => updatePickupPoint(index, 'instructions', e.target.value)}
+                              className="w-full px-3 py-2 rounded-lg border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs"
+                              placeholder="Ex: Entrar no estacionamento comercial"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase block">
+                            Buscar Endereço (Autocomplete)
+                          </label>
+                          <AddressAutocomplete
+                            initialValue={point.address}
+                            placeholder="Rua, avenida, número e bairro..."
+                            onSelect={(addr, lat, lon) => {
+                              updatePickupPoint(index, 'address', addr);
+                              updatePickupPoint(index, 'latitude', lat);
+                              updatePickupPoint(index, 'longitude', lon);
+                            }}
+                          />
+                        </div>
+
+                        {point.latitude && point.longitude && (
+                          <div className="flex items-center space-x-1.5 text-[9px] font-extrabold text-[#5FC9C8]/80 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-900/50 w-max uppercase tracking-wider">
+                            <MapPin className="h-3 w-3" />
+                            <span>Coordenadas Capturadas: Lat {point.latitude.toFixed(5)} / Lon {point.longitude.toFixed(5)}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-8 rounded-xl bg-slate-950/20 border border-slate-900 text-center text-xs text-slate-500">
+                A retirada no local está desativada. Ative o botão acima para cadastrar locais e disponibilizar aos clientes.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* FUNCIONAMENTO TAB */}
+        {activeTab === 'horarios' && (
+          <div className="space-y-5 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-slate-900 pb-2">
+              <h3 className="text-sm font-extrabold text-white">
+                🕒 Horário de Funcionamento Estruturado
+              </h3>
+              <button
+                type="button"
+                onClick={copyHoursToAllDays}
+                className="flex items-center space-x-1.5 bg-[#1E3A5F]/20 hover:bg-[#1E3A5F]/35 border border-[#2F7DBB]/30 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#5FC9C8] transition-colors cursor-pointer"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                <span>Copiar horário de Segunda para todos</span>
+              </button>
+            </div>
+
+            <div className="space-y-3.5">
+              {operatingHours.map((h, i) => (
+                <div
+                  key={h.day}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-950/40 border border-slate-900 rounded-xl p-3.5 gap-3"
+                >
+                  <div className="flex items-center justify-between sm:justify-start sm:space-x-4 min-w-[150px]">
+                    <span className="text-xs font-bold text-white">{h.label}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleDayHoursChange(i, 'open', !h.open)}
+                      className={`px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition-colors cursor-pointer ${h.open
+                          ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/20'
+                          : 'bg-slate-900 text-slate-500 border border-slate-800'
+                        }`}
+                    >
+                      {h.open ? 'Aberto' : 'Fechado'}
+                    </button>
+                  </div>
+
+                  {h.open ? (
+                    <div className="flex items-center space-x-2 self-end sm:self-auto">
+                      <input
+                        type="time"
+                        value={h.openTime}
+                        onChange={(e) => handleDayHoursChange(i, 'openTime', e.target.value)}
+                        className="px-2.5 py-1.5 rounded-lg border border-slate-900 bg-slate-950 text-white text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5FC9C8]"
+                      />
+                      <span className="text-xs font-bold text-slate-500">até</span>
+                      <input
+                        type="time"
+                        value={h.closeTime}
+                        onChange={(e) => handleDayHoursChange(i, 'closeTime', e.target.value)}
+                        className="px-2.5 py-1.5 rounded-lg border border-slate-900 bg-slate-950 text-white text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5FC9C8]"
+                      />
+                    </div>
+                  ) : (
+                    <span className="text-xs font-bold text-slate-650 self-end sm:self-auto uppercase tracking-widest text-[10px]">
+                      Não funciona
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ENTREGA TAB */}
+        {activeTab === 'entrega' && (
+          <div className="space-y-5 animate-fadeIn">
+            <h3 className="text-sm font-extrabold text-white border-b border-slate-900 pb-2">
+              🚚 Configurações Globais de Entrega
+            </h3>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Tempo Padrão de Entrega (Ex.: 2 horas ou 45 min)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={deliveryTimeDefault}
+                  onChange={(e) => setDeliveryTimeDefault(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  placeholder="Ex: 2 horas"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Mensagem Personalizada - Entrega Disponível
+                </label>
+                <textarea
+                  rows={2}
+                  value={deliveryAvailableMsg}
+                  onChange={(e) => setDeliveryAvailableMsg(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium resize-none"
+                  placeholder="Ex: Receba hoje em até {deliveryTime}."
+                />
+                <p className="text-[10px] text-slate-500 font-semibold">Dica: Use {"{deliveryTime}"} para injetar o tempo de entrega configurado para o bairro.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                  Mensagem Personalizada - Entrega Indisponível
+                </label>
+                <textarea
+                  rows={2}
+                  value={deliveryUnavailableMsg}
+                  onChange={(e) => setDeliveryUnavailableMsg(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium resize-none"
+                  placeholder="Ex: Sem entregas disponíveis para sua região."
+                />
+              </div>
+
+              <div className="border-t border-slate-900/60 pt-4 space-y-4">
+                <div className="flex items-center space-x-2 text-amber-500/80">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider">Horário Limite no Mesmo Dia (Same Day)</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                      Pedidos fechados até:
+                    </label>
+                    <input
+                      type="time"
+                      value={sameDayCutoff}
+                      onChange={(e) => setSameDayCutoff(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-semibold"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                      Aviso exibido após o horário limite:
+                    </label>
+                    <input
+                      type="text"
+                      value={cutoffMessage}
+                      onChange={(e) => setCutoffMessage(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                      placeholder="Ex: Pedidos após esse horário serão entregues no próximo dia útil."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Save Button */}
       <div className="pt-4 border-t border-slate-900 flex justify-end">
         <button
           type="submit"
           disabled={loading}
-          className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer shadow shadow-[#1E3A5F]/10 active:scale-95 border border-[#2F7DBB]/30"
+          className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer shadow shadow-[#1E3A5F]/10 active:scale-95 border border-[#2F7DBB]/30 text-xs"
         >
-          <Save className="h-5 w-5" />
+          <Save className="h-4 w-4" />
           <span>{loading ? 'Salvando...' : 'Salvar Configurações'}</span>
         </button>
       </div>

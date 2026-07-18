@@ -13,6 +13,38 @@ function normalizeName(str: string): string {
     .trim();
 }
 
+function extractBairro(item: any): string {
+  if (!item) return '';
+  const addr = item.address || {};
+  
+  let candidates = [
+    addr.suburb,
+    addr.neighbourhood,
+    addr.quarter,
+    addr.city_district,
+    addr.city_block,
+    addr.residential
+  ];
+  
+  // Ignore regional executive secretariats (SER)
+  candidates = candidates.map(c => {
+    if (!c || typeof c !== 'string') return '';
+    const lc = c.toLowerCase();
+    if (lc.includes('regional') || lc.includes('ser ') || lc.startsWith('ser') || lc.includes('secretaria executiva')) {
+      return '';
+    }
+    return c;
+  });
+  
+  let bairro = candidates.find(c => c && c.trim().length > 0) || '';
+  
+  if (!bairro && item.type && ['suburb', 'neighbourhood', 'quarter', 'city_district', 'district'].includes(item.type)) {
+    bairro = item.name || item.display_name?.split(',')[0] || '';
+  }
+  
+  return bairro.trim();
+}
+
 interface LookupResult {
   success: boolean;
   bairro?: string;
@@ -276,7 +308,10 @@ export async function lookupAddress(storeSlug: string, rawAddress: string): Prom
   }
 
   try {
-    const query = `${rawAddress.trim()}, Fortaleza, Ceará, Brasil`;
+    let query = rawAddress.trim();
+    if (!query.toLowerCase().includes('fortaleza')) {
+      query = `${query}, Fortaleza, Ceará, Brasil`;
+    }
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=1`,
       {
@@ -341,8 +376,8 @@ export async function lookupAddress(storeSlug: string, rawAddress: string): Prom
       };
     }
 
-    // Extract neighborhood (Nominatim suburbs represent bairros)
-    const rawBairro = addressDetails.suburb || addressDetails.neighbourhood || addressDetails.quarter || addressDetails.city_district || '';
+    // Extract neighborhood using extractBairro
+    const rawBairro = extractBairro(result);
     if (!rawBairro) {
       return { success: false, error: 'Bairro não identificado. Tente pesquisar informando o CEP.' };
     }
@@ -522,8 +557,8 @@ export async function lookupCoords(storeSlug: string, lat: number, lon: number):
       };
     }
 
-    // Extract neighborhood (Nominatim suburbs represent bairros)
-    const rawBairro = addressDetails.suburb || addressDetails.neighbourhood || addressDetails.quarter || addressDetails.city_district || '';
+    // Extract neighborhood using extractBairro
+    const rawBairro = extractBairro(data);
     if (!rawBairro) {
       return { success: false, error: 'Bairro não identificado na sua localização. Tente pesquisar por CEP.' };
     }
@@ -624,5 +659,191 @@ export async function lookupCoords(storeSlug: string, lat: number, lon: number):
   } catch (error) {
     console.error('Error looking up Coordinates:', error);
     return { success: false, error: 'Ocorreu um erro ao processar sua consulta de localização.' };
+  }
+}
+
+export async function searchAddressSuggestions(query: string): Promise<Array<{
+  display_name: string;
+  lat: number;
+  lon: number;
+  bairro?: string;
+  road?: string;
+}>> {
+  if (!query || query.trim().length < 3) return [];
+  try {
+    let formattedQuery = query.trim();
+    if (!formattedQuery.toLowerCase().includes('fortaleza')) {
+      formattedQuery = `${formattedQuery}, Fortaleza, Ceará, Brasil`;
+    }
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(formattedQuery)}&format=json&addressdetails=1&limit=5&countrycodes=br`,
+      {
+        headers: {
+          'User-Agent': 'FreteFortalApp/1.0 (contact: admin@fretefortal.com)'
+        }
+      }
+    );
+    if (!response.ok) return [];
+    const data = await response.json();
+    if (!Array.isArray(data)) return [];
+    
+    return data.map((item: any) => {
+      const addr = item.address || {};
+      const bairro = extractBairro(item);
+      const road = addr.road || '';
+      return {
+        display_name: item.display_name,
+        lat: parseFloat(item.lat),
+        lon: parseFloat(item.lon),
+        bairro,
+        road
+      };
+    });
+  } catch (error) {
+    console.error('Error in searchAddressSuggestions:', error);
+    return [];
+  }
+}
+
+export async function lookupSelectedAddress(
+  storeSlug: string,
+  rawAddress: string,
+  lat: number,
+  lon: number,
+  bairroName?: string
+): Promise<LookupResult> {
+  const startTime = Date.now();
+
+  const store = await prisma.store.findUnique({
+    where: { slug: storeSlug }
+  });
+
+  if (!store) {
+    return { success: false, error: 'Loja não encontrada.' };
+  }
+
+  try {
+    let matchedBairroName = bairroName || '';
+    
+    // Fallback: reverse-geocode if neighborhood is missing
+    if (!matchedBairroName) {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'FreteFortalApp/1.0 (contact: admin@fretefortal.com)'
+          }
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        matchedBairroName = extractBairro(data);
+      }
+    }
+
+    if (!matchedBairroName) {
+      return {
+        success: true,
+        deliveryEnabled: false,
+        storeAddress: store.address,
+        storeWhatsapp: store.whatsapp,
+        pickupEnabled: store.pickupEnabled,
+        error: 'Bairro não identificado para esta localização.'
+      };
+    }
+
+    const normalizedBairro = normalizeName(matchedBairroName);
+
+    const baseBairro = await prisma.baseNeighborhood.findUnique({
+      where: { name: normalizedBairro }
+    });
+
+    const responseTimeMs = Date.now() - startTime;
+
+    if (!baseBairro) {
+      await logSearchEvent({
+        storeId: store.id,
+        searchType: 'ADDRESS',
+        searchedValue: rawAddress,
+        searchedNeighborhood: matchedBairroName,
+        matchedNeighborhoodId: null,
+        deliveryAvailable: false,
+        deliveryPrice: 0,
+        responseTimeMs
+      });
+
+      return {
+        success: true,
+        bairro: matchedBairroName,
+        street: '',
+        deliveryEnabled: false,
+        storeAddress: store.address,
+        storeWhatsapp: store.whatsapp,
+        pickupEnabled: store.pickupEnabled,
+      };
+    }
+
+    // Query neighborhood rates
+    const neighborhood = await prisma.neighborhood.findUnique({
+      where: {
+        storeId_baseNeighborhoodId: {
+          storeId: store.id,
+          baseNeighborhoodId: baseBairro.id
+        }
+      }
+    });
+
+    if (!neighborhood) {
+      await logSearchEvent({
+        storeId: store.id,
+        searchType: 'ADDRESS',
+        searchedValue: rawAddress,
+        searchedNeighborhood: baseBairro.officialName,
+        matchedNeighborhoodId: baseBairro.id,
+        deliveryAvailable: false,
+        deliveryPrice: 0,
+        responseTimeMs
+      });
+
+      return {
+        success: true,
+        bairro: baseBairro.officialName,
+        street: '',
+        deliveryEnabled: false,
+        storeAddress: store.address,
+        storeWhatsapp: store.whatsapp,
+        pickupEnabled: store.pickupEnabled,
+      };
+    }
+
+    await logSearchEvent({
+      storeId: store.id,
+      searchType: 'ADDRESS',
+      searchedValue: rawAddress,
+      searchedNeighborhood: baseBairro.officialName,
+      matchedNeighborhoodId: baseBairro.id,
+      deliveryAvailable: neighborhood.deliveryEnabled,
+      deliveryPrice: Number(neighborhood.fee),
+      responseTimeMs
+    });
+
+    return {
+      success: true,
+      bairro: baseBairro.officialName,
+      street: '',
+      deliveryEnabled: neighborhood.deliveryEnabled,
+      fee: Number(neighborhood.fee),
+      deliveryTime: neighborhood.deliveryTime || store.deliveryTimeDefault || '2h',
+      minimumOrder: neighborhood.minimumOrder ? Number(neighborhood.minimumOrder) : null,
+      freeDeliveryThreshold: neighborhood.freeDeliveryThreshold ? Number(neighborhood.freeDeliveryThreshold) : null,
+      notes: neighborhood.notes,
+      storeAddress: store.address,
+      storeWhatsapp: store.whatsapp,
+      pickupEnabled: store.pickupEnabled,
+    };
+
+  } catch (error) {
+    console.error('Error looking up selected address:', error);
+    return { success: false, error: 'Ocorreu um erro ao processar a localização do endereço selecionado.' };
   }
 }

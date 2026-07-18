@@ -10,19 +10,44 @@ datasource db {
 }
 
 model Store {
-  id             String         @id @default(uuid())
-  slug           String         @unique
-  name           String         @default("Minha Loja")
-  logoUrl        String?
-  whatsapp       String         @default("5585999999999")
-  address        String         @default("Endereço da Loja, Fortaleza - CE")
-  operatingHours String         @default("Segunda a Sexta: 08:00 às 18:00")
-  pickupEnabled  Boolean        @default(true)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id                     String         @id @default(uuid())
+  slug                   String         @unique
+  name                   String         @default("Minha Loja")
+  logoUrl                String?
+  bannerUrl              String?
+  description            String?
+  whatsapp               String         @default("5585999999999")
+  address                String         @default("Endereço da Loja, Fortaleza - CE")
+  operatingHours         String         @default("Segunda a Sexta: 08:00 às 18:00")
+  operatingHoursJson     Json?
+  pickupEnabled          Boolean        @default(true)
+  instagram              String?
+  catalogUrl             String?
+  websiteUrl             String?
+  deliveryTimeDefault    String         @default("2 horas")
+  deliveryAvailableMsg   String?
+  deliveryUnavailableMsg String?
+  sameDayCutoff          String?
+  cutoffMessage          String?
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
   
-  neighborhoods  Neighborhood[]
-  searchEvents   SearchEvent[]
+  neighborhoods          Neighborhood[]
+  searchEvents           SearchEvent[]
+  pickupPoints           PickupPoint[]
+}
+
+model PickupPoint {
+  id           String   @id @default(uuid())
+  storeId      String
+  store        Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  name         String?  // Ex.: "Loja Aldeota"
+  address      String   // Endereço padronizado
+  latitude     Float?
+  longitude    Float?
+  instructions String?  // Instruções opcionais de retirada
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model BaseNeighborhood {

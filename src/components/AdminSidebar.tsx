@@ -51,7 +51,7 @@ export default function AdminSidebar() {
               <Motorbike className="h-6 w-6" />
             </div>
             <div className="flex flex-col flex-shrink-0">
-              <h1 className="font-bold text-base leading-none text-white">FreteFortal</h1>
+              <h1 className="font-bold text-base leading-none text-white">Cobertura085</h1>
               <span className="text-[10px] text-[#5FC9C8] font-bold mt-1 tracking-wider uppercase">Painel Admin</span>
             </div>
           </div>

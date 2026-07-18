@@ -2,8 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { lookupCep, lookupAddress, lookupCoords } from '@/app/actions';
-import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2, Locate, Clock, Truck, Timer, ShoppingBag, Gift, Info } from 'lucide-react';
+import { lookupCep, lookupAddress, lookupCoords, lookupSelectedAddress } from '@/app/actions';
+import {
+  Search,
+  MapPin,
+  MessageSquare,
+  Building,
+  AlertTriangle,
+  ArrowRight,
+  Loader2,
+  Locate,
+  Clock,
+  Truck,
+  Timer,
+  ShoppingBag,
+  Gift,
+  Info,
+  Globe,
+  Navigation,
+} from 'lucide-react';
+import AddressAutocomplete from './AddressAutocomplete';
 
 const LeafletMap = dynamic(() => import('./LeafletMap'), {
   ssr: false,
@@ -29,6 +47,15 @@ interface NeighborhoodData {
   notes: string | null;
 }
 
+interface PickupPoint {
+  id?: string;
+  name: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  instructions: string;
+}
+
 interface PublicLookupProps {
   storeSlug: string;
   storeName: string;
@@ -37,6 +64,18 @@ interface PublicLookupProps {
   storeAddress: string;
   operatingHours: string;
   initialNeighborhoods: NeighborhoodData[];
+  logoUrl?: string | null;
+  bannerUrl?: string | null;
+  description?: string | null;
+  instagram?: string | null;
+  catalogUrl?: string | null;
+  websiteUrl?: string | null;
+  deliveryTimeDefault?: string;
+  deliveryAvailableMsg?: string | null;
+  deliveryUnavailableMsg?: string | null;
+  sameDayCutoff?: string | null;
+  cutoffMessage?: string | null;
+  pickupPoints?: PickupPoint[];
 }
 
 export default function PublicLookup({
@@ -46,7 +85,19 @@ export default function PublicLookup({
   pickupEnabled,
   storeAddress,
   operatingHours,
-  initialNeighborhoods
+  initialNeighborhoods,
+  logoUrl,
+  bannerUrl,
+  description,
+  instagram,
+  catalogUrl,
+  websiteUrl,
+  deliveryTimeDefault = '2 horas',
+  deliveryAvailableMsg,
+  deliveryUnavailableMsg,
+  sameDayCutoff,
+  cutoffMessage,
+  pickupPoints = [],
 }: PublicLookupProps) {
   const [mode, setMode] = useState<'cep' | 'address'>('cep');
   const [inputValue, setInputValue] = useState('');
@@ -74,6 +125,39 @@ export default function PublicLookup({
         res = await lookupAddress(storeSlug, valueToQuery);
       }
 
+      if (res.success) {
+        setResult(res);
+        const targetBairro = res.bairro;
+        if (targetBairro) {
+          const match = initialNeighborhoods.find(
+            (n) => n.officialName.toLowerCase() === targetBairro.toLowerCase() || n.name === targetBairro.toLowerCase()
+          );
+          if (match) {
+            setSelectedMapBairroName(match.name);
+          }
+        }
+        if (res.error) {
+          setError(res.error);
+        }
+      } else {
+        setError(res.error || 'Ocorreu um erro na consulta.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Falha de conexão com o servidor. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddressSelect = async (address: string, lat: number, lon: number, bairro?: string) => {
+    setInputValue(address);
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const res = await lookupSelectedAddress(storeSlug, address, lat, lon, bairro);
       if (res.success) {
         setResult(res);
         const targetBairro = res.bairro;
@@ -204,7 +288,7 @@ export default function PublicLookup({
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 0
+        maximumAge: 0,
       }
     );
   };
@@ -222,13 +306,13 @@ export default function PublicLookup({
         bairro: dbBairro.officialName,
         street: '',
         fee: dbBairro.fee,
-        deliveryTime: dbBairro.deliveryTime || '24h',
+        deliveryTime: dbBairro.deliveryTime || deliveryTimeDefault,
         minimumOrder: dbBairro.minimumOrder,
         freeDeliveryThreshold: dbBairro.freeDeliveryThreshold,
         notes: dbBairro.notes,
         storeAddress,
         storeWhatsapp,
-        pickupEnabled
+        pickupEnabled,
       });
       setInputValue(dbBairro.officialName);
       setMode('address');
@@ -240,14 +324,47 @@ export default function PublicLookup({
         street: '',
         storeAddress,
         storeWhatsapp,
-        pickupEnabled
+        pickupEnabled,
       });
       setInputValue(officialName);
       setMode('address');
     }
   };
 
-  // Generate the WhatsApp Link
+  // Same day cutoff checker
+  const isPastCutoff = () => {
+    if (!sameDayCutoff) return false;
+    try {
+      const [cutoffHours, cutoffMinutes] = sameDayCutoff.split(':').map(Number);
+      const now = new Date();
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+
+      if (currentHours > cutoffHours) return true;
+      if (currentHours === cutoffHours && currentMinutes >= cutoffMinutes) return true;
+      return false;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
+  const getCustomDeliveryMsg = () => {
+    const time = result?.deliveryTime || deliveryTimeDefault || '2 horas';
+    if (deliveryAvailableMsg) {
+      return deliveryAvailableMsg.replace('{deliveryTime}', time);
+    }
+    return `Receba hoje em até ${time}.`;
+  };
+
+  const getCustomDeliveryUnavailableMsg = () => {
+    if (deliveryUnavailableMsg) {
+      return deliveryUnavailableMsg;
+    }
+    return `Infelizmente ${storeName} ainda não realiza entregas no bairro ${result?.bairro || ''}.`;
+  };
+
+  // Generate the WhatsApp Link for Delivery
   const getWhatsAppLink = () => {
     if (!result) return '';
     const number = result.storeWhatsapp || storeWhatsapp;
@@ -262,28 +379,100 @@ export default function PublicLookup({
 
     text += `🚚 *Informações do Frete:*\n`;
     text += `- Taxa: R$ ${result.fee?.toFixed(2) || '0.00'}\n`;
-    text += `- Prazo: ${result.deliveryTime || '24h'}`;
+    text += `- Prazo: ${result.deliveryTime || deliveryTimeDefault}`;
+
+    if (isPastCutoff()) {
+      text += `\n⚠️ _(Ciente do aviso de entrega no próximo dia útil)_`;
+    }
 
     return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
   };
 
   return (
     <div className="relative w-full h-full min-h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden">
-      {/* Left Sidebar Control Panel - Positioned absolute at the top on mobile, relative sidebar on desktop */}
+      {/* Left Sidebar Control Panel */}
       <div className="w-auto md:w-[420px] lg:w-[450px] flex-shrink-0 z-10 transition-all duration-300 absolute md:relative top-4 md:top-auto left-4 md:left-auto right-4 md:right-auto md:h-full md:max-h-none h-auto max-h-[85vh] overflow-y-auto bg-transparent md:bg-slate-950/85 md:backdrop-blur-md md:border-r border-slate-900/60 shadow-none md:shadow-none p-0 md:p-6 flex flex-col justify-between pointer-events-none md:pointer-events-auto">
-        <div className="space-y-6">
-          {/* Header title inside sidebar (Desktop only) */}
-          <div className="hidden md:block space-y-2">
-            <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+        <div className="space-y-5">
+
+          {/* Cover card: Logo + Banner + Description */}
+          <div className="hidden md:block bg-slate-900/40 border border-slate-900 rounded-2xl overflow-hidden shadow-xl pointer-events-auto">
+            {bannerUrl ? (
+              <div className="w-full h-24 overflow-hidden relative">
+                <img src={bannerUrl} alt={storeName} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              </div>
+            ) : (
+              <div className="w-full h-12 bg-gradient-to-r from-[#1E3A5F]/40 to-[#2F7DBB]/40"></div>
+            )}
+
+            <div className="px-5 pb-5 pt-3 relative">
+              {logoUrl && (
+                <div className="absolute -top-8 left-5 w-14 h-14 rounded-full border-2 border-slate-950 bg-slate-950 flex items-center justify-center overflow-hidden shadow">
+                  <img src={logoUrl} alt={storeName} className="w-full h-full object-cover" />
+                </div>
+              )}
+
+              <div className={logoUrl ? 'pl-18' : ''}>
+                <h2 className="text-base font-extrabold text-white leading-tight truncate">{storeName}</h2>
+                {description && (
+                  <p className="text-[10px] text-slate-400 mt-1 leading-normal line-clamp-2 font-medium">
+                    {description}
+                  </p>
+                )}
+              </div>
+
+              {/* Social and Contact Links */}
+              {(instagram || catalogUrl || websiteUrl) && (
+                <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-slate-900/40">
+                  {instagram && (
+                    <a
+                      href={instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-900 text-slate-400 hover:text-white transition-all text-[9px] font-bold flex items-center space-x-1"
+                    >
+                      <Globe className="h-3 w-3 text-pink-500" />
+                      <span>Instagram</span>
+                    </a>
+                  )}
+                  {catalogUrl && (
+                    <a
+                      href={catalogUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-900 text-[#5FC9C8] hover:text-white transition-all text-[9px] font-bold flex items-center space-x-1"
+                    >
+                      <ShoppingBag className="h-3 w-3" />
+                      <span>Catálogo</span>
+                    </a>
+                  )}
+                  {websiteUrl && (
+                    <a
+                      href={websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-900 text-[#2F7DBB] hover:text-white transition-all text-[9px] font-bold flex items-center space-x-1"
+                    >
+                      <Globe className="h-3 w-3" />
+                      <span>Site</span>
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="hidden md:block space-y-1">
+            <h1 className="text-2xl font-black tracking-tight text-white">
               Consulte seu Frete
             </h1>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Informe seu CEP, endereço ou use a sua localização atual. Você também pode clicar diretamente em qualquer bairro no mapa interativo.
+            <p className="text-[10px] text-slate-500 leading-normal font-semibold uppercase tracking-wider">
+              Fortaleza - CE
             </p>
           </div>
 
-          {/* Quick stats/Hours inside sidebar (Desktop only) */}
-          <div className="hidden md:flex flex-wrap gap-2 text-[10px] font-semibold text-slate-400">
+          {/* Quick stats/Hours inside sidebar */}
+          <div className="hidden md:flex flex-wrap gap-2 text-[10px] font-bold text-slate-400">
             <div className="flex items-center space-x-1.5 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-900 shadow-sm">
               <Clock className="h-3 w-3 text-[#5FC9C8]" />
               <span>{operatingHours}</span>
@@ -296,7 +485,7 @@ export default function PublicLookup({
             )}
           </div>
 
-          {/* Mobile Search Summary Card - Visible only on mobile when result is active */}
+          {/* Mobile Search Summary Card */}
           {result && (
             <div className="md:hidden w-full pointer-events-auto bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
@@ -325,7 +514,7 @@ export default function PublicLookup({
             </div>
           )}
 
-          {/* Search elements and Tabs inside sidebar - Styled as a floating unified card on mobile (hidden on mobile if result exists) */}
+          {/* Search elements and Tabs inside sidebar */}
           <div className={`${result ? 'hidden md:block' : 'block'} space-y-3 pointer-events-auto bg-slate-905 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-slate-900/60 md:border-0 rounded-2xl md:rounded-none p-3.5 md:p-0 shadow-2xl md:shadow-none`}>
             {/* Search Selection Tabs */}
             <div className="bg-slate-900/50 p-1 rounded-2xl flex items-center space-x-1 border border-slate-900">
@@ -349,33 +538,40 @@ export default function PublicLookup({
                   : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
                   }`}
               >
-                Não sei meu CEP
+                Pesquisar por Endereço
               </button>
             </div>
 
-            {/* Main Search Card - Compact padding on mobile */}
+            {/* Main Search Card */}
             <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-3 md:p-6 shadow-xl relative overflow-hidden">
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                     {mode === 'cep' ? 'Digite seu CEP de Fortaleza' : 'Digite seu endereço em Fortaleza'}
                   </label>
                   <div className="relative">
                     {mode === 'cep' ? (
-                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                      <>
+                        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                        <input
+                          type="text"
+                          required
+                          disabled={isPending}
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          maxLength={9}
+                          placeholder="Ex: 60150-160"
+                          className="w-full pl-11 pr-4 py-2.5 md:py-3 rounded-xl border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        />
+                      </>
                     ) : (
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                      <AddressAutocomplete
+                        disabled={isPending}
+                        initialValue={inputValue}
+                        placeholder="Rua, Avenida, Número, etc."
+                        onSelect={handleAddressSelect}
+                      />
                     )}
-                    <input
-                      type="text"
-                      required
-                      disabled={isPending}
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      maxLength={mode === 'cep' ? 9 : 100}
-                      placeholder={mode === 'cep' ? 'Ex: 60150-160' : 'Rua, Avenida, Número, etc.'}
-                      className="w-full pl-11 pr-4 py-2.5 md:py-3 rounded-xl border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
                   </div>
                 </div>
 
@@ -398,198 +594,285 @@ export default function PublicLookup({
                   )}
                 </button>
 
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-2.5 md:py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg shadow-[#1E3A5F]/15 active:scale-98 text-sm"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin text-white" />
-                      <span>Buscando taxa...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Consultar Taxa de Entrega</span>
-                      <ArrowRight className="h-4.5 w-4.5" />
-                    </>
-                  )}
-                </button>
+                {mode === 'cep' && (
+                  <button
+                    type="submit"
+                    disabled={isPending || inputValue.length < 8}
+                    className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md shadow-[#1E3A5F]/10 text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <span>Consultar Frete</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </button>
+                )}
               </form>
+
+              {/* Informative text below search button */}
+              <div className="mt-4 flex items-start space-x-2 text-[10px] text-slate-500 font-semibold leading-normal">
+                <Info className="h-3.5 w-3.5 text-[#5FC9C8] flex-shrink-0 mt-0.5" />
+                <p>
+                  As taxas de entrega são calculadas automaticamente com base no seu bairro.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Error Alert */}
+          {/* Feedback Messages (Errors, Out of Boundaries, etc.) */}
           {error && !result && (
-            <div className="bg-rose-955 text-rose-450 border border-rose-900/30 p-4 rounded-xl flex items-start space-x-3 text-sm animate-fadeIn pointer-events-auto">
-              <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5 text-rose-500" />
+            <div className="pointer-events-auto bg-rose-955 border border-rose-900/30 rounded-2xl p-4 flex items-start space-x-3 shadow-lg animate-fadeIn">
+              <AlertTriangle className="h-5 w-5 text-rose-450 flex-shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold block">Erro na consulta</span>
-                <span className="text-xs text-rose-400 mt-0.5 block">{error}</span>
+                <h4 className="font-bold text-white text-xs">Não foi possível consultar</h4>
+                <p className="text-[10px] text-rose-300 mt-0.5 leading-relaxed">{error}</p>
               </div>
             </div>
           )}
 
-          {/* Results Overlay Card */}
+          {/* Results Details Card */}
           {result && (
-            <div className="animate-fadeIn pointer-events-auto  md:p-0 fixed md:relative bottom-4 md:bottom-auto left-4 md:left-auto right-4 md:right-auto z-[400] md:z-auto max-h-[75vh] md:max-h-none overflow-y-auto bg-slate-900 border border-slate-800 rounded-2xl md:border-0 md:bg-transparent md:rounded-none md:shadow-none md:p-0">
+            <div className="pointer-events-auto space-y-4 animate-fadeIn">
               {result.deliveryEnabled ? (
                 /* DELIVERABLE */
-                <div className="bg-slate-900/30 border-2 border-[#2F7DBB]/85 rounded-2xl overflow-hidden shadow-2xl shadow-[#2F7DBB]/10">
-                  <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-4 flex items-center justify-between">
-                    <span className="font-bold text-white text-sm">Entregamos no seu Bairro!</span>
-                    {/* <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                      Fortaleza
-                    </span> */}
+                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-4 md:p-6 space-y-5">
+                  <div className="flex items-center space-x-3 pb-4 border-b border-slate-900/60">
+                    <div className="bg-[#5FC9C8]/10 p-2.5 rounded-xl text-[#5FC9C8] border border-[#5FC9C8]/10">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Endereço Identificado</span>
+                      <span className="text-base font-black text-white mt-0.5 block truncate">
+                        {result.bairro}
+                      </span>
+                      {result.street && (
+                        <span className="text-xs text-slate-450 mt-0.5 block truncate leading-tight">
+                          Rua: {result.street}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="p-4 md:p-6 space-y-4 md:space-y-6">
-                    <div className="flex items-start space-x-3 border-b border-slate-900 pb-3">
-                      <div className="bg-[#2F7DBB]/10 p-2.5 rounded-xl text-[#2F7DBB] border border-[#2F7DBB]/15 flex-shrink-0">
-                        <MapPin className="h-5 w-5" />
+
+                  {/* Logistical Details - Level 1 */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Delivery Fee */}
+                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-[#5FC9C8]/10 p-1.5 rounded-lg text-[#5FC9C8] border border-[#5FC9C8]/10 flex-shrink-0 mt-0.5">
+                        <Truck className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FRETE</span>
+                        <span className="text-[15px] font-black text-[#5FC9C8] mt-0.5 block leading-tight">
+                          {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Delivery Time */}
+                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-[#2F7DBB]/10 p-1.5 rounded-lg text-[#2F7DBB] border border-[#2F7DBB]/10 flex-shrink-0 mt-0.5">
+                        <Timer className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PRAZO</span>
+                        <span className="text-[15px] font-black text-white mt-0.5 block leading-tight">
+                          {result.deliveryTime || deliveryTimeDefault}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Custom Delivery Availability Message */}
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-900 text-xs font-semibold text-slate-200 text-center">
+                    {getCustomDeliveryMsg()}
+                  </div>
+
+                  {/* Cutoff Warning */}
+                  {sameDayCutoff && isPastCutoff() && (
+                    <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl flex items-start space-x-2.5 text-xs text-amber-200">
+                      <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">Aviso de Horário Limite ({sameDayCutoff})</p>
+                        <p className="text-[10px] text-amber-350 mt-0.5 leading-normal">
+                          {cutoffMessage || 'Pedidos realizados após esse horário serão entregues no próximo dia útil.'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Logistical Details - Level 2 */}
+                  <div className="space-y-2.5 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
+                    {/* Operating Hours */}
+                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
+                        <Clock className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Endereço Identificado</span>
-                        <span className="text-base font-black text-white mt-0.5 block truncate">
-                          {result.bairro}
+                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FUNCIONAMENTO</span>
+                        <span className="text-[11px] md:text-xs font-semibold text-slate-200 mt-0.5 block whitespace-normal break-words leading-tight">
+                          {operatingHours}
                         </span>
-                        {result.street && (
-                          <span className="text-xs text-slate-450 mt-0.5 block truncate leading-tight">
-                            Rua: {result.street}
-                          </span>
-                        )}
                       </div>
                     </div>
 
-                    {/* Logistical Details - Level 1 (Always Grid 2 cols) */}
-                    <div className="grid grid-cols-2 gap-3">
-                      {/* Delivery Fee */}
-                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                        <div className="bg-[#5FC9C8]/10 p-1.5 rounded-lg text-[#5FC9C8] border border-[#5FC9C8]/10 flex-shrink-0 mt-0.5">
-                          <Truck className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FRETE</span>
-                          <span className="text-[15px] font-black text-[#5FC9C8] mt-0.5 block leading-tight">
-                            {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
-                          </span>
-                        </div>
+                    {/* Minimum Order */}
+                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
+                        <ShoppingBag className="h-4 w-4" />
                       </div>
-
-                      {/* Delivery Time */}
-                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                        <div className="bg-[#2F7DBB]/10 p-1.5 rounded-lg text-[#2F7DBB] border border-[#2F7DBB]/10 flex-shrink-0 mt-0.5">
-                          <Timer className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PRAZO</span>
-                          <span className="text-[15px] font-black text-white mt-0.5 block leading-tight">
-                            {result.deliveryTime}
-                          </span>
-                        </div>
+                      <div>
+                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PEDIDO MÍNIMO</span>
+                        <span className="text-xs font-bold text-slate-200 mt-0.5 block leading-tight">
+                          {result.minimumOrder ? `R$ ${result.minimumOrder.toFixed(2)}` : 'Sem mínimo'}
+                        </span>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Logistical Details - Level 2 (Stacked column on mobile, Grid on desktop) */}
-                    <div className="space-y-2.5 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
-                      {/* Operating Hours */}
-                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                        <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
-                          <Clock className="h-4 w-4" />
+                  {/* Highlight alerts/rules */}
+                  {(result.freeDeliveryThreshold || result.notes) && (
+                    <div className="bg-[#2F7DBB]/5 border border-[#2F7DBB]/15 p-3 rounded-xl text-xs space-y-2 text-slate-300">
+                      {result.freeDeliveryThreshold && (
+                        <div className="flex items-center space-x-2">
+                          <Gift className="h-3.5 w-3.5 text-[#5FC9C8] flex-shrink-0" />
+                          <p className="text-[11px] leading-tight">
+                            Frete grátis a partir de <strong className="text-white">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong> em compras!
+                          </p>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FUNCIONAMENTO</span>
-                          <span className="text-[11px] md:text-xs font-semibold text-slate-200 mt-0.5 block whitespace-normal break-words leading-tight">
-                            {operatingHours}
-                          </span>
+                      )}
+                      {result.notes && (
+                        <div className="flex items-start space-x-2">
+                          <Info className="h-3.5 w-3.5 text-[#5FC9C8]/80 flex-shrink-0" />
+                          <p className="text-[11px] text-slate-400 leading-tight">
+                            <span className="font-semibold text-slate-300">Obs:</span> {result.notes}
+                          </p>
                         </div>
-                      </div>
-
-                      {/* Minimum Order */}
-                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                        <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
-                          <ShoppingBag className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PEDIDO MÍNIMO</span>
-                          <span className="text-xs font-bold text-slate-200 mt-0.5 block leading-tight">
-                            {result.minimumOrder ? `R$ ${result.minimumOrder.toFixed(2)}` : 'Sem mínimo'}
-                          </span>
-                        </div>
-                      </div>
+                      )}
                     </div>
+                  )}
 
-                    {/* Highlight alerts/rules (Free delivery threshold, special notes) */}
-                    {(result.freeDeliveryThreshold || result.notes) && (
-                      <div className="bg-[#2F7DBB]/5 border border-[#2F7DBB]/15 p-3 rounded-xl text-xs space-y-2 text-slate-300">
-                        {result.freeDeliveryThreshold && (
-                          <div className="flex items-center space-x-2">
-                            <Gift className="h-3.5 w-3.5 text-[#5FC9C8] flex-shrink-0" />
-                            <p className="text-[11px] leading-tight">
-                              Frete grátis a partir de <strong className="text-white">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong> em compras!
-                            </p>
-                          </div>
-                        )}
-                        {result.notes && (
-                          <div className="flex items-start space-x-2">
-                            <Info className="h-3.5 w-3.5 text-[#5FC9C8]/80 flex-shrink-0" />
-                            <p className="text-[11px] text-slate-400 leading-tight">
-                              <span className="font-semibold text-slate-300">Obs:</span> {result.notes}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
+                  <div className="pt-2">
                     <a
                       href={getWhatsAppLink()}
                       target="_blank"
-                      className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#1E3A5F]/15 text-sm cursor-pointer active:scale-98"
+                      rel="noopener noreferrer"
+                      className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#1E3A5F]/15 text-xs cursor-pointer active:scale-98"
                     >
-                      <MessageSquare className="h-5 w-5 fill-current text-white" />
+                      <MessageSquare className="h-4 w-4 fill-current text-white" />
                       <span>Enviar Pedido via WhatsApp</span>
                     </a>
                   </div>
                 </div>
               ) : (
                 /* NON-DELIVERABLE */
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-6 space-y-6">
-                  <div className="flex items-start space-x-3 text-rose-450">
-                    <AlertTriangle className="h-6 w-6 flex-shrink-0 mt-0.5" />
+                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-4 md:p-6 space-y-5">
+                  <div className="flex items-start space-x-3 text-rose-450 pb-4 border-b border-slate-900/60">
+                    <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-bold text-white text-base">Sem Entrega para este Bairro</h4>
-                      <p className="text-xs text-slate-400 mt-1">
-                        Infelizmente {storeName} ainda não realiza entregas no bairro <strong className="text-white">{result.bairro}</strong>.
+                      <h4 className="font-bold text-white text-sm">Sem Entrega para este Bairro</h4>
+                      <p className="text-[10px] text-slate-450 mt-1 leading-normal font-medium">
+                        {getCustomDeliveryUnavailableMsg()}
                       </p>
                     </div>
                   </div>
 
                   {result.pickupEnabled ? (
-                    <div className="border-t border-slate-900 pt-5 space-y-4">
-                      <div className="flex items-start space-x-4">
-                        <div className="bg-slate-950 p-3 rounded-xl text-slate-400 border border-slate-905">
-                          <Building className="h-6 w-6" />
-                        </div>
-                        <div>
-                          <span className="text-xs text-slate-500 font-semibold block uppercase">Opção: Retirada no Local</span>
-                          <p className="text-xs text-slate-400 mt-1">
-                            Você pode retirar seu pedido diretamente em nossa loja física sem custo de entrega:
-                          </p>
-                          <span className="text-sm font-bold text-white mt-2 block">
-                            {result.storeAddress || storeAddress}
-                          </span>
-                        </div>
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-xs text-slate-450 font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
+                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-semibold">
+                          Você pode retirar seu pedido em um de nossos pontos de retirada sem taxa de entrega:
+                        </p>
                       </div>
 
-                      <a
-                        href={`https://wa.me/${result.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
-                          `Olá! Gostaria de fazer um pedido para retirada na loja física.`
-                        )}`}
-                        target="_blank"
-                        className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-sm cursor-pointer active:scale-98"
-                      >
-                        <MessageSquare className="h-5 w-5" />
-                        <span>Combinar Retirada via WhatsApp</span>
-                      </a>
+                      {/* Multiple Pickup Points List */}
+                      {pickupPoints.length > 0 ? (
+                        <div className="space-y-3">
+                          {pickupPoints.map((p, idx) => (
+                            <div key={idx} className="bg-slate-950 border border-slate-900 rounded-xl p-3.5 space-y-3">
+                              <div>
+                                <span className="text-xs font-black text-white block">
+                                  {p.name || `Ponto ${idx + 1}`}
+                                </span>
+                                <span className="text-[10px] text-slate-400 mt-0.5 block leading-normal font-medium">
+                                  {p.address}
+                                </span>
+                                {p.instructions && (
+                                  <span className="text-[9px] text-[#5FC9C8] font-bold mt-1.5 block uppercase tracking-wider bg-[#5FC9C8]/5 px-2 py-1 rounded border border-[#5FC9C8]/10 w-max leading-none">
+                                    Obs: {p.instructions}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-900/80">
+                                {/* Google Maps link */}
+                                <a
+                                  href={
+                                    p.latitude && p.longitude
+                                      ? `https://www.google.com/maps/search/?api=1&query=${p.latitude},${p.longitude}`
+                                      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`
+                                  }
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                                >
+                                  <Navigation className="h-3 w-3 text-[#5FC9C8]" />
+                                  <span>Google Maps</span>
+                                </a>
+
+                                {/* Waze link if coordinates are present */}
+                                {p.latitude && p.longitude && (
+                                  <a
+                                    href={`https://waze.com/ul?ll=${p.latitude},${p.longitude}&navigate=yes`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                                  >
+                                    <Navigation className="h-3 w-3 text-[#2F7DBB]" />
+                                    <span>Waze</span>
+                                  </a>
+                                )}
+
+                                {/* Combine via WhatsApp */}
+                                <a
+                                  href={`https://wa.me/${result.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
+                                    `Olá! Gostaria de fazer um pedido para retirada no ponto: ${p.name || `Ponto ${idx + 1}`} (${p.address})`
+                                  )}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center space-x-1.5 bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-3.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer ml-auto"
+                                >
+                                  <MessageSquare className="h-3 w-3" />
+                                  <span>Retirar Aqui</span>
+                                </a>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="bg-slate-950 border border-slate-900 rounded-xl p-4">
+                          <span className="text-[11px] font-bold text-white block">
+                            Loja Central
+                          </span>
+                          <span className="text-[10px] text-slate-400 mt-1 block">
+                            {result.storeAddress || storeAddress}
+                          </span>
+                          <a
+                            href={`https://wa.me/${result.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
+                              `Olá! Gostaria de fazer um pedido para retirada na loja central.`
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-xs cursor-pointer active:scale-98 mt-3"
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                            <span>Combinar Retirada via WhatsApp</span>
+                          </a>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="p-4 rounded-xl bg-slate-950 text-center text-xs text-slate-500 border border-slate-900">
@@ -602,16 +885,16 @@ export default function PublicLookup({
           )}
         </div>
 
-        {/* Sidebar Footer (Desktop only) */}
-        <div className="hidden md:block pt-6 border-t border-slate-900/60 mt-8 text-center text-[10px] text-slate-500 flex-shrink-0">
+        {/* Sidebar Footer */}
+        <div className="hidden md:block pt-4 border-t border-slate-900/60 mt-6 text-center text-[9px] text-slate-500 flex-shrink-0">
           <p>&copy; {new Date().getFullYear()} {storeName}. Todos os direitos reservados.</p>
-          <p className="mt-0.5 text-[9px] text-slate-600">
+          <p className="mt-0.5 text-slate-650 font-medium">
             Entregas realizadas exclusivamente na cidade de Fortaleza (CE).
           </p>
         </div>
       </div>
 
-      {/* Right side: Map container (covers screen on desktop, full background on mobile) */}
+      {/* Right side: Map container */}
       <div className="absolute md:relative inset-0 md:inset-auto w-full h-full md:flex-1 z-0">
         <LeafletMap
           neighborhoods={initialNeighborhoods}

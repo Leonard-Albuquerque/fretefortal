@@ -1,15 +1,15 @@
 import { prisma } from '@/lib/prisma';
-import { 
-  Activity, 
-  Search, 
-  MapPin, 
-  Clock, 
-  User, 
-  CheckCircle, 
-  XCircle, 
-  Percent, 
-  Layers, 
-  Globe, 
+import {
+  Activity,
+  Search,
+  MapPin,
+  Clock,
+  User,
+  CheckCircle,
+  XCircle,
+  Percent,
+  Layers,
+  Globe,
   Calendar,
   AlertCircle
 } from 'lucide-react';
@@ -18,7 +18,7 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Telemetria Pangalaxy - FreteFortal',
+  title: 'Telemetria Pangalaxy - Cobertura085',
   description: 'Painel global de análise de telemetria e métricas de buscas.',
 };
 
@@ -39,26 +39,26 @@ export default async function PangalaxyAdminPage() {
   ] = await Promise.all([
     // Total searches
     prisma.searchEvent.count(),
-    
+
     // Unique visitors (sessions)
     prisma.searchEvent.groupBy({
       by: ['sessionId']
     }),
-    
+
     // Delivery Available rate
     prisma.searchEvent.count({ where: { deliveryAvailable: true } }),
     prisma.searchEvent.count({ where: { deliveryAvailable: false } }),
-    
+
     // Response time
     prisma.searchEvent.aggregate({
       _avg: { responseTimeMs: true }
     }),
-    
+
     // Search types
     prisma.searchEvent.count({ where: { searchType: 'CEP' } }),
     prisma.searchEvent.count({ where: { searchType: 'ADDRESS' } }),
     prisma.searchEvent.count({ where: { searchType: 'LOCATION' } }),
-    
+
     // Top 10 Searched Neighborhoods
     prisma.searchEvent.groupBy({
       by: ['searchedNeighborhood'],
@@ -73,7 +73,7 @@ export default async function PangalaxyAdminPage() {
       },
       take: 10
     }),
-    
+
     // Share of searches by store
     prisma.searchEvent.groupBy({
       by: ['storeId'],
@@ -84,7 +84,7 @@ export default async function PangalaxyAdminPage() {
         }
       }
     }),
-    
+
     // Recent logs
     prisma.searchEvent.findMany({
       orderBy: { createdAt: 'desc' },
@@ -108,12 +108,12 @@ export default async function PangalaxyAdminPage() {
   const storeMap = new Map(allStores.map(s => [s.id, s]));
 
   const uniqueVisitors = uniqueSessionsGroup.length;
-  const avgResponseTime = avgResponseTimeAggregate._avg.responseTimeMs 
-    ? Math.round(avgResponseTimeAggregate._avg.responseTimeMs) 
+  const avgResponseTime = avgResponseTimeAggregate._avg.responseTimeMs
+    ? Math.round(avgResponseTimeAggregate._avg.responseTimeMs)
     : 0;
 
-  const successRate = totalSearches > 0 
-    ? Math.round((successfulDeliveries / totalSearches) * 100) 
+  const successRate = totalSearches > 0
+    ? Math.round((successfulDeliveries / totalSearches) * 100)
     : 0;
 
   // Process store share data
@@ -251,12 +251,12 @@ export default async function PangalaxyAdminPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-slate-400">Consulta por CEP</span>
-                  <span className="text-white">{cepSearches} ({totalSearches > 0 ? Math.round((cepSearches/totalSearches)*100) : 0}%)</span>
+                  <span className="text-white">{cepSearches} ({totalSearches > 0 ? Math.round((cepSearches / totalSearches) * 100) : 0}%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-900">
-                  <div 
-                    className="h-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] rounded-full" 
-                    style={{ width: `${totalSearches > 0 ? (cepSearches/totalSearches)*100 : 0}%` }}
+                  <div
+                    className="h-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] rounded-full"
+                    style={{ width: `${totalSearches > 0 ? (cepSearches / totalSearches) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -264,12 +264,12 @@ export default async function PangalaxyAdminPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-slate-400">Consulta por Endereço</span>
-                  <span className="text-white">{addressSearches} ({totalSearches > 0 ? Math.round((addressSearches/totalSearches)*100) : 0}%)</span>
+                  <span className="text-white">{addressSearches} ({totalSearches > 0 ? Math.round((addressSearches / totalSearches) * 100) : 0}%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-900">
-                  <div 
-                    className="h-full bg-gradient-to-r from-[#DCC8A5] to-[#5FC9C8] rounded-full" 
-                    style={{ width: `${totalSearches > 0 ? (addressSearches/totalSearches)*100 : 0}%` }}
+                  <div
+                    className="h-full bg-gradient-to-r from-[#DCC8A5] to-[#5FC9C8] rounded-full"
+                    style={{ width: `${totalSearches > 0 ? (addressSearches / totalSearches) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -277,12 +277,12 @@ export default async function PangalaxyAdminPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-slate-400">Consulta por Localização</span>
-                  <span className="text-white">{locationSearches} ({totalSearches > 0 ? Math.round((locationSearches/totalSearches)*100) : 0}%)</span>
+                  <span className="text-white">{locationSearches} ({totalSearches > 0 ? Math.round((locationSearches / totalSearches) * 100) : 0}%)</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-900">
-                  <div 
-                    className="h-full bg-gradient-to-r from-violet-600 to-fuchsia-500 rounded-full" 
-                    style={{ width: `${totalSearches > 0 ? (locationSearches/totalSearches)*100 : 0}%` }}
+                  <div
+                    className="h-full bg-gradient-to-r from-violet-600 to-fuchsia-500 rounded-full"
+                    style={{ width: `${totalSearches > 0 ? (locationSearches / totalSearches) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -304,8 +304,8 @@ export default async function PangalaxyAdminPage() {
                       <span className="text-white">{item.count} ({item.percentage}%)</span>
                     </div>
                     <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-900">
-                      <div 
-                        className="h-full bg-gradient-to-r from-[#1E3A5F] to-[#5FC9C8] rounded-full" 
+                      <div
+                        className="h-full bg-gradient-to-r from-[#1E3A5F] to-[#5FC9C8] rounded-full"
                         style={{ width: `${item.percentage}%` }}
                       ></div>
                     </div>
@@ -331,14 +331,14 @@ export default async function PangalaxyAdminPage() {
                   <div key={idx} className="space-y-1.5">
                     <div className="flex justify-between text-xs font-semibold">
                       <span className="text-slate-300 flex items-center">
-                        <span className="text-[10px] bg-slate-950 border border-slate-850 px-1.5 py-0.5 rounded text-slate-400 mr-2 font-mono">#{idx+1}</span>
+                        <span className="text-[10px] bg-slate-950 border border-slate-850 px-1.5 py-0.5 rounded text-slate-400 mr-2 font-mono">#{idx + 1}</span>
                         {item.name}
                       </span>
                       <span className="text-white font-mono">{item.count} buscas</span>
                     </div>
                     <div className="w-full h-2 bg-slate-955 rounded-full overflow-hidden border border-slate-900">
-                      <div 
-                        className="h-full bg-[#5FC9C8] rounded-full" 
+                      <div
+                        className="h-full bg-[#5FC9C8] rounded-full"
                         style={{ width: `${item.percentage}%` }}
                       ></div>
                     </div>
@@ -389,7 +389,7 @@ export default async function PangalaxyAdminPage() {
               {recentEvents.length > 0 ? (
                 recentEvents.map((event) => {
                   const parsedDate = new Date(event.createdAt).toLocaleString('pt-BR', { timeZone: 'America/Fortaleza' });
-                  
+
                   // Simple browser detection from userAgent
                   let browser = 'Unknown';
                   const ua = event.userAgent.toLowerCase();
@@ -405,13 +405,12 @@ export default async function PangalaxyAdminPage() {
                       <td className="p-4 whitespace-nowrap font-mono text-[10px] text-slate-500">{parsedDate}</td>
                       <td className="p-4 font-semibold text-slate-200">{event.store.name}</td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold border ${
-                          event.searchType === 'CEP' 
-                            ? 'bg-[#1E3A5F]/20 text-[#5FC9C8] border-[#1E3A5F]/30' 
+                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold border ${event.searchType === 'CEP'
+                            ? 'bg-[#1E3A5F]/20 text-[#5FC9C8] border-[#1E3A5F]/30'
                             : event.searchType === 'ADDRESS'
                               ? 'bg-[#2F7DBB]/20 text-white border-[#2F7DBB]/30'
                               : 'bg-violet-950/40 text-violet-400 border-violet-900/40'
-                        }`}>
+                          }`}>
                           {event.searchType}
                         </span>
                       </td>
@@ -436,11 +435,10 @@ export default async function PangalaxyAdminPage() {
                         {event.deliveryAvailable ? `R$ ${Number(event.deliveryPrice).toFixed(2)}` : '-'}
                       </td>
                       <td className="p-4 font-mono">
-                        <span className={`${
-                          event.responseTimeMs > 800 
-                            ? 'text-rose-450 font-semibold' 
+                        <span className={`${event.responseTimeMs > 800
+                            ? 'text-rose-450 font-semibold'
                             : (event.responseTimeMs > 300 ? 'text-[#DCC8A5]' : 'text-[#5FC9C8]')
-                        }`}>
+                          }`}>
                           {event.responseTimeMs} ms
                         </span>
                       </td>
