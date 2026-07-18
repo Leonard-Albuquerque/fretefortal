@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, useMap, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { Info } from 'lucide-react';
 
@@ -14,6 +14,15 @@ interface NeighborhoodData {
   fee: number;
 }
 
+interface PickupPoint {
+  id?: string;
+  name: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  instructions: string;
+}
+
 interface LeafletMapProps {
   neighborhoods: NeighborhoodData[];
   selectedName: string | null;
@@ -21,6 +30,7 @@ interface LeafletMapProps {
   dirtyName: string | null;
   publicView?: boolean;
   className?: string;
+  pickupPoints?: PickupPoint[];
 }
 
 const FORTALEZA_BOUNDS = L.latLngBounds(
@@ -77,13 +87,22 @@ function CustomZoomControls() {
   );
 }
 
+const storeIcon = typeof window !== 'undefined' ? L.divIcon({
+  html: `<div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] border-2 border-[#5FC9C8] flex items-center justify-center shadow-lg text-white font-black animate-pulse" style="box-shadow: 0 0 12px rgba(95, 201, 200, 0.75);"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-store"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 10V7"/></svg></div>`,
+  className: 'bg-transparent border-0',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+}) : null;
+
 export default function LeafletMap({
   neighborhoods,
   selectedName,
   onSelect,
   dirtyName,
   publicView = false,
-  className = "w-full h-[550px] overflow-hidden rounded-xl border border-slate-900 relative shadow-xl"
+  className = "w-full h-[550px] overflow-hidden rounded-xl border border-slate-900 relative shadow-xl",
+  pickupPoints = []
 }: LeafletMapProps) {
   const [geojsonData, setGeojsonData] = useState<any>(null);
   const [legendOpen, setLegendOpen] = useState(false);
@@ -258,6 +277,32 @@ export default function LeafletMap({
             return getStyleForLayer(name, selectedName === name, dirtyName === name);
           }}
         />
+
+        {pickupPoints && pickupPoints.map((p, idx) => {
+          if (p.latitude && p.longitude) {
+            return (
+              <Marker
+                key={idx}
+                position={[p.latitude, p.longitude]}
+                icon={storeIcon || undefined}
+              >
+                <Popup>
+                  <div className="p-1 min-w-[140px] text-[11px] font-semibold text-slate-200">
+                    <strong className="text-white block font-black text-xs mb-1 leading-tight">{p.name || `Ponto ${idx + 1}`}</strong>
+                    <span className="block text-slate-400 font-medium leading-normal mb-1">{p.address}</span>
+                    {p.instructions && (
+                      <span className="block text-[#5FC9C8] text-[9px] font-bold uppercase tracking-wider mt-1 bg-[#5FC9C8]/10 px-2 py-0.5 rounded border border-[#5FC9C8]/15 w-max">
+                        Obs: {p.instructions}
+                      </span>
+                    )}
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          }
+          return null;
+        })}
+
         <MapController selectedName={selectedName} geojsonData={geojsonData} />
         <CustomZoomControls />
       </MapContainer>

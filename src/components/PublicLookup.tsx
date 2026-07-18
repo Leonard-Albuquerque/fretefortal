@@ -183,6 +183,20 @@ export default function PublicLookup({
     }
   };
 
+  const open99Pop = (lat: number, lon: number, name: string) => {
+    const deepLink = `didi-passenger://didi-passenger/call_a_car?dropoff_lat=${lat}&dropoff_lng=${lon}&dropoff_name=${encodeURIComponent(name)}`;
+    
+    // Try to open the deep link
+    window.location.href = deepLink;
+    
+    // Fallback to 99app.com website after a delay if the deep link doesn't trigger
+    setTimeout(() => {
+      if (document.hasFocus()) {
+        window.open('https://99app.com/', '_blank');
+      }
+    }, 1500);
+  };
+
   // Auto-submit when CEP reaches 8 digits
   useEffect(() => {
     if (mode === 'cep') {
@@ -386,6 +400,122 @@ export default function PublicLookup({
     }
 
     return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+  };
+
+  const renderPickupPointsSection = () => {
+    if (!pickupEnabled) return null;
+    
+    return (
+      <div className="space-y-4">
+        {pickupPoints.length > 0 ? (
+          <div className="space-y-3">
+            {pickupPoints.map((p, idx) => (
+              <div key={idx} className="bg-slate-950/60 border border-slate-900/60 rounded-xl p-3.5 space-y-3">
+                <div>
+                  <span className="text-xs font-black text-white block">
+                    {p.name || `Ponto ${idx + 1}`}
+                  </span>
+                  <span className="text-[10px] text-slate-400 mt-0.5 block leading-normal font-medium">
+                    {p.address}
+                  </span>
+                  {p.instructions && (
+                    <span className="text-[9px] text-[#5FC9C8] font-bold mt-1.5 block uppercase tracking-wider bg-[#5FC9C8]/5 px-2 py-1 rounded border border-[#5FC9C8]/10 w-max leading-none">
+                      Obs: {p.instructions}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-900/80">
+                  {/* Google Maps link */}
+                  <a
+                    href={
+                      p.latitude && p.longitude
+                        ? `https://www.google.com/maps/search/?api=1&query=${p.latitude},${p.longitude}`
+                        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                  >
+                    <Navigation className="h-3 w-3 text-[#5FC9C8]" />
+                    <span>Google Maps</span>
+                  </a>
+
+                  {/* Waze link if coordinates are present */}
+                  {p.latitude && p.longitude && (
+                    <a
+                      href={`https://waze.com/ul?ll=${p.latitude},${p.longitude}&navigate=yes`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      <Navigation className="h-3 w-3 text-[#2F7DBB]" />
+                      <span>Waze</span>
+                    </a>
+                  )}
+
+                  {/* Uber ride link */}
+                  {p.latitude && p.longitude && (
+                    <a
+                      href={`https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${p.latitude}&dropoff[longitude]=${p.longitude}&dropoff[formatted_address]=${encodeURIComponent(p.name || p.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      <span className="text-[#5FC9C8] font-bold text-[9px]">Uber</span>
+                    </a>
+                  )}
+
+                  {/* 99Pop ride link */}
+                  {p.latitude && p.longitude && (
+                    <button
+                      type="button"
+                      onClick={() => open99Pop(p.latitude!, p.longitude!, p.name || p.address)}
+                      className="flex items-center space-x-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[#E9B824] hover:text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      <span className="font-bold text-[9px]">99Pop</span>
+                    </button>
+                  )}
+
+                  {/* Combine via WhatsApp */}
+                  <a
+                    href={`https://wa.me/${result?.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
+                      `Olá! Gostaria de fazer um pedido para retirada no ponto: ${p.name || `Ponto ${idx + 1}`} (${p.address})`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-1.5 bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-3.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer ml-auto"
+                  >
+                    <MessageSquare className="h-3 w-3" />
+                    <span>Retirar Aqui</span>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-slate-950 border border-slate-900 rounded-xl p-4">
+            <span className="text-[11px] font-bold text-white block">
+              Loja Central
+            </span>
+            <span className="text-[10px] text-slate-400 mt-1 block">
+              {result?.storeAddress || storeAddress}
+            </span>
+            <a
+              href={`https://wa.me/${result?.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
+                `Olá! Gostaria de fazer um pedido para retirada na loja central.`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-xs cursor-pointer active:scale-98 mt-3"
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>Combinar Retirada via WhatsApp</span>
+            </a>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -765,6 +895,18 @@ export default function PublicLookup({
                       <span>Enviar Pedido via WhatsApp</span>
                     </a>
                   </div>
+
+                  {pickupEnabled && (
+                    <div className="border-t border-slate-900/60 pt-5 space-y-4">
+                      <div>
+                        <span className="text-xs text-[#5FC9C8] font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
+                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-semibold">
+                          Se preferir, economize no frete retirando em um de nossos pontos de retirada:
+                        </p>
+                      </div>
+                      {renderPickupPointsSection()}
+                    </div>
+                  )}
                 </div>
               ) : (
                 /* NON-DELIVERABLE */
@@ -787,92 +929,7 @@ export default function PublicLookup({
                           Você pode retirar seu pedido em um de nossos pontos de retirada sem taxa de entrega:
                         </p>
                       </div>
-
-                      {/* Multiple Pickup Points List */}
-                      {pickupPoints.length > 0 ? (
-                        <div className="space-y-3">
-                          {pickupPoints.map((p, idx) => (
-                            <div key={idx} className="bg-slate-950 border border-slate-900 rounded-xl p-3.5 space-y-3">
-                              <div>
-                                <span className="text-xs font-black text-white block">
-                                  {p.name || `Ponto ${idx + 1}`}
-                                </span>
-                                <span className="text-[10px] text-slate-400 mt-0.5 block leading-normal font-medium">
-                                  {p.address}
-                                </span>
-                                {p.instructions && (
-                                  <span className="text-[9px] text-[#5FC9C8] font-bold mt-1.5 block uppercase tracking-wider bg-[#5FC9C8]/5 px-2 py-1 rounded border border-[#5FC9C8]/10 w-max leading-none">
-                                    Obs: {p.instructions}
-                                  </span>
-                                )}
-                              </div>
-
-                              <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-900/80">
-                                {/* Google Maps link */}
-                                <a
-                                  href={
-                                    p.latitude && p.longitude
-                                      ? `https://www.google.com/maps/search/?api=1&query=${p.latitude},${p.longitude}`
-                                      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`
-                                  }
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
-                                >
-                                  <Navigation className="h-3 w-3 text-[#5FC9C8]" />
-                                  <span>Google Maps</span>
-                                </a>
-
-                                {/* Waze link if coordinates are present */}
-                                {p.latitude && p.longitude && (
-                                  <a
-                                    href={`https://waze.com/ul?ll=${p.latitude},${p.longitude}&navigate=yes`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
-                                  >
-                                    <Navigation className="h-3 w-3 text-[#2F7DBB]" />
-                                    <span>Waze</span>
-                                  </a>
-                                )}
-
-                                {/* Combine via WhatsApp */}
-                                <a
-                                  href={`https://wa.me/${result.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
-                                    `Olá! Gostaria de fazer um pedido para retirada no ponto: ${p.name || `Ponto ${idx + 1}`} (${p.address})`
-                                  )}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center space-x-1.5 bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-3.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer ml-auto"
-                                >
-                                  <MessageSquare className="h-3 w-3" />
-                                  <span>Retirar Aqui</span>
-                                </a>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="bg-slate-950 border border-slate-900 rounded-xl p-4">
-                          <span className="text-[11px] font-bold text-white block">
-                            Loja Central
-                          </span>
-                          <span className="text-[10px] text-slate-400 mt-1 block">
-                            {result.storeAddress || storeAddress}
-                          </span>
-                          <a
-                            href={`https://wa.me/${result.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
-                              `Olá! Gostaria de fazer um pedido para retirada na loja central.`
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-xs cursor-pointer active:scale-98 mt-3"
-                          >
-                            <MessageSquare className="h-4 w-4" />
-                            <span>Combinar Retirada via WhatsApp</span>
-                          </a>
-                        </div>
-                      )}
+                      {renderPickupPointsSection()}
                     </div>
                   ) : (
                     <div className="p-4 rounded-xl bg-slate-950 text-center text-xs text-slate-500 border border-slate-900">
@@ -903,6 +960,7 @@ export default function PublicLookup({
           dirtyName={null}
           publicView={true}
           className="w-full h-full min-h-[350px] relative z-0 md:rounded-none border-0 shadow-none"
+          pickupPoints={pickupPoints}
         />
       </div>
     </div>

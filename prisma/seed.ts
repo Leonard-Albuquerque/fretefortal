@@ -197,6 +197,48 @@ async function main() {
       create: storeData,
     });
 
+    // Seed default pickup points for testing
+    console.log(`Seeding pickup points for ${storeData.name}...`);
+    await prisma.pickupPoint.deleteMany({
+      where: { storeId: store.id }
+    });
+
+    if (storeData.slug === 'fortal-express') {
+      await prisma.pickupPoint.createMany({
+        data: [
+          {
+            storeId: store.id,
+            name: "Loja Aldeota",
+            address: "Av. Dom Luís, 500 - Aldeota, Fortaleza - CE",
+            latitude: -3.7350,
+            longitude: -38.4990,
+            instructions: "Ao lado do Shopping Del Paseo"
+          },
+          {
+            storeId: store.id,
+            name: "Retirada Meireles",
+            address: "Av. Beira Mar, 1000 - Meireles, Fortaleza - CE",
+            latitude: -3.7250,
+            longitude: -38.4890,
+            instructions: "Quiosque frente à praia"
+          }
+        ]
+      });
+    } else if (storeData.slug === 'pizzaria-bella') {
+      await prisma.pickupPoint.createMany({
+        data: [
+          {
+            storeId: store.id,
+            name: "Loja Central Aldeota",
+            address: "Av. Dom Luís, 800 - Aldeota, Fortaleza - CE",
+            latitude: -3.7360,
+            longitude: -38.4950,
+            instructions: "Dentro da galeria Aldeota Mall"
+          }
+        ]
+      });
+    }
+
     // 3. Seed neighborhood configs for this store
     console.log(`Seeding configs for ${storeData.name}...`);
     let configCount = 0;
