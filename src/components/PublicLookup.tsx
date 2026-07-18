@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { lookupCep, lookupAddress, lookupCoords } from '@/app/actions';
-import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2, Locate, Clock } from 'lucide-react';
+import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2, Locate, Clock, Truck, Timer, ShoppingBag, Gift } from 'lucide-react';
 
 const LeafletMap = dynamic(() => import('./LeafletMap'), {
   ssr: false,
@@ -76,9 +76,10 @@ export default function PublicLookup({
 
       if (res.success) {
         setResult(res);
-        if (res.bairro) {
+        const targetBairro = res.bairro;
+        if (targetBairro) {
           const match = initialNeighborhoods.find(
-            (n) => n.officialName.toLowerCase() === res.bairro.toLowerCase() || n.name === res.bairro.toLowerCase()
+            (n) => n.officialName.toLowerCase() === targetBairro.toLowerCase() || n.name === targetBairro.toLowerCase()
           );
           if (match) {
             setSelectedMapBairroName(match.name);
@@ -156,10 +157,11 @@ export default function PublicLookup({
             if (res.street) {
               displayAddress += res.street;
             }
-            if (res.bairro) {
-              displayAddress += (displayAddress ? ', ' : '') + res.bairro;
+            const targetBairro = res.bairro;
+            if (targetBairro) {
+              displayAddress += (displayAddress ? ', ' : '') + targetBairro;
               const match = initialNeighborhoods.find(
-                (n) => n.officialName.toLowerCase() === res.bairro.toLowerCase() || n.name === res.bairro.toLowerCase()
+                (n) => n.officialName.toLowerCase() === targetBairro.toLowerCase() || n.name === targetBairro.toLowerCase()
               );
               if (match) {
                 setSelectedMapBairroName(match.name);
@@ -249,7 +251,7 @@ export default function PublicLookup({
   const getWhatsAppLink = () => {
     if (!result) return '';
     const number = result.storeWhatsapp || storeWhatsapp;
-    
+
     let text = `Olá, *${storeName}*! Consultei a taxa de entrega para meu endereço pelo site e gostaria de fazer um pedido.\n\n`;
     text += `📍 *Meu Endereço:*\n`;
     if (result.street) {
@@ -257,7 +259,7 @@ export default function PublicLookup({
     }
     text += `- Bairro: *${result.bairro}*\n`;
     text += `- Cidade: Fortaleza - CE\n\n`;
-    
+
     text += `🚚 *Informações do Frete:*\n`;
     text += `- Taxa: R$ ${result.fee?.toFixed(2) || '0.00'}\n`;
     text += `- Prazo: ${result.deliveryTime || '24h'}`;
@@ -331,11 +333,10 @@ export default function PublicLookup({
                 type="button"
                 disabled={isPending}
                 onClick={() => switchMode('cep')}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                  mode === 'cep'
-                    ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
-                }`}
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'cep'
+                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
               >
                 Pesquisar por CEP
               </button>
@@ -343,11 +344,10 @@ export default function PublicLookup({
                 type="button"
                 disabled={isPending}
                 onClick={() => switchMode('address')}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                  mode === 'address'
-                    ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
-                }`}
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'address'
+                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
               >
                 Não sei meu CEP
               </button>
@@ -432,124 +432,171 @@ export default function PublicLookup({
 
           {/* Results Overlay Card */}
           {result && (
-            <div className="animate-fadeIn pointer-events-auto p-4 md:p-0 fixed md:relative bottom-4 md:bottom-auto left-4 md:left-auto right-4 md:right-auto z-[400] md:z-auto max-h-[45vh] md:max-h-none overflow-y-auto bg-slate-900 border border-slate-800 rounded-2xl md:border-0 md:bg-transparent md:rounded-none md:shadow-none md:p-0">
-                {result.deliveryEnabled ? (
-                  /* DELIVERABLE */
-                  <div className="bg-slate-900/30 border-2 border-[#2F7DBB]/85 rounded-2xl overflow-hidden shadow-2xl shadow-[#2F7DBB]/10">
-                    <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-4 flex items-center justify-between">
-                      <span className="font-bold text-white text-sm">Entregamos no seu Bairro!</span>
-                      <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                        Fortaleza
-                      </span>
+            <div className="animate-fadeIn pointer-events-auto  md:p-0 fixed md:relative bottom-4 md:bottom-auto left-4 md:left-auto right-4 md:right-auto z-[400] md:z-auto max-h-[75dvh] md:max-h-none overflow-y-auto bg-slate-900 border border-slate-800 rounded-2xl md:border-0 md:bg-transparent md:rounded-none md:shadow-none md:p-0">
+              {result.deliveryEnabled ? (
+                /* DELIVERABLE */
+                <div className="bg-slate-900/30 border-2 border-[#2F7DBB]/85 rounded-2xl overflow-hidden shadow-2xl shadow-[#2F7DBB]/10">
+                  <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-4 flex items-center justify-between">
+                    <span className="font-bold text-white text-sm">Entregamos no seu Bairro!</span>
+                    {/* <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      Fortaleza
+                    </span> */}
+                  </div>
+                  <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+                    <div className="flex items-start space-x-3 border-b border-slate-900 pb-3">
+                      <div className="bg-[#2F7DBB]/10 p-2.5 rounded-xl text-[#2F7DBB] border border-[#2F7DBB]/15 flex-shrink-0">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Endereço Identificado</span>
+                        <span className="text-base font-black text-white mt-0.5 block truncate">
+                          {result.bairro}
+                        </span>
+                        {result.street && (
+                          <span className="text-xs text-slate-450 mt-0.5 block truncate leading-tight">
+                            Rua: {result.street}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="p-6 space-y-6">
-                      <div className="flex items-start space-x-4 border-b border-slate-900 pb-4">
-                        <div className="bg-[#5FC9C8]/10 p-3 rounded-xl text-[#5FC9C8] border border-[#5FC9C8]/10 flex-shrink-0">
-                          <Map className="h-6 w-6" />
+
+                    {/* Logistical Grid Dashboard */}
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Delivery Fee */}
+                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                        <div className="bg-[#5FC9C8]/10 p-1.5 rounded-lg text-[#5FC9C8] border border-[#5FC9C8]/10 flex-shrink-0 mt-0.5">
+                          <Truck className="h-4 w-4" />
                         </div>
                         <div>
-                          <span className="text-xs text-slate-500 font-semibold block uppercase">Localização Identificada</span>
-                          <span className="text-lg font-bold text-white mt-0.5 block">
-                            {result.bairro}
-                          </span>
-                          {result.street && (
-                            <span className="text-xs text-slate-400 mt-1 block">
-                              Rua: {result.street}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-slate-950 border border-slate-900 p-4 rounded-xl">
-                          <span className="text-xs text-slate-500 font-semibold block">Taxa de Frete</span>
-                          <span className="text-xl font-bold text-[#5FC9C8] mt-1 block">
+                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Frete</span>
+                          <span className="text-sm font-black text-[#5FC9C8] mt-0.5 block">
                             {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
                           </span>
                         </div>
-                        <div className="bg-slate-950 border border-slate-900 p-4 rounded-xl">
-                          <span className="text-xs text-slate-500 font-semibold block">Prazo de Entrega</span>
-                          <span className="text-xl font-bold text-white mt-1 block">
+                      </div>
+
+                      {/* Delivery Time */}
+                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                        <div className="bg-[#2F7DBB]/10 p-1.5 rounded-lg text-[#2F7DBB] border border-[#2F7DBB]/10 flex-shrink-0 mt-0.5">
+                          <Timer className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Prazo</span>
+                          <span className="text-sm font-bold text-white mt-0.5 block truncate max-w-[100px]" title={result.deliveryTime}>
                             {result.deliveryTime}
                           </span>
                         </div>
                       </div>
 
-                      {/* Additional criteria */}
-                      {(result.minimumOrder || result.freeDeliveryThreshold || result.notes) && (
-                        <div className="bg-slate-950 border border-slate-900 p-4 rounded-xl text-xs space-y-1.5 text-slate-400">
-                          {result.minimumOrder && (
-                            <p>• Pedido mínimo para entrega: <strong className="text-white">R$ {result.minimumOrder.toFixed(2)}</strong></p>
-                          )}
-                          {result.freeDeliveryThreshold && (
-                            <p>• Frete grátis para compras acima de: <strong className="text-white">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong></p>
-                          )}
-                          {result.notes && (
-                            <p>• Observações: <span className="italic">{result.notes}</span></p>
-                          )}
+                      {/* Operating Hours */}
+                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                        <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
+                          <Clock className="h-4 w-4" />
                         </div>
-                      )}
+                        <div className="min-w-0 flex-1">
+                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Funcionamento</span>
+                          <span className="text-xs font-semibold text-white mt-0.5 block truncate" title={operatingHours}>
+                            {operatingHours}
+                          </span>
+                        </div>
+                      </div>
 
-                      <a
-                        href={getWhatsAppLink()}
-                        target="_blank"
-                        className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#1E3A5F]/15 text-sm cursor-pointer active:scale-98"
-                      >
-                        <MessageSquare className="h-5 w-5 fill-current text-white" />
-                        <span>Enviar Pedido via WhatsApp</span>
-                      </a>
-                    </div>
-                  </div>
-                ) : (
-                  /* NON-DELIVERABLE */
-                  <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-6 space-y-6">
-                    <div className="flex items-start space-x-3 text-rose-450">
-                      <AlertTriangle className="h-6 w-6 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="font-bold text-white text-base">Sem Entrega para este Bairro</h4>
-                        <p className="text-xs text-slate-400 mt-1">
-                          Infelizmente {storeName} ainda não realiza entregas no bairro <strong className="text-white">{result.bairro}</strong>.
-                        </p>
+                      {/* Minimum Order */}
+                      <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
+                        <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
+                          <ShoppingBag className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Pedido Mínimo</span>
+                          <span className="text-xs font-bold text-white mt-0.5 block">
+                            {result.minimumOrder ? `R$ ${result.minimumOrder.toFixed(2)}` : 'Sem mínimo'}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    {result.pickupEnabled ? (
-                      <div className="border-t border-slate-900 pt-5 space-y-4">
-                        <div className="flex items-start space-x-4">
-                          <div className="bg-slate-950 p-3 rounded-xl text-slate-400 border border-slate-905">
-                            <Building className="h-6 w-6" />
-                          </div>
-                          <div>
-                            <span className="text-xs text-slate-500 font-semibold block uppercase">Opção: Retirada no Local</span>
-                            <p className="text-xs text-slate-400 mt-1">
-                              Você pode retirar seu pedido diretamente em nossa loja física sem custo de entrega:
+                    {/* Highlight alerts/rules (Free delivery threshold, special notes) */}
+                    {(result.freeDeliveryThreshold || result.notes) && (
+                      <div className="bg-[#2F7DBB]/5 border border-[#2F7DBB]/15 p-3 rounded-xl text-xs space-y-1.5 text-slate-300">
+                        {result.freeDeliveryThreshold && (
+                          <div className="flex items-center space-x-2">
+                            <Gift className="h-3.5 w-3.5 text-[#5FC9C8] flex-shrink-0" />
+                            <p>
+                              Frete grátis a partir de <strong className="text-white">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong> em compras!
                             </p>
-                            <span className="text-sm font-bold text-white mt-2 block">
-                              {result.storeAddress || storeAddress}
-                            </span>
                           </div>
-                        </div>
-
-                        <a
-                          href={`https://wa.me/${result.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
-                            `Olá! Gostaria de fazer um pedido para retirada na loja física.`
-                          )}`}
-                          target="_blank"
-                          className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-sm cursor-pointer active:scale-98"
-                        >
-                          <MessageSquare className="h-5 w-5" />
-                          <span>Combinar Retirada via WhatsApp</span>
-                        </a>
-                      </div>
-                    ) : (
-                      <div className="p-4 rounded-xl bg-slate-950 text-center text-xs text-slate-500 border border-slate-900">
-                        Caso queira falar com um atendente, entre em contato pelo WhatsApp.
+                        )}
+                        {result.notes && (
+                          <div className="flex items-start space-x-2">
+                            <span className="text-[#5FC9C8] font-bold block mt-0.5">•</span>
+                            <p className="text-[11px] text-slate-400 leading-tight">
+                              <span className="font-semibold text-slate-350">Obs:</span> {result.notes}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
+
+                    <a
+                      href={getWhatsAppLink()}
+                      target="_blank"
+                      className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#1E3A5F]/15 text-sm cursor-pointer active:scale-98"
+                    >
+                      <MessageSquare className="h-5 w-5 fill-current text-white" />
+                      <span>Enviar Pedido via WhatsApp</span>
+                    </a>
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              ) : (
+                /* NON-DELIVERABLE */
+                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-6 space-y-6">
+                  <div className="flex items-start space-x-3 text-rose-450">
+                    <AlertTriangle className="h-6 w-6 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-bold text-white text-base">Sem Entrega para este Bairro</h4>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Infelizmente {storeName} ainda não realiza entregas no bairro <strong className="text-white">{result.bairro}</strong>.
+                      </p>
+                    </div>
+                  </div>
+
+                  {result.pickupEnabled ? (
+                    <div className="border-t border-slate-900 pt-5 space-y-4">
+                      <div className="flex items-start space-x-4">
+                        <div className="bg-slate-950 p-3 rounded-xl text-slate-400 border border-slate-905">
+                          <Building className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500 font-semibold block uppercase">Opção: Retirada no Local</span>
+                          <p className="text-xs text-slate-400 mt-1">
+                            Você pode retirar seu pedido diretamente em nossa loja física sem custo de entrega:
+                          </p>
+                          <span className="text-sm font-bold text-white mt-2 block">
+                            {result.storeAddress || storeAddress}
+                          </span>
+                        </div>
+                      </div>
+
+                      <a
+                        href={`https://wa.me/${result.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
+                          `Olá! Gostaria de fazer um pedido para retirada na loja física.`
+                        )}`}
+                        target="_blank"
+                        className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-sm cursor-pointer active:scale-98"
+                      >
+                        <MessageSquare className="h-5 w-5" />
+                        <span>Combinar Retirada via WhatsApp</span>
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-xl bg-slate-950 text-center text-xs text-slate-500 border border-slate-900">
+                      Caso queira falar com um atendente, entre em contato pelo WhatsApp.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Sidebar Footer (Desktop only) */}
