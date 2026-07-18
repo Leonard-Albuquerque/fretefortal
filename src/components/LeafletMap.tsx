@@ -15,8 +15,10 @@ interface NeighborhoodData {
 interface LeafletMapProps {
   neighborhoods: NeighborhoodData[];
   selectedName: string | null;
-  onSelect: (normalizedName: string) => void;
+  onSelect: (normalizedName: string, officialName: string) => void;
   dirtyName: string | null;
+  publicView?: boolean;
+  className?: string;
 }
 
 const FORTALEZA_BOUNDS = L.latLngBounds(
@@ -77,7 +79,9 @@ export default function LeafletMap({
   neighborhoods,
   selectedName,
   onSelect,
-  dirtyName
+  dirtyName,
+  publicView = false,
+  className = "w-full h-[550px] overflow-hidden rounded-xl border border-slate-900 relative shadow-xl"
 }: LeafletMapProps) {
   const [geojsonData, setGeojsonData] = useState<any>(null);
   const geojsonRef = useRef<any>(null);
@@ -191,7 +195,7 @@ export default function LeafletMap({
 
     layer.on({
       click: () => {
-        onSelect(name);
+        onSelect(name, officialName);
       },
       mouseover: (e: any) => {
         const l = e.target;
@@ -221,7 +225,7 @@ export default function LeafletMap({
   const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png';
 
   return (
-    <div className="w-full h-[550px] overflow-hidden rounded-xl border border-slate-900 relative shadow-xl">
+    <div className={className}>
       <MapContainer
         center={[-3.7319, -38.5267]} // Fortaleza center
         zoom={12}
@@ -265,7 +269,7 @@ export default function LeafletMap({
         </div>
         <div className="flex items-center space-x-2.5 border-t border-slate-800/80 pt-1.5 mt-1">
           <span className="w-3.5 h-3.5 bg-slate-900 border-2 border-[#5FC9C8] rounded-md"></span>
-          <span>Selecionado (Editar)</span>
+          <span>{publicView ? 'Bairro Selecionado' : 'Selecionado (Editar)'}</span>
         </div>
       </div>
     </div>
