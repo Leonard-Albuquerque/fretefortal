@@ -531,7 +531,7 @@ export default function PublicLookup({
                         )}
                         {result.notes && (
                           <div className="flex items-start space-x-2">
-                            <Info className="h-3.5 w-3.5 text-[#5FC9C8]/80 flex-shrink-0 mt-0.5" />
+                            <Info className="h-3.5 w-3.5 text-[#5FC9C8]/80 flex-shrink-0" />
                             <p className="text-[11px] text-slate-400 leading-tight">
                               <span className="font-semibold text-slate-300">Obs:</span> {result.notes}
                             </p>
