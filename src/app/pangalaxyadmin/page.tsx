@@ -32,6 +32,7 @@ export default async function PangalaxyAdminPage() {
     avgResponseTimeAggregate,
     cepSearches,
     addressSearches,
+    locationSearches,
     topNeighborhoodsRaw,
     storeShareRaw,
     recentEvents
@@ -56,6 +57,7 @@ export default async function PangalaxyAdminPage() {
     // Search types
     prisma.searchEvent.count({ where: { searchType: 'CEP' } }),
     prisma.searchEvent.count({ where: { searchType: 'ADDRESS' } }),
+    prisma.searchEvent.count({ where: { searchType: 'LOCATION' } }),
     
     // Top 10 Searched Neighborhoods
     prisma.searchEvent.groupBy({
@@ -271,6 +273,19 @@ export default async function PangalaxyAdminPage() {
                   ></div>
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="text-slate-400">Consulta por Localização</span>
+                  <span className="text-white">{locationSearches} ({totalSearches > 0 ? Math.round((locationSearches/totalSearches)*100) : 0}%)</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-900">
+                  <div 
+                    className="h-full bg-gradient-to-r from-violet-600 to-fuchsia-500 rounded-full" 
+                    style={{ width: `${totalSearches > 0 ? (locationSearches/totalSearches)*100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -393,7 +408,9 @@ export default async function PangalaxyAdminPage() {
                         <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold border ${
                           event.searchType === 'CEP' 
                             ? 'bg-[#1E3A5F]/20 text-[#5FC9C8] border-[#1E3A5F]/30' 
-                            : 'bg-[#2F7DBB]/20 text-white border-[#2F7DBB]/30'
+                            : event.searchType === 'ADDRESS'
+                              ? 'bg-[#2F7DBB]/20 text-white border-[#2F7DBB]/30'
+                              : 'bg-violet-950/40 text-violet-400 border-violet-900/40'
                         }`}>
                           {event.searchType}
                         </span>

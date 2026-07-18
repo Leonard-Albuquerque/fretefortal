@@ -40,7 +40,7 @@ async function logSearchEvent({
   responseTimeMs
 }: {
   storeId: string;
-  searchType: 'CEP' | 'ADDRESS';
+  searchType: 'CEP' | 'ADDRESS' | 'LOCATION';
   searchedValue: string;
   searchedNeighborhood: string | null;
   matchedNeighborhoodId: string | null;
@@ -443,5 +443,186 @@ export async function lookupAddress(storeSlug: string, rawAddress: string): Prom
   } catch (error) {
     console.error('Error looking up Address:', error);
     return { success: false, error: 'Ocorreu um erro ao processar sua consulta de endereço.' };
+  }
+}
+
+export async function lookupCoords(storeSlug: string, lat: number, lon: number): Promise<LookupResult> {
+  const startTime = Date.now();
+  
+  // Pre-fetch store to have storeId for logging
+  const store = await prisma.store.findUnique({
+    where: { slug: storeSlug }
+  });
+
+  if (!store) {
+    return { success: false, error: 'Loja não encontrada.' };
+  }
+
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`,
+      {
+        headers: {
+          'User-Agent': 'FreteFortalApp/1.0 (contact: admin@fretefortal.com)'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      const responseTimeMs = Date.now() - startTime;
+      await logSearchEvent({
+        storeId: store.id,
+        searchType: 'LOCATION',
+        searchedValue: `${lat.toFixed(6)}, ${lon.toFixed(6)}`,
+        searchedNeighborhood: null,
+        matchedNeighborhoodId: null,
+        deliveryAvailable: false,
+        deliveryPrice: 0,
+        responseTimeMs
+      });
+      return { success: false, error: 'Erro ao consultar o serviço de localização.' };
+    }
+
+    const data = await response.json();
+    if (!data || !data.address) {
+      const responseTimeMs = Date.now() - startTime;
+      await logSearchEvent({
+        storeId: store.id,
+        searchType: 'LOCATION',
+        searchedValue: `${lat.toFixed(6)}, ${lon.toFixed(6)}`,
+        searchedNeighborhood: null,
+        matchedNeighborhoodId: null,
+        deliveryAvailable: false,
+        deliveryPrice: 0,
+        responseTimeMs
+      });
+      return { success: false, error: 'Localização não identificada.' };
+    }
+
+    const addressDetails = data.address;
+    
+    // Verify it is inside Fortaleza
+    const city = addressDetails.city || addressDetails.town || addressDetails.municipality || '';
+    if (city.toLowerCase() !== 'fortaleza') {
+      const responseTimeMs = Date.now() - startTime;
+      await logSearchEvent({
+        storeId: store.id,
+        searchType: 'LOCATION',
+        searchedValue: `${lat.toFixed(6)}, ${lon.toFixed(6)}`,
+        searchedNeighborhood: 'Fora de Fortaleza',
+        matchedNeighborhoodId: null,
+        deliveryAvailable: false,
+        deliveryPrice: 0,
+        responseTimeMs
+      });
+      return { 
+        success: true, 
+        deliveryEnabled: false, 
+        error: 'Infelizmente entregamos apenas em Fortaleza (CE).' 
+      };
+    }
+
+    // Extract neighborhood (Nominatim suburbs represent bairros)
+    const rawBairro = addressDetails.suburb || addressDetails.neighbourhood || addressDetails.quarter || addressDetails.city_district || '';
+    if (!rawBairro) {
+      return { success: false, error: 'Bairro não identificado na sua localização. Tente pesquisar por CEP.' };
+    }
+
+    const normalizedBairro = normalizeName(rawBairro);
+    
+    // Query base neighborhood details
+    const baseBairro = await prisma.baseNeighborhood.findUnique({
+      where: { name: normalizedBairro }
+    });
+
+    // Extract street name
+    const street = addressDetails.road || '';
+
+    if (!baseBairro) {
+      const responseTimeMs = Date.now() - startTime;
+      await logSearchEvent({
+        storeId: store.id,
+        searchType: 'LOCATION',
+        searchedValue: `${lat.toFixed(6)}, ${lon.toFixed(6)}`,
+        searchedNeighborhood: rawBairro,
+        matchedNeighborhoodId: null,
+        deliveryAvailable: false,
+        deliveryPrice: 0,
+        responseTimeMs
+      });
+      return {
+        success: true,
+        bairro: rawBairro,
+        street,
+        deliveryEnabled: false,
+        storeAddress: store.address,
+        storeWhatsapp: store.whatsapp,
+        pickupEnabled: store.pickupEnabled,
+      };
+    }
+
+    // Query neighborhood rates
+    const neighborhood = await prisma.neighborhood.findUnique({
+      where: {
+        storeId_baseNeighborhoodId: {
+          storeId: store.id,
+          baseNeighborhoodId: baseBairro.id
+        }
+      }
+    });
+
+    const responseTimeMs = Date.now() - startTime;
+
+    if (!neighborhood) {
+      await logSearchEvent({
+        storeId: store.id,
+        searchType: 'LOCATION',
+        searchedValue: `${lat.toFixed(6)}, ${lon.toFixed(6)}`,
+        searchedNeighborhood: baseBairro.officialName,
+        matchedNeighborhoodId: baseBairro.id,
+        deliveryAvailable: false,
+        deliveryPrice: 0,
+        responseTimeMs
+      });
+      return {
+        success: true,
+        bairro: baseBairro.officialName,
+        street,
+        deliveryEnabled: false,
+        storeAddress: store.address,
+        storeWhatsapp: store.whatsapp,
+        pickupEnabled: store.pickupEnabled,
+      };
+    }
+
+    await logSearchEvent({
+      storeId: store.id,
+      searchType: 'LOCATION',
+      searchedValue: `${lat.toFixed(6)}, ${lon.toFixed(6)}`,
+      searchedNeighborhood: baseBairro.officialName,
+      matchedNeighborhoodId: baseBairro.id,
+      deliveryAvailable: neighborhood.deliveryEnabled,
+      deliveryPrice: Number(neighborhood.fee),
+      responseTimeMs
+    });
+
+    return {
+      success: true,
+      bairro: baseBairro.officialName,
+      street,
+      deliveryEnabled: neighborhood.deliveryEnabled,
+      fee: Number(neighborhood.fee),
+      deliveryTime: neighborhood.deliveryTime || '24h',
+      minimumOrder: neighborhood.minimumOrder ? Number(neighborhood.minimumOrder) : null,
+      freeDeliveryThreshold: neighborhood.freeDeliveryThreshold ? Number(neighborhood.freeDeliveryThreshold) : null,
+      notes: neighborhood.notes,
+      storeAddress: store.address,
+      storeWhatsapp: store.whatsapp,
+      pickupEnabled: store.pickupEnabled,
+    };
+
+  } catch (error) {
+    console.error('Error looking up Coordinates:', error);
+    return { success: false, error: 'Ocorreu um erro ao processar sua consulta de localização.' };
   }
 }

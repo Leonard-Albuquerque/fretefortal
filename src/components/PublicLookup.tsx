@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { lookupCep, lookupAddress } from '@/app/actions';
-import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2 } from 'lucide-react';
+import { lookupCep, lookupAddress, lookupCoords } from '@/app/actions';
+import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2, Locate } from 'lucide-react';
 
 interface PublicLookupProps {
   storeSlug: string;
@@ -24,8 +24,11 @@ export default function PublicLookup({
   const [mode, setMode] = useState<'cep' | 'address'>('cep');
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
+  const [geolocating, setGeolocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
+
+  const isPending = loading || geolocating;
 
   const handleLookup = async (overrideValue?: string) => {
     const valueToQuery = overrideValue || inputValue;
@@ -96,6 +99,72 @@ export default function PublicLookup({
     setResult(null);
   };
 
+  const handleGeolocation = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocalização não é suportada por este navegador.');
+      return;
+    }
+
+    setGeolocating(true);
+    setError(null);
+    setResult(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const res = await lookupCoords(storeSlug, latitude, longitude);
+          if (res.success) {
+            setResult(res);
+            let displayAddress = '';
+            if (res.street) {
+              displayAddress += res.street;
+            }
+            if (res.bairro) {
+              displayAddress += (displayAddress ? ', ' : '') + res.bairro;
+            }
+            if (displayAddress) {
+              setInputValue(displayAddress);
+              setMode('address');
+            }
+            if (res.error) {
+              setError(res.error);
+            }
+          } else {
+            setError(res.error || 'Ocorreu um erro na consulta de localização.');
+          }
+        } catch (err) {
+          console.error(err);
+          setError('Falha de conexão com o servidor. Tente novamente.');
+        } finally {
+          setGeolocating(false);
+        }
+      },
+      (err) => {
+        console.error('Geolocation error:', err);
+        setGeolocating(false);
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            setError('Permissão de localização negada pelo usuário.');
+            break;
+          case err.POSITION_UNAVAILABLE:
+            setError('Informações de localização indisponíveis.');
+            break;
+          case err.TIMEOUT:
+            setError('Tempo limite esgotado ao tentar obter localização.');
+            break;
+          default:
+            setError('Não foi possível obter a sua localização atual.');
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  };
+
   // Generate the WhatsApp Link
   const getWhatsAppLink = () => {
     if (!result) return '';
@@ -122,8 +191,9 @@ export default function PublicLookup({
       <div className="bg-slate-900/50 p-1 rounded-2xl flex items-center space-x-1 border border-slate-900">
         <button
           type="button"
+          disabled={isPending}
           onClick={() => switchMode('cep')}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
             mode === 'cep'
               ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
@@ -133,8 +203,9 @@ export default function PublicLookup({
         </button>
         <button
           type="button"
+          disabled={isPending}
           onClick={() => switchMode('address')}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
             mode === 'address'
               ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
@@ -160,18 +231,38 @@ export default function PublicLookup({
               <input
                 type="text"
                 required
+                disabled={isPending}
                 value={inputValue}
                 onChange={handleInputChange}
                 maxLength={mode === 'cep' ? 9 : 100}
                 placeholder={mode === 'cep' ? 'Ex: 60150-160' : 'Rua, Avenida, Número, etc.'}
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-900 bg-slate-955 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-900 bg-slate-955 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
           </div>
 
           <button
+            type="button"
+            onClick={handleGeolocation}
+            disabled={isPending}
+            className="w-full py-2.5 rounded-xl border border-slate-800 bg-slate-950/40 text-slate-350 hover:text-white hover:bg-slate-900/60 transition-all font-semibold text-xs flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+          >
+            {geolocating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin text-[#5FC9C8]" />
+                <span>Obtendo localização...</span>
+              </>
+            ) : (
+              <>
+                <Locate className="h-4 w-4 text-[#5FC9C8]" />
+                <span>Usar minha localização atual</span>
+              </>
+            )}
+          </button>
+
+          <button
             type="submit"
-            disabled={loading}
+            disabled={isPending}
             className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg shadow-[#1E3A5F]/15 active:scale-98 text-sm"
           >
             {loading ? (
