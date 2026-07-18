@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { lookupCep, lookupAddress, lookupCoords } from '@/app/actions';
-import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2, Locate, Clock, Truck, Timer, ShoppingBag, Gift } from 'lucide-react';
+import { Search, MapPin, Map, MessageSquare, Building, AlertTriangle, ArrowRight, Loader2, Locate, Clock, Truck, Timer, ShoppingBag, Gift, Info } from 'lucide-react';
 
 const LeafletMap = dynamic(() => import('./LeafletMap'), {
   ssr: false,
@@ -432,7 +432,7 @@ export default function PublicLookup({
 
           {/* Results Overlay Card */}
           {result && (
-            <div className="animate-fadeIn pointer-events-auto  md:p-0 fixed md:relative bottom-4 md:bottom-auto left-4 md:left-auto right-4 md:right-auto z-[400] md:z-auto max-h-[75dvh] md:max-h-none overflow-y-auto bg-slate-900 border border-slate-800 rounded-2xl md:border-0 md:bg-transparent md:rounded-none md:shadow-none md:p-0">
+            <div className="animate-fadeIn pointer-events-auto  md:p-0 fixed md:relative bottom-4 md:bottom-auto left-4 md:left-auto right-4 md:right-auto z-[400] md:z-auto max-h-[75vh] md:max-h-none overflow-y-auto bg-slate-900 border border-slate-800 rounded-2xl md:border-0 md:bg-transparent md:rounded-none md:shadow-none md:p-0">
               {result.deliveryEnabled ? (
                 /* DELIVERABLE */
                 <div className="bg-slate-900/30 border-2 border-[#2F7DBB]/85 rounded-2xl overflow-hidden shadow-2xl shadow-[#2F7DBB]/10">
@@ -460,7 +460,7 @@ export default function PublicLookup({
                       </div>
                     </div>
 
-                    {/* Logistical Grid Dashboard */}
+                    {/* Logistical Details - Level 1 (Always Grid 2 cols) */}
                     <div className="grid grid-cols-2 gap-3">
                       {/* Delivery Fee */}
                       <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
@@ -468,8 +468,8 @@ export default function PublicLookup({
                           <Truck className="h-4 w-4" />
                         </div>
                         <div>
-                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Frete</span>
-                          <span className="text-sm font-black text-[#5FC9C8] mt-0.5 block">
+                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FRETE</span>
+                          <span className="text-[15px] font-black text-[#5FC9C8] mt-0.5 block leading-tight">
                             {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
                           </span>
                         </div>
@@ -481,21 +481,24 @@ export default function PublicLookup({
                           <Timer className="h-4 w-4" />
                         </div>
                         <div>
-                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Prazo</span>
-                          <span className="text-sm font-bold text-white mt-0.5 block truncate max-w-[100px]" title={result.deliveryTime}>
+                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PRAZO</span>
+                          <span className="text-[15px] font-black text-white mt-0.5 block leading-tight">
                             {result.deliveryTime}
                           </span>
                         </div>
                       </div>
+                    </div>
 
+                    {/* Logistical Details - Level 2 (Stacked column on mobile, Grid on desktop) */}
+                    <div className="space-y-2.5 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
                       {/* Operating Hours */}
                       <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
                         <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
                           <Clock className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Funcionamento</span>
-                          <span className="text-xs font-semibold text-white mt-0.5 block truncate" title={operatingHours}>
+                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FUNCIONAMENTO</span>
+                          <span className="text-[11px] md:text-xs font-semibold text-slate-200 mt-0.5 block whitespace-normal break-words leading-tight">
                             {operatingHours}
                           </span>
                         </div>
@@ -507,8 +510,8 @@ export default function PublicLookup({
                           <ShoppingBag className="h-4 w-4" />
                         </div>
                         <div>
-                          <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wide">Pedido Mínimo</span>
-                          <span className="text-xs font-bold text-white mt-0.5 block">
+                          <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PEDIDO MÍNIMO</span>
+                          <span className="text-xs font-bold text-slate-200 mt-0.5 block leading-tight">
                             {result.minimumOrder ? `R$ ${result.minimumOrder.toFixed(2)}` : 'Sem mínimo'}
                           </span>
                         </div>
@@ -517,20 +520,20 @@ export default function PublicLookup({
 
                     {/* Highlight alerts/rules (Free delivery threshold, special notes) */}
                     {(result.freeDeliveryThreshold || result.notes) && (
-                      <div className="bg-[#2F7DBB]/5 border border-[#2F7DBB]/15 p-3 rounded-xl text-xs space-y-1.5 text-slate-300">
+                      <div className="bg-[#2F7DBB]/5 border border-[#2F7DBB]/15 p-3 rounded-xl text-xs space-y-2 text-slate-300">
                         {result.freeDeliveryThreshold && (
                           <div className="flex items-center space-x-2">
                             <Gift className="h-3.5 w-3.5 text-[#5FC9C8] flex-shrink-0" />
-                            <p>
+                            <p className="text-[11px] leading-tight">
                               Frete grátis a partir de <strong className="text-white">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong> em compras!
                             </p>
                           </div>
                         )}
                         {result.notes && (
                           <div className="flex items-start space-x-2">
-                            <span className="text-[#5FC9C8] font-bold block mt-0.5">•</span>
+                            <Info className="h-3.5 w-3.5 text-[#5FC9C8]/80 flex-shrink-0 mt-0.5" />
                             <p className="text-[11px] text-slate-400 leading-tight">
-                              <span className="font-semibold text-slate-350">Obs:</span> {result.notes}
+                              <span className="font-semibold text-slate-300">Obs:</span> {result.notes}
                             </p>
                           </div>
                         )}
