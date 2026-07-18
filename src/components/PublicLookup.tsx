@@ -267,11 +267,11 @@ export default function PublicLookup({
 
   return (
     <div className="relative w-full h-full min-h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden">
-      {/* Left Sidebar Control Panel */}
-      <div className="w-full md:w-[420px] lg:w-[450px] flex-shrink-0 md:h-full overflow-y-auto bg-slate-955/85 backdrop-blur-md border-r border-slate-900/60 z-10 p-6 flex flex-col justify-between">
+      {/* Left Sidebar Control Panel - Positioned absolute at the top on mobile, relative sidebar on desktop */}
+      <div className="w-auto md:w-[420px] lg:w-[450px] flex-shrink-0 z-10 transition-all duration-300 absolute md:relative top-4 md:top-auto left-4 md:left-auto right-4 md:right-auto md:h-full md:max-h-none h-auto max-h-[85vh] overflow-y-auto bg-transparent md:bg-slate-950/85 md:backdrop-blur-md md:border-r border-slate-900/60 shadow-none md:shadow-none p-0 md:p-6 flex flex-col justify-between pointer-events-none md:pointer-events-auto">
         <div className="space-y-6">
-          {/* Header title inside sidebar */}
-          <div className="space-y-2">
+          {/* Header title inside sidebar (Desktop only) */}
+          <div className="hidden md:block space-y-2">
             <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
               Consulte seu Frete
             </h1>
@@ -280,8 +280,8 @@ export default function PublicLookup({
             </p>
           </div>
 
-          {/* Quick stats/Hours inside sidebar */}
-          <div className="flex flex-wrap gap-2 text-[10px] font-semibold text-slate-400">
+          {/* Quick stats/Hours inside sidebar (Desktop only) */}
+          <div className="hidden md:flex flex-wrap gap-2 text-[10px] font-semibold text-slate-400">
             <div className="flex items-center space-x-1.5 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-900 shadow-sm">
               <Clock className="h-3 w-3 text-[#5FC9C8]" />
               <span>{operatingHours}</span>
@@ -294,15 +294,44 @@ export default function PublicLookup({
             )}
           </div>
 
-          {/* Search elements and Tabs inside sidebar */}
-          <div className="space-y-6">
+          {/* Mobile Search Summary Card - Visible only on mobile when result is active */}
+          {result && (
+            <div className="md:hidden w-full pointer-events-auto bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="bg-[#5FC9C8]/10 p-2 rounded-xl text-[#5FC9C8] border border-[#5FC9C8]/10">
+                  <MapPin className="h-4 w-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Consultando bairro</span>
+                  <span className="text-sm font-bold text-white block truncate max-w-[150px] sm:max-w-[200px]">
+                    {result.bairro}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setResult(null);
+                  setError(null);
+                  setInputValue('');
+                  setSelectedMapBairroName(null);
+                }}
+                className="bg-slate-800 hover:bg-slate-700 text-[#5FC9C8] hover:text-white font-bold text-xs px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center space-x-1"
+              >
+                <span>Alterar</span>
+              </button>
+            </div>
+          )}
+
+          {/* Search elements and Tabs inside sidebar - Styled as a floating unified card on mobile (hidden on mobile if result exists) */}
+          <div className={`${result ? 'hidden md:block' : 'block'} space-y-3 pointer-events-auto bg-slate-905 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-slate-900/60 md:border-0 rounded-2xl md:rounded-none p-3.5 md:p-0 shadow-2xl md:shadow-none`}>
             {/* Search Selection Tabs */}
             <div className="bg-slate-900/50 p-1 rounded-2xl flex items-center space-x-1 border border-slate-900">
               <button
                 type="button"
                 disabled={isPending}
                 onClick={() => switchMode('cep')}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                   mode === 'cep'
                     ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
                     : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
@@ -314,7 +343,7 @@ export default function PublicLookup({
                 type="button"
                 disabled={isPending}
                 onClick={() => switchMode('address')}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                   mode === 'address'
                     ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
                     : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
@@ -324,8 +353,8 @@ export default function PublicLookup({
               </button>
             </div>
 
-            {/* Main Search Card */}
-            <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            {/* Main Search Card - Compact padding on mobile */}
+            <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-3 md:p-6 shadow-xl relative overflow-hidden">
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
@@ -345,7 +374,7 @@ export default function PublicLookup({
                       onChange={handleInputChange}
                       maxLength={mode === 'cep' ? 9 : 100}
                       placeholder={mode === 'cep' ? 'Ex: 60150-160' : 'Rua, Avenida, Número, etc.'}
-                      className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-900 bg-slate-955 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full pl-11 pr-4 py-2.5 md:py-3 rounded-xl border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -354,7 +383,7 @@ export default function PublicLookup({
                   type="button"
                   onClick={handleGeolocation}
                   disabled={isPending}
-                  className="w-full py-2.5 rounded-xl border border-slate-800 bg-slate-950/40 text-slate-350 hover:text-white hover:bg-slate-900/60 transition-all font-semibold text-xs flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+                  className="w-full py-2 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-350 hover:text-white hover:bg-slate-900/60 transition-all font-semibold text-xs flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
                 >
                   {geolocating ? (
                     <>
@@ -372,7 +401,7 @@ export default function PublicLookup({
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg shadow-[#1E3A5F]/15 active:scale-98 text-sm"
+                  className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-2.5 md:py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg shadow-[#1E3A5F]/15 active:scale-98 text-sm"
                 >
                   {loading ? (
                     <>
@@ -388,21 +417,22 @@ export default function PublicLookup({
                 </button>
               </form>
             </div>
+          </div>
 
-            {/* Error Alert */}
-            {error && !result && (
-              <div className="bg-rose-955 text-rose-450 border border-rose-900/30 p-4 rounded-xl flex items-start space-x-3 text-sm animate-fadeIn">
-                <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5 text-rose-500" />
-                <div>
-                  <span className="font-semibold block">Erro na consulta</span>
-                  <span className="text-xs text-rose-400 mt-0.5 block">{error}</span>
-                </div>
+          {/* Error Alert */}
+          {error && !result && (
+            <div className="bg-rose-955 text-rose-450 border border-rose-900/30 p-4 rounded-xl flex items-start space-x-3 text-sm animate-fadeIn pointer-events-auto">
+              <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5 text-rose-500" />
+              <div>
+                <span className="font-semibold block">Erro na consulta</span>
+                <span className="text-xs text-rose-400 mt-0.5 block">{error}</span>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Results Overlay Card */}
-            {result && (
-              <div className="animate-fadeIn">
+          {/* Results Overlay Card */}
+          {result && (
+            <div className="animate-fadeIn pointer-events-auto p-4 md:p-0 fixed md:relative bottom-4 md:bottom-auto left-4 md:left-auto right-4 md:right-auto z-[400] md:z-auto max-h-[45vh] md:max-h-none overflow-y-auto bg-slate-900 border border-slate-800 rounded-2xl md:border-0 md:bg-transparent md:rounded-none md:shadow-none md:p-0">
                 {result.deliveryEnabled ? (
                   /* DELIVERABLE */
                   <div className="bg-slate-900/30 border-2 border-[#2F7DBB]/85 rounded-2xl overflow-hidden shadow-2xl shadow-[#2F7DBB]/10">
@@ -418,7 +448,7 @@ export default function PublicLookup({
                           <Map className="h-6 w-6" />
                         </div>
                         <div>
-                          <span className="text-xs text-slate-550 font-semibold block uppercase">Localização Identificada</span>
+                          <span className="text-xs text-slate-500 font-semibold block uppercase">Localização Identificada</span>
                           <span className="text-lg font-bold text-white mt-0.5 block">
                             {result.bairro}
                           </span>
@@ -431,13 +461,13 @@ export default function PublicLookup({
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-slate-955 border border-slate-900 p-4 rounded-xl">
+                        <div className="bg-slate-950 border border-slate-900 p-4 rounded-xl">
                           <span className="text-xs text-slate-500 font-semibold block">Taxa de Frete</span>
                           <span className="text-xl font-bold text-[#5FC9C8] mt-1 block">
                             {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
                           </span>
                         </div>
-                        <div className="bg-slate-955 border border-slate-900 p-4 rounded-xl">
+                        <div className="bg-slate-950 border border-slate-900 p-4 rounded-xl">
                           <span className="text-xs text-slate-500 font-semibold block">Prazo de Entrega</span>
                           <span className="text-xl font-bold text-white mt-1 block">
                             {result.deliveryTime}
@@ -447,7 +477,7 @@ export default function PublicLookup({
 
                       {/* Additional criteria */}
                       {(result.minimumOrder || result.freeDeliveryThreshold || result.notes) && (
-                        <div className="bg-slate-955 border border-slate-900 p-4 rounded-xl text-xs space-y-1.5 text-slate-400">
+                        <div className="bg-slate-950 border border-slate-900 p-4 rounded-xl text-xs space-y-1.5 text-slate-400">
                           {result.minimumOrder && (
                             <p>• Pedido mínimo para entrega: <strong className="text-white">R$ {result.minimumOrder.toFixed(2)}</strong></p>
                           )}
@@ -486,11 +516,11 @@ export default function PublicLookup({
                     {result.pickupEnabled ? (
                       <div className="border-t border-slate-900 pt-5 space-y-4">
                         <div className="flex items-start space-x-4">
-                          <div className="bg-slate-955 p-3 rounded-xl text-slate-400 border border-slate-905">
+                          <div className="bg-slate-950 p-3 rounded-xl text-slate-400 border border-slate-905">
                             <Building className="h-6 w-6" />
                           </div>
                           <div>
-                            <span className="text-xs text-slate-550 font-semibold block uppercase">Opção: Retirada no Local</span>
+                            <span className="text-xs text-slate-500 font-semibold block uppercase">Opção: Retirada no Local</span>
                             <p className="text-xs text-slate-400 mt-1">
                               Você pode retirar seu pedido diretamente em nossa loja física sem custo de entrega:
                             </p>
@@ -512,7 +542,7 @@ export default function PublicLookup({
                         </a>
                       </div>
                     ) : (
-                      <div className="p-4 rounded-xl bg-slate-955 text-center text-xs text-slate-500 border border-slate-900">
+                      <div className="p-4 rounded-xl bg-slate-950 text-center text-xs text-slate-500 border border-slate-900">
                         Caso queira falar com um atendente, entre em contato pelo WhatsApp.
                       </div>
                     )}
@@ -520,11 +550,10 @@ export default function PublicLookup({
                 )}
               </div>
             )}
-          </div>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="pt-6 border-t border-slate-900/60 mt-8 text-center text-[10px] text-slate-500 flex-shrink-0">
+        {/* Sidebar Footer (Desktop only) */}
+        <div className="hidden md:block pt-6 border-t border-slate-900/60 mt-8 text-center text-[10px] text-slate-500 flex-shrink-0">
           <p>&copy; {new Date().getFullYear()} {storeName}. Todos os direitos reservados.</p>
           <p className="mt-0.5 text-[9px] text-slate-600">
             Entregas realizadas exclusivamente na cidade de Fortaleza (CE).
@@ -532,8 +561,8 @@ export default function PublicLookup({
         </div>
       </div>
 
-      {/* Right side: Map container (covers screen on desktop, shown below on mobile) */}
-      <div className="flex-1 w-full h-[350px] md:h-full relative z-0">
+      {/* Right side: Map container (covers screen on desktop, full background on mobile) */}
+      <div className="absolute md:relative inset-0 md:inset-auto w-full h-full md:flex-1 z-0">
         <LeafletMap
           neighborhoods={initialNeighborhoods}
           selectedName={selectedMapBairroName}

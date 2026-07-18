@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { Info } from 'lucide-react';
 
 interface NeighborhoodData {
   id: string;
@@ -84,6 +85,7 @@ export default function LeafletMap({
   className = "w-full h-[550px] overflow-hidden rounded-xl border border-slate-900 relative shadow-xl"
 }: LeafletMapProps) {
   const [geojsonData, setGeojsonData] = useState<any>(null);
+  const [legendOpen, setLegendOpen] = useState(false);
   const geojsonRef = useRef<any>(null);
 
   // Sync Leaflet default icon paths (required inside Next.js)
@@ -243,13 +245,19 @@ export default function LeafletMap({
           ref={geojsonRef}
           data={geojsonData}
           onEachFeature={onEachFeature}
+          filter={(feature) => feature.geometry?.type !== 'Point'}
+          style={(feature) => {
+            if (!feature) return {};
+            const name = feature.properties.name;
+            return getStyleForLayer(name, selectedName === name, dirtyName === name);
+          }}
         />
         <MapController selectedName={selectedName} geojsonData={geojsonData} />
         <CustomZoomControls />
       </MapContainer>
 
-      {/* Modern Minimal Map Legend (Theme Accents Refactored) */}
-      <div className="absolute top-4 left-4 bg-slate-900/95 backdrop-blur border border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-semibold transition-all text-slate-300">
+      {/* Modern Minimal Map Legend - Desktop: always visible, Mobile: hidden */}
+      <div className="hidden md:block absolute top-4 left-4 bg-slate-900/95 backdrop-blur border border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-semibold transition-all text-slate-300">
         <span className="text-slate-500 block text-[9px] uppercase tracking-wider font-bold">Legenda de Frete</span>
         <div className="flex items-center space-x-2.5">
           <span className="w-3.5 h-3.5 bg-[#DCC8A5]/45 border border-[#DCC8A5] rounded-md"></span>
@@ -272,6 +280,58 @@ export default function LeafletMap({
           <span>{publicView ? 'Bairro Selecionado' : 'Selecionado (Editar)'}</span>
         </div>
       </div>
+
+      {/* Mobile Legend Trigger Button */}
+      {publicView && (
+        <button
+          type="button"
+          onClick={() => setLegendOpen(true)}
+          className="md:hidden absolute bottom-4 left-4 w-10 h-10 rounded-full bg-slate-900 border border-slate-800 text-[#5FC9C8] flex items-center justify-center shadow-lg active:scale-95 transition-all z-[500] cursor-pointer"
+          title="Ver legenda de frete"
+        >
+          <Info className="h-5 w-5" />
+        </button>
+      )}
+
+      {/* Mobile Legend Modal Overlay */}
+      {legendOpen && (
+        <div className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl w-full max-w-xs space-y-4 animate-fadeIn relative">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Legenda de Frete</span>
+              <button
+                type="button"
+                onClick={() => setLegendOpen(false)}
+                className="text-slate-400 hover:text-white font-bold text-xs bg-slate-800 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+            <div className="space-y-3 text-xs font-semibold text-slate-300">
+              <div className="flex items-center space-x-2.5">
+                <span className="w-3.5 h-3.5 bg-[#DCC8A5]/45 border border-[#DCC8A5] rounded-md"></span>
+                <span>Econômico (≤ R$ 5,00)</span>
+              </div>
+              <div className="flex items-center space-x-2.5">
+                <span className="w-3.5 h-3.5 bg-[#5FC9C8]/45 border border-[#5FC9C8] rounded-md"></span>
+                <span>Intermediário (R$ 6 - R$ 12)</span>
+              </div>
+              <div className="flex items-center space-x-2.5">
+                <span className="w-3.5 h-3.5 bg-[#2F7DBB]/45 border border-[#2F7DBB] rounded-md"></span>
+                <span>Distante (&gt; R$ 12,00)</span>
+              </div>
+              <div className="flex items-center space-x-2.5">
+                <span className="w-3.5 h-3.5 bg-[#1E3A5F]/15 border border-[#1E3A5F] rounded-md"></span>
+                <span>Sem entrega / Inativo</span>
+              </div>
+              <div className="flex items-center space-x-2.5 border-t border-slate-800/80 pt-2">
+                <span className="w-3.5 h-3.5 bg-slate-900 border-2 border-[#5FC9C8] rounded-md"></span>
+                <span>Bairro Selecionado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

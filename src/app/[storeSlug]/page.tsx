@@ -55,7 +55,7 @@ export default async function StoreHome({ params }: PageProps) {
   }));
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-955 text-slate-100 transition-colors">
+    <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100 transition-colors">
       {/* Top Navbar */}
       <header className="bg-slate-950/80 backdrop-blur border-b border-slate-900 sticky top-0 z-50 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -69,7 +69,7 @@ export default async function StoreHome({ params }: PageProps) {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 relative w-full h-[calc(100vh-4rem)] overflow-hidden bg-slate-955 flex flex-col">
+      <main className="flex-1 relative w-full h-[calc(100vh-4rem)] overflow-hidden bg-slate-950 flex flex-col">
         <PublicLookup
           storeSlug={storeSlug}
           storeName={store.name}
