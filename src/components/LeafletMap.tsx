@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Info } from 'lucide-react';
@@ -86,7 +87,12 @@ export default function LeafletMap({
 }: LeafletMapProps) {
   const [geojsonData, setGeojsonData] = useState<any>(null);
   const [legendOpen, setLegendOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const geojsonRef = useRef<any>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sync Leaflet default icon paths (required inside Next.js)
   useEffect(() => {
@@ -294,7 +300,7 @@ export default function LeafletMap({
       )}
 
       {/* Mobile Legend Modal Overlay */}
-      {legendOpen && (
+      {legendOpen && mounted && createPortal(
         <div className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl w-full max-w-xs space-y-4 animate-fadeIn relative">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -330,7 +336,8 @@ export default function LeafletMap({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
