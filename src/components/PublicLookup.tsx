@@ -733,7 +733,7 @@ export default function PublicLookup({
                   </div>
 
                   {/* Highlight alerts/rules */}
-                  {(result.freeDeliveryThreshold || result.notes) && (
+                  {(result.freeDeliveryThreshold && result.notes?.length > 3) && (
                     <div className="bg-[#2F7DBB]/5 border border-[#2F7DBB]/15 p-3 rounded-xl text-xs space-y-2 text-slate-300">
                       {result.freeDeliveryThreshold && (
                         <div className="flex items-center space-x-2">
