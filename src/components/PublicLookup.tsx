@@ -185,10 +185,10 @@ export default function PublicLookup({
 
   const open99Pop = (lat: number, lon: number, name: string) => {
     const deepLink = `didi-passenger://didi-passenger/call_a_car?dropoff_lat=${lat}&dropoff_lng=${lon}&dropoff_name=${encodeURIComponent(name)}`;
-    
+
     // Try to open the deep link
     window.location.href = deepLink;
-    
+
     // Fallback to 99app.com website after a delay if the deep link doesn't trigger
     setTimeout(() => {
       if (document.hasFocus()) {
@@ -196,6 +196,31 @@ export default function PublicLookup({
       }
     }, 1500);
   };
+
+  // Lock body scroll on mobile when search result is active to prevent scroll conflict
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkAndLockScroll = () => {
+      const isMobile = window.innerWidth < 768; // md breakpoint is 768px
+      if (isMobile && result) {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
+    };
+
+    checkAndLockScroll();
+
+    window.addEventListener('resize', checkAndLockScroll);
+    return () => {
+      window.removeEventListener('resize', checkAndLockScroll);
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [result]);
 
   // Auto-submit when CEP reaches 8 digits
   useEffect(() => {
@@ -404,7 +429,7 @@ export default function PublicLookup({
 
   const renderPickupPointsSection = () => {
     if (!pickupEnabled) return null;
-    
+
     return (
       <div className="space-y-4">
         {pickupPoints.length > 0 ? (
@@ -480,14 +505,14 @@ export default function PublicLookup({
                   {/* Combine via WhatsApp */}
                   <a
                     href={`https://wa.me/${result?.storeWhatsapp || storeWhatsapp}?text=${encodeURIComponent(
-                      `Olá! Gostaria de fazer um pedido para retirada no ponto: ${p.name || `Ponto ${idx + 1}`} (${p.address})`
+                      `Olá! Gostaria de fazer um pedido para retirada no ponto: ${p.name || `Ponto ${idx + 1}`} (${p.address}) , mas tenho algumas dúvidas.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center space-x-1.5 bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-3.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer ml-auto"
                   >
-                    <MessageSquare className="h-3 w-3" />
-                    <span>Retirar Aqui</span>
+                    <img src="/whatsapp.svg" alt="WhatsApp" className="h-3 w-3" />
+                    <span>Tenho dúvidas</span>
                   </a>
                 </div>
               </div>
@@ -509,7 +534,7 @@ export default function PublicLookup({
               rel="noopener noreferrer"
               className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-xs cursor-pointer active:scale-98 mt-3"
             >
-              <MessageSquare className="h-4 w-4" />
+              <img src="/whatsapp.svg" alt="WhatsApp" className="h-4 w-4" />
               <span>Combinar Retirada via WhatsApp</span>
             </a>
           </div>
@@ -521,7 +546,7 @@ export default function PublicLookup({
   return (
     <div className="relative w-full h-full min-h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden">
       {/* Left Sidebar Control Panel */}
-      <div className="w-auto md:w-[420px] lg:w-[450px] flex-shrink-0 z-10 transition-all duration-300 absolute md:relative top-4 md:top-auto left-4 md:left-auto right-4 md:right-auto md:h-full md:max-h-none h-auto max-h-[85vh] overflow-y-auto bg-transparent md:bg-slate-950/85 md:backdrop-blur-md md:border-r border-slate-900/60 shadow-none md:shadow-none p-0 md:p-6 flex flex-col justify-between pointer-events-none md:pointer-events-auto">
+      <div className={`w-auto md:w-[420px] lg:w-[450px] flex-shrink-0 z-10 transition-all duration-300 absolute md:relative top-4 md:top-auto left-4 md:left-auto right-4 md:right-auto md:h-full md:max-h-none h-auto max-h-[85vh] overflow-y-auto bg-transparent md:bg-slate-950/85 md:backdrop-blur-md md:border-r border-slate-900/60 shadow-none md:shadow-none p-0 md:p-6 flex flex-col justify-between ${result ? 'pointer-events-auto' : 'pointer-events-none'} md:pointer-events-auto`}>
         <div className="space-y-5">
 
           {/* Cover card: Logo + Banner + Description */}
@@ -899,10 +924,10 @@ export default function PublicLookup({
                   {pickupEnabled && (
                     <div className="border-t border-slate-900/60 pt-5 space-y-4">
                       <div>
-                        <span className="text-xs text-[#5FC9C8] font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
-                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-semibold">
+                        <span className="text-xs text-white font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
+                        {/* <p className="text-[10px] text-slate-500 mt-1 leading-normal font-semibold">
                           Se preferir, economize no frete retirando em um de nossos pontos de retirada:
-                        </p>
+                        </p> */}
                       </div>
                       {renderPickupPointsSection()}
                     </div>
@@ -940,6 +965,8 @@ export default function PublicLookup({
               )}
             </div>
           )}
+          {/* Mobile Spacer to prevent overlap of Chrome mobile bottom controls */}
+          <div className="h-32 w-full block md:hidden" />
         </div>
 
         {/* Sidebar Footer */}
