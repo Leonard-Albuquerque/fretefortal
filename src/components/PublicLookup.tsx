@@ -432,22 +432,22 @@ export default function PublicLookup({
         {pickupPoints.length > 0 ? (
           <div className="space-y-3">
             {pickupPoints.map((p, idx) => (
-              <div key={idx} className="bg-slate-950/60 border border-slate-900/60 rounded-xl p-3.5 space-y-3">
+              <div key={idx} className="bg-[#FFFDFB] border border-[#F1ECE6] rounded-xl p-3.5 space-y-3 shadow-xs">
                 <div>
-                  <span className="text-xs font-black text-white block">
+                  <span className="text-xs font-bold text-slate-900 block">
                     {p.name || `Ponto ${idx + 1}`}
                   </span>
-                  <span className="text-[10px] text-slate-400 mt-0.5 block leading-normal font-medium">
+                  <span className="text-[10px] text-slate-500 mt-0.5 block leading-normal font-medium">
                     {p.address}
                   </span>
                   {p.instructions && (
-                    <span className="text-[9px] text-[#5FC9C8] font-bold mt-1.5 block uppercase tracking-wider bg-[#5FC9C8]/5 px-2 py-1 rounded border border-[#5FC9C8]/10 w-max leading-none">
+                    <span className="text-[9px] text-[#0D9488] font-bold mt-1.5 block uppercase tracking-wider bg-[#F0FDFA] px-2 py-1 rounded border border-[#CCFBF1] w-max leading-none">
                       Obs: {p.instructions}
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-900/80">
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-[#F1ECE6]">
                   {/* Google Maps link */}
                   <a
                     href={
@@ -457,9 +457,9 @@ export default function PublicLookup({
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                    className="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
                   >
-                    <Navigation className="h-3 w-3 text-[#5FC9C8]" />
+                    <Navigation className="h-3 w-3 text-[#0D9488]" />
                     <span>Google Maps</span>
                   </a>
 
@@ -469,9 +469,9 @@ export default function PublicLookup({
                       href={`https://waze.com/ul?ll=${p.latitude},${p.longitude}&navigate=yes`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                      className="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
                     >
-                      <Navigation className="h-3 w-3 text-[#2F7DBB]" />
+                      <Navigation className="h-3 w-3 text-[#FF8A65]" />
                       <span>Waze</span>
                     </a>
                   )}
@@ -482,9 +482,9 @@ export default function PublicLookup({
                       href={`https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${p.latitude}&dropoff[longitude]=${p.longitude}&dropoff[formatted_address]=${encodeURIComponent(p.name || p.address)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center space-x-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+                      className="flex items-center space-x-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
                     >
-                      <span className="text-[#5FC9C8] font-bold text-[9px]">Uber</span>
+                      <span className="text-[#0D9488] font-bold text-[9px]">Uber</span>
                     </a>
                   )}
 
@@ -492,16 +492,16 @@ export default function PublicLookup({
                   <button
                     type="button"
                     onClick={() => handleCopyAddress(p.address, idx)}
-                    className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer"
+                    className="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer"
                   >
                     {copiedIndex === idx ? (
                       <>
-                        <Check className="h-3.5 w-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">Copiado!</span>
+                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                        <span className="text-emerald-700">Copiado!</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="h-3 w-3 text-[#E9B824]" />
+                        <Copy className="h-3 w-3 text-amber-500" />
                         <span>Copiar endereço</span>
                       </>
                     )}
@@ -514,7 +514,7 @@ export default function PublicLookup({
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-1.5 bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-3.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer ml-auto"
+                    className="flex items-center space-x-1.5 bg-gradient-to-r from-[#0D9488] to-[#14B8A6] hover:from-[#0F766E] hover:to-[#0D9488] text-white font-bold px-3.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer ml-auto shadow-xs"
                   >
                     <img src="/whatsapp.svg" alt="WhatsApp" className="h-3 w-3" />
                     <span>Tenho dúvidas</span>
@@ -524,11 +524,11 @@ export default function PublicLookup({
             ))}
           </div>
         ) : (
-          <div className="bg-slate-950 border border-slate-900 rounded-xl p-4">
-            <span className="text-[11px] font-bold text-white block">
+          <div className="bg-[#FFFDFB] border border-[#F1ECE6] rounded-xl p-4">
+            <span className="text-[11px] font-bold text-slate-900 block">
               Loja Central
             </span>
-            <span className="text-[10px] text-slate-400 mt-1 block">
+            <span className="text-[10px] text-slate-500 mt-1 block font-medium">
               {result?.storeAddress || storeAddress}
             </span>
             <a
@@ -537,7 +537,7 @@ export default function PublicLookup({
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-xs cursor-pointer active:scale-98 mt-3"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center space-x-2 transition-all text-xs cursor-pointer active:scale-98 mt-3 shadow-xs"
             >
               <img src="/whatsapp.svg" alt="WhatsApp" className="h-4 w-4" />
               <span>Combinar Retirada via WhatsApp</span>
@@ -549,33 +549,33 @@ export default function PublicLookup({
   };
 
   return (
-    <div className="relative w-full h-full min-h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden">
+    <div className="relative w-full h-full min-h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col md:flex-row overflow-hidden bg-[#FFFDFB]">
       {/* Left Sidebar Control Panel */}
-      <div className={`w-auto md:w-[420px] lg:w-[450px] flex-shrink-0 z-10 transition-all duration-300 absolute md:relative top-4 md:top-auto left-4 md:left-auto right-4 md:right-auto md:h-full md:max-h-none h-auto max-h-[85vh] overflow-y-auto bg-transparent md:bg-slate-950/85 md:backdrop-blur-md md:border-r border-slate-900/60 shadow-none md:shadow-none p-0 md:p-6 flex flex-col justify-between ${result ? 'pointer-events-auto' : 'pointer-events-none'} md:pointer-events-auto`}>
+      <div className={`w-auto md:w-[420px] lg:w-[450px] flex-shrink-0 z-10 transition-all duration-300 absolute md:relative top-4 md:top-auto left-4 md:left-auto right-4 md:right-auto md:h-full md:max-h-none h-auto max-h-[85vh] overflow-y-auto bg-transparent md:bg-white/90 md:backdrop-blur-md md:border-r border-[#F1ECE6] shadow-none md:shadow-sm p-0 md:p-6 flex flex-col justify-between ${result ? 'pointer-events-auto' : 'pointer-events-none'} md:pointer-events-auto`}>
         <div className="space-y-5">
 
           {/* Cover card: Logo + Banner + Description */}
-          <div className="hidden md:block bg-slate-900/40 border border-slate-900 rounded-2xl overflow-hidden shadow-xl pointer-events-auto">
+          <div className="hidden md:block bg-white border border-[#F1ECE6] rounded-2xl overflow-hidden shadow-sm shadow-slate-900/5 pointer-events-auto">
             {bannerUrl ? (
               <div className="w-full h-24 overflow-hidden relative">
                 <img src={bannerUrl} alt={storeName} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
               </div>
             ) : (
-              <div className="w-full h-12 bg-gradient-to-r from-[#1E3A5F]/40 to-[#2F7DBB]/40"></div>
+              <div className="w-full h-12 bg-gradient-to-r from-[#F0FDFA] via-[#FFF4F0] to-[#F0FDFA]"></div>
             )}
 
             <div className="px-5 pb-5 pt-3 relative">
               {logoUrl && (
-                <div className="absolute -top-8 left-5 w-14 h-14 rounded-full border-2 border-slate-950 bg-slate-950 flex items-center justify-center overflow-hidden shadow">
+                <div className="absolute -top-8 left-5 w-14 h-14 rounded-full border-2 border-white bg-white flex items-center justify-center overflow-hidden shadow-sm">
                   <img src={logoUrl} alt={storeName} className="w-full h-full object-cover" />
                 </div>
               )}
 
               <div className={logoUrl ? 'pl-18' : ''}>
-                <h2 className="text-base font-extrabold text-white leading-tight truncate">{storeName}</h2>
+                <h2 className="text-base font-extrabold text-slate-900 leading-tight truncate">{storeName}</h2>
                 {description && (
-                  <p className="text-[10px] text-slate-400 mt-1 leading-normal line-clamp-2 font-medium">
+                  <p className="text-[10px] text-slate-500 mt-1 leading-normal line-clamp-2 font-medium">
                     {description}
                   </p>
                 )}
@@ -583,13 +583,13 @@ export default function PublicLookup({
 
               {/* Social and Contact Links */}
               {(instagram || catalogUrl || websiteUrl) && (
-                <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-slate-900/40">
+                <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-[#F1ECE6]">
                   {instagram && (
                     <a
                       href={instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace('@', '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-900 text-slate-400 hover:text-white transition-all text-[9px] font-bold flex items-center space-x-1"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 transition-all text-[9px] font-bold flex items-center space-x-1"
                     >
                       <Globe className="h-3 w-3 text-pink-500" />
                       <span>Instagram</span>
@@ -600,7 +600,7 @@ export default function PublicLookup({
                       href={catalogUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-900 text-[#5FC9C8] hover:text-white transition-all text-[9px] font-bold flex items-center space-x-1"
+                      className="px-2.5 py-1.5 rounded-lg bg-[#F0FDFA] hover:bg-[#CCFBF1] border border-[#CCFBF1] text-[#0D9488] transition-all text-[9px] font-bold flex items-center space-x-1"
                     >
                       <ShoppingBag className="h-3 w-3" />
                       <span>Catálogo</span>
@@ -611,7 +611,7 @@ export default function PublicLookup({
                       href={websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-900 text-[#2F7DBB] hover:text-white transition-all text-[9px] font-bold flex items-center space-x-1"
+                      className="px-2.5 py-1.5 rounded-lg bg-[#FFF4F0] hover:bg-[#FFE3DC] border border-[#FFE3DC] text-[#FF8A65] transition-all text-[9px] font-bold flex items-center space-x-1"
                     >
                       <Globe className="h-3 w-3" />
                       <span>Site</span>
@@ -623,23 +623,23 @@ export default function PublicLookup({
           </div>
 
           <div className="hidden md:block space-y-1">
-            <h1 className="text-2xl font-black tracking-tight text-white">
+            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
               Consulte seu Frete
             </h1>
-            <p className="text-[10px] text-slate-500 leading-normal font-semibold uppercase tracking-wider">
+            <p className="text-[10px] text-slate-400 leading-normal font-bold uppercase tracking-wider">
               Fortaleza - CE
             </p>
           </div>
 
           {/* Quick stats/Hours inside sidebar */}
-          <div className="hidden md:flex flex-wrap gap-2 text-[10px] font-bold text-slate-400">
-            <div className="flex items-center space-x-1.5 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-900 shadow-sm">
-              <Clock className="h-3 w-3 text-[#5FC9C8]" />
+          <div className="hidden md:flex flex-wrap gap-2 text-[10px] font-bold text-slate-600">
+            <div className="flex items-center space-x-1.5 bg-white px-3 py-1.5 rounded-full border border-[#F1ECE6] shadow-xs">
+              <Clock className="h-3 w-3 text-[#0D9488]" />
               <span>{operatingHours}</span>
             </div>
             {pickupEnabled && (
-              <div className="flex items-center space-x-1.5 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-900 shadow-sm">
-                <MapPin className="h-3 w-3 text-[#5FC9C8]" />
+              <div className="flex items-center space-x-1.5 bg-[#F0FDFA] px-3 py-1.5 rounded-full border border-[#CCFBF1] text-[#0D9488] shadow-xs">
+                <MapPin className="h-3 w-3 text-[#0D9488]" />
                 <span>Retirada Habilitada</span>
               </div>
             )}
@@ -647,14 +647,14 @@ export default function PublicLookup({
 
           {/* Mobile Search Summary Card */}
           {result && (
-            <div className="md:hidden w-full pointer-events-auto bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl flex items-center justify-between">
+            <div className="md:hidden w-full pointer-events-auto bg-white border border-[#F1ECE6] rounded-2xl p-3.5 shadow-lg flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
-                <div className="bg-[#5FC9C8]/10 p-2 rounded-xl text-[#5FC9C8] border border-[#5FC9C8]/10">
+                <div className="bg-[#F0FDFA] p-2 rounded-xl text-[#0D9488] border border-[#CCFBF1]">
                   <MapPin className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Consultando bairro</span>
-                  <span className="text-sm font-bold text-white block truncate max-w-[150px] sm:max-w-[200px]">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Consultando bairro</span>
+                  <span className="text-sm font-bold text-slate-900 block truncate max-w-[150px] sm:max-w-[200px]">
                     {result.bairro}
                   </span>
                 </div>
@@ -667,7 +667,7 @@ export default function PublicLookup({
                   setInputValue('');
                   setSelectedMapBairroName(null);
                 }}
-                className="bg-slate-800 hover:bg-slate-700 text-[#5FC9C8] hover:text-white font-bold text-xs px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center space-x-1"
+                className="bg-slate-100 hover:bg-slate-200 text-[#0D9488] hover:text-slate-900 font-bold text-xs px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center space-x-1"
               >
                 <span>Alterar</span>
               </button>
@@ -675,16 +675,16 @@ export default function PublicLookup({
           )}
 
           {/* Search elements and Tabs inside sidebar */}
-          <div className={`${result ? 'hidden md:block' : 'block'} space-y-3 pointer-events-auto bg-slate-905 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-slate-900/60 md:border-0 rounded-2xl md:rounded-none p-3.5 md:p-0 shadow-2xl md:shadow-none`}>
+          <div className={`${result ? 'hidden md:block' : 'block'} space-y-3 pointer-events-auto bg-white/95 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-[#F1ECE6] md:border-0 rounded-2xl md:rounded-none p-3.5 md:p-0 shadow-lg md:shadow-none`}>
             {/* Search Selection Tabs */}
-            <div className="bg-slate-900/50 p-1 rounded-2xl flex items-center space-x-1 border border-slate-900">
+            <div className="bg-slate-100 p-1 rounded-2xl flex items-center space-x-1 border border-slate-200">
               <button
                 type="button"
                 disabled={isPending}
                 onClick={() => switchMode('cep')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'cep'
-                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white shadow-md shadow-[#2E5B9A]/20'
+                  : 'text-slate-900 hover:text-black hover:bg-slate-200/60'
                   }`}
               >
                 Pesquisar por CEP
@@ -694,8 +694,8 @@ export default function PublicLookup({
                 disabled={isPending}
                 onClick={() => switchMode('address')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'address'
-                  ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow shadow-[#1E3A5F]/20'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white shadow-md shadow-[#2E5B9A]/20'
+                  : 'text-slate-900 hover:text-black hover:bg-slate-200/60'
                   }`}
               >
                 Pesquisar por Endereço
@@ -703,7 +703,7 @@ export default function PublicLookup({
             </div>
 
             {/* Main Search Card */}
-            <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-3 md:p-6 shadow-xl relative overflow-hidden">
+            <div className="bg-white border border-[#F1ECE6] rounded-2xl p-3 md:p-6 shadow-sm relative overflow-hidden">
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
@@ -712,7 +712,7 @@ export default function PublicLookup({
                   <div className="relative">
                     {mode === 'cep' ? (
                       <>
-                        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                         <input
                           type="text"
                           required
@@ -721,7 +721,7 @@ export default function PublicLookup({
                           onChange={handleInputChange}
                           maxLength={9}
                           placeholder="Ex: 60150-160"
-                          className="w-full pl-11 pr-4 py-2.5 md:py-3 rounded-xl border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full pl-11 pr-4 py-2.5 md:py-3 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       </>
                     ) : (
@@ -739,16 +739,16 @@ export default function PublicLookup({
                   type="button"
                   onClick={handleGeolocation}
                   disabled={isPending}
-                  className="w-full py-2 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-350 hover:text-white hover:bg-slate-900/60 transition-all font-semibold text-xs flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+                  className="w-full py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold text-xs flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
                 >
                   {geolocating ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin text-[#5FC9C8]" />
+                      <Loader2 className="h-4 w-4 animate-spin text-[#0D9488]" />
                       <span>Obtendo localização...</span>
                     </>
                   ) : (
                     <>
-                      <Locate className="h-4 w-4 text-[#5FC9C8]" />
+                      <Locate className="h-4 w-4 text-[#0D9488]" />
                       <span>Usar minha localização atual</span>
                     </>
                   )}
@@ -758,7 +758,7 @@ export default function PublicLookup({
                   <button
                     type="submit"
                     disabled={isPending || inputValue.length < 8}
-                    className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md shadow-[#1E3A5F]/10 text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+                    className="w-full bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md shadow-[#2E5B9A]/20 text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
                   >
                     {loading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -773,8 +773,8 @@ export default function PublicLookup({
               </form>
 
               {/* Informative text below search button */}
-              <div className="mt-4 flex items-start space-x-2 text-[10px] text-slate-500 font-semibold leading-normal">
-                <Info className="h-3.5 w-3.5 text-[#5FC9C8] flex-shrink-0 mt-0.5" />
+              <div className="mt-4 flex items-start space-x-2 text-[10px] text-slate-500 font-medium leading-normal">
+                <Info className="h-3.5 w-3.5 text-[#0D9488] flex-shrink-0 mt-0.5" />
                 <p>
                   As taxas de entrega são calculadas automaticamente com base no seu bairro.
                 </p>
@@ -784,11 +784,11 @@ export default function PublicLookup({
 
           {/* Feedback Messages (Errors, Out of Boundaries, etc.) */}
           {error && !result && (
-            <div className="pointer-events-auto bg-rose-955 border border-rose-900/30 rounded-2xl p-4 flex items-start space-x-3 shadow-lg animate-fadeIn">
-              <AlertTriangle className="h-5 w-5 text-rose-450 flex-shrink-0 mt-0.5" />
+            <div className="pointer-events-auto bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start space-x-3 shadow-sm animate-fadeIn">
+              <AlertTriangle className="h-5 w-5 text-rose-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-bold text-white text-xs">Não foi possível consultar</h4>
-                <p className="text-[10px] text-rose-300 mt-0.5 leading-relaxed">{error}</p>
+                <h4 className="font-bold text-rose-900 text-xs">Não foi possível consultar</h4>
+                <p className="text-[10px] text-rose-700 mt-0.5 leading-relaxed font-medium">{error}</p>
               </div>
             </div>
           )}
@@ -798,18 +798,18 @@ export default function PublicLookup({
             <div className="pointer-events-auto space-y-4 animate-fadeIn">
               {result.deliveryEnabled ? (
                 /* DELIVERABLE */
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-4 md:p-6 space-y-5">
-                  <div className="flex items-center space-x-3 pb-4 border-b border-slate-900/60">
-                    <div className="bg-[#5FC9C8]/10 p-2.5 rounded-xl text-[#5FC9C8] border border-[#5FC9C8]/10">
+                <div className="bg-white border border-[#F1ECE6] rounded-2xl overflow-hidden shadow-lg p-4 md:p-6 space-y-5 text-slate-800">
+                  <div className="flex items-center space-x-3 pb-4 border-b border-[#F1ECE6]">
+                    <div className="bg-[#F0FDFA] p-2.5 rounded-xl text-[#0D9488] border border-[#CCFBF1]">
                       <MapPin className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Endereço Identificado</span>
-                      <span className="text-base font-black text-white mt-0.5 block truncate">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Endereço Identificado</span>
+                      <span className="text-base font-black text-slate-900 mt-0.5 block truncate">
                         {result.bairro}
                       </span>
                       {result.street && (
-                        <span className="text-xs text-slate-450 mt-0.5 block truncate leading-tight">
+                        <span className="text-xs text-slate-500 mt-0.5 block truncate leading-tight font-medium">
                           Rua: {result.street}
                         </span>
                       )}
@@ -819,26 +819,26 @@ export default function PublicLookup({
                   {/* Logistical Details - Level 1 */}
                   <div className="grid grid-cols-2 gap-3">
                     {/* Delivery Fee */}
-                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                      <div className="bg-[#5FC9C8]/10 p-1.5 rounded-lg text-[#5FC9C8] border border-[#5FC9C8]/10 flex-shrink-0 mt-0.5">
+                    <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-[#F0FDFA] p-1.5 rounded-lg text-[#0D9488] border border-[#CCFBF1] flex-shrink-0 mt-0.5">
                         <Truck className="h-4 w-4" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FRETE</span>
-                        <span className="text-[15px] font-black text-[#5FC9C8] mt-0.5 block leading-tight">
+                        <span className="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">FRETE</span>
+                        <span className="text-[15px] font-black text-[#0D9488] mt-0.5 block leading-tight">
                           {result.fee === 0 ? 'Grátis' : `R$ ${result.fee.toFixed(2)}`}
                         </span>
                       </div>
                     </div>
 
                     {/* Delivery Time */}
-                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                      <div className="bg-[#2F7DBB]/10 p-1.5 rounded-lg text-[#2F7DBB] border border-[#2F7DBB]/10 flex-shrink-0 mt-0.5">
+                    <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-[#FFF4F0] p-1.5 rounded-lg text-[#FF8A65] border border-[#FFE3DC] flex-shrink-0 mt-0.5">
                         <Timer className="h-4 w-4" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PRAZO</span>
-                        <span className="text-[15px] font-black text-white mt-0.5 block leading-tight">
+                        <span className="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">PRAZO</span>
+                        <span className="text-[15px] font-black text-slate-900 mt-0.5 block leading-tight">
                           {result.deliveryTime || deliveryTimeDefault}
                         </span>
                       </div>
@@ -846,17 +846,17 @@ export default function PublicLookup({
                   </div>
 
                   {/* Custom Delivery Availability Message */}
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-900 text-xs font-semibold text-slate-200 text-center">
+                  <div className="p-3 rounded-xl bg-[#F0FDFA] border border-[#CCFBF1] text-xs font-semibold text-[#0D9488] text-center">
                     {getCustomDeliveryMsg()}
                   </div>
 
                   {/* Cutoff Warning */}
                   {sameDayCutoff && isPastCutoff() && (
-                    <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl flex items-start space-x-2.5 text-xs text-amber-200">
-                      <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                    <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl flex items-start space-x-2.5 text-xs text-amber-900">
+                      <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="font-bold">Aviso de Horário Limite ({sameDayCutoff})</p>
-                        <p className="text-[10px] text-amber-350 mt-0.5 leading-normal">
+                        <p className="text-[10px] text-amber-700 mt-0.5 leading-normal">
                           {cutoffMessage || 'Pedidos realizados após esse horário serão entregues no próximo dia útil.'}
                         </p>
                       </div>
@@ -866,26 +866,26 @@ export default function PublicLookup({
                   {/* Logistical Details - Level 2 */}
                   <div className="space-y-2.5 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
                     {/* Operating Hours */}
-                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                      <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
+                    <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-slate-100 p-1.5 rounded-lg text-slate-500 border border-slate-200 flex-shrink-0 mt-0.5">
                         <Clock className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">FUNCIONAMENTO</span>
-                        <span className="text-[11px] md:text-xs font-semibold text-slate-200 mt-0.5 block whitespace-normal break-words leading-tight">
+                        <span className="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">FUNCIONAMENTO</span>
+                        <span className="text-[11px] md:text-xs font-semibold text-slate-800 mt-0.5 block whitespace-normal break-words leading-tight">
                           {operatingHours}
                         </span>
                       </div>
                     </div>
 
                     {/* Minimum Order */}
-                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl flex items-start space-x-2.5">
-                      <div className="bg-slate-900 p-1.5 rounded-lg text-slate-400 border border-slate-800 flex-shrink-0 mt-0.5">
+                    <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-3 rounded-xl flex items-start space-x-2.5">
+                      <div className="bg-slate-100 p-1.5 rounded-lg text-slate-500 border border-slate-200 flex-shrink-0 mt-0.5">
                         <ShoppingBag className="h-4 w-4" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-slate-500 font-bold block uppercase tracking-wider">PEDIDO MÍNIMO</span>
-                        <span className="text-xs font-bold text-slate-200 mt-0.5 block leading-tight">
+                        <span className="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">PEDIDO MÍNIMO</span>
+                        <span className="text-xs font-bold text-slate-800 mt-0.5 block leading-tight">
                           {result.minimumOrder ? `R$ ${result.minimumOrder.toFixed(2)}` : 'Sem mínimo'}
                         </span>
                       </div>
@@ -894,20 +894,20 @@ export default function PublicLookup({
 
                   {/* Highlight alerts/rules */}
                   {(result.freeDeliveryThreshold && result.notes?.length > 3) && (
-                    <div className="bg-[#2F7DBB]/5 border border-[#2F7DBB]/15 p-3 rounded-xl text-xs space-y-2 text-slate-300">
+                    <div className="bg-[#F0FDFA] border border-[#CCFBF1] p-3 rounded-xl text-xs space-y-2 text-slate-700">
                       {result.freeDeliveryThreshold && (
                         <div className="flex items-center space-x-2">
-                          <Gift className="h-3.5 w-3.5 text-[#5FC9C8] flex-shrink-0" />
+                          <Gift className="h-3.5 w-3.5 text-[#0D9488] flex-shrink-0" />
                           <p className="text-[11px] leading-tight">
-                            Frete grátis a partir de <strong className="text-white">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong> em compras!
+                            Frete grátis a partir de <strong className="text-[#0D9488]">R$ {result.freeDeliveryThreshold.toFixed(2)}</strong> em compras!
                           </p>
                         </div>
                       )}
                       {result.notes && (
                         <div className="flex items-start space-x-2">
-                          <Info className="h-3.5 w-3.5 text-[#5FC9C8]/80 flex-shrink-0" />
-                          <p className="text-[11px] text-slate-400 leading-tight">
-                            <span className="font-semibold text-slate-300">Obs:</span> {result.notes}
+                          <Info className="h-3.5 w-3.5 text-[#0D9488]/80 flex-shrink-0" />
+                          <p className="text-[11px] text-slate-600 leading-tight">
+                            <span className="font-semibold text-slate-800">Obs:</span> {result.notes}
                           </p>
                         </div>
                       )}
@@ -919,7 +919,7 @@ export default function PublicLookup({
                       href={getWhatsAppLink()}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#1E3A5F]/15 text-xs cursor-pointer active:scale-98"
+                      className="w-full bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md shadow-[#2E5B9A]/20 text-xs cursor-pointer active:scale-98"
                     >
                       <MessageSquare className="h-4 w-4 fill-current text-white" />
                       <span>Enviar Pedido via WhatsApp</span>
@@ -927,12 +927,9 @@ export default function PublicLookup({
                   </div>
 
                   {pickupEnabled && (
-                    <div className="border-t border-slate-900/60 pt-5 space-y-4">
+                    <div className="border-t border-[#F1ECE6] pt-5 space-y-4">
                       <div>
-                        <span className="text-xs text-white font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
-                        {/* <p className="text-[10px] text-slate-500 mt-1 leading-normal font-semibold">
-                          Se preferir, economize no frete retirando em um de nossos pontos de retirada:
-                        </p> */}
+                        <span className="text-xs text-slate-900 font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
                       </div>
                       {renderPickupPointsSection()}
                     </div>
@@ -940,12 +937,12 @@ export default function PublicLookup({
                 </div>
               ) : (
                 /* NON-DELIVERABLE */
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl p-4 md:p-6 space-y-5">
-                  <div className="flex items-start space-x-3 text-rose-450 pb-4 border-b border-slate-900/60">
+                <div className="bg-white border border-[#F1ECE6] rounded-2xl overflow-hidden shadow-lg p-4 md:p-6 space-y-5 text-slate-800">
+                  <div className="flex items-start space-x-3 text-rose-600 pb-4 border-b border-[#F1ECE6]">
                     <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-bold text-white text-sm">Sem Entrega para este Bairro</h4>
-                      <p className="text-[10px] text-slate-450 mt-1 leading-normal font-medium">
+                      <h4 className="font-bold text-slate-900 text-sm">Sem Entrega para este Bairro</h4>
+                      <p className="text-[10px] text-slate-500 mt-1 leading-normal font-medium">
                         {getCustomDeliveryUnavailableMsg()}
                       </p>
                     </div>
@@ -954,15 +951,15 @@ export default function PublicLookup({
                   {result.pickupEnabled ? (
                     <div className="space-y-4">
                       <div>
-                        <span className="text-xs text-slate-450 font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
-                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-semibold">
+                        <span className="text-xs text-slate-700 font-bold block uppercase tracking-wider">Opção: Retirada no Local</span>
+                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-medium">
                           Você pode retirar seu pedido em um de nossos pontos de retirada sem taxa de entrega:
                         </p>
                       </div>
                       {renderPickupPointsSection()}
                     </div>
                   ) : (
-                    <div className="p-4 rounded-xl bg-slate-950 text-center text-xs text-slate-500 border border-slate-900">
+                    <div className="p-4 rounded-xl bg-slate-50 text-center text-xs text-slate-600 border border-slate-200 font-medium">
                       Caso queira falar com um atendente, entre em contato pelo WhatsApp.
                     </div>
                   )}
@@ -975,9 +972,9 @@ export default function PublicLookup({
         </div>
 
         {/* Sidebar Footer */}
-        <div className="hidden md:block pt-4 border-t border-slate-900/60 mt-6 text-center text-[9px] text-slate-500 flex-shrink-0">
+        <div className="hidden md:block pt-4 border-t border-[#F1ECE6] mt-6 text-center text-[9px] text-slate-400 flex-shrink-0 font-medium">
           <p>&copy; {new Date().getFullYear()} {storeName}. Todos os direitos reservados.</p>
-          <p className="mt-0.5 text-slate-650 font-medium">
+          <p className="mt-0.5 text-slate-400">
             Entregas realizadas exclusivamente na cidade de Fortaleza (CE).
           </p>
         </div>

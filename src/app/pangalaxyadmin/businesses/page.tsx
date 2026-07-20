@@ -86,16 +86,16 @@ export default async function PangalaxyBusinessesPage() {
   }));
 
   return (
-    <div className="space-y-12 animate-fadeIn">
+    <div className="space-y-12 animate-fadeIn text-slate-800">
       {/* Header */}
-      <header className="border-b border-slate-900 pb-8 space-y-2">
-        <span className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg shadow-[#1E3A5F]/20 border border-[#2F7DBB]/10">
+      <header className="border-b border-[#F1ECE6] pb-8 space-y-2">
+        <span className="bg-[#F0FDFA] text-[#0D9488] text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full shadow-xs border border-[#CCFBF1]">
           Métricas por Estabelecimento
         </span>
-        <h1 className="text-4xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
           Desempenho de Empresas
         </h1>
-        <p className="text-sm text-slate-400 max-w-xl">
+        <p className="text-sm text-slate-500 max-w-xl font-medium">
           Compare volumes de requisições, cobertura de frete por CEP/endereço e latência média separadamente para cada empresa.
         </p>
       </header>
@@ -105,23 +105,23 @@ export default async function PangalaxyBusinessesPage() {
         {storeMetrics.map(({ store, totalSearches, uniqueVisitors, successfulDeliveries, failedDeliveries, avgResponseTime, successRate, topNeighborhoods }) => (
           <div 
             key={store.id} 
-            className="group relative bg-slate-900/30 border border-slate-900 rounded-2xl p-8 shadow-xl transition-all duration-300 hover:border-[#5FC9C8]/25 overflow-hidden"
+            className="group relative bg-white border border-[#F1ECE6] rounded-2xl p-8 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:border-[#0D9488]/30 overflow-hidden text-slate-800"
           >
             {/* Ambient Background Glow on Hover */}
-            <div className="absolute -inset-px bg-gradient-to-r from-[#2F7DBB]/0 via-[#5FC9C8]/5 to-[#2F7DBB]/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <div className="absolute -inset-px bg-gradient-to-r from-[#2E5B9A]/0 via-[#59C8CF]/10 to-[#FFD7B5]/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
             <div className="space-y-8 relative">
               {/* Card Title & Store link */}
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center space-x-3.5">
-                  <div className="bg-gradient-to-r from-[#1E3A5F]/10 to-[#2F7DBB]/10 p-3 rounded-xl text-[#5FC9C8] border border-[#5FC9C8]/10 group-hover:scale-105 transition-transform duration-300">
+                  <div className="bg-[#F0FDFA] p-3 rounded-xl text-[#0D9488] border border-[#CCFBF1] group-hover:scale-105 transition-transform duration-300 shadow-xs">
                     <StoreIcon className="h-6 w-6" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white group-hover:text-[#5FC9C8] transition-colors">
+                    <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-[#0D9488] transition-colors">
                       {store.name}
                     </h2>
-                    <span className="text-[10px] text-slate-500 font-mono block mt-0.5">
+                    <span className="text-[10px] text-slate-400 font-mono block mt-0.5 font-bold">
                       SLUG: {store.slug}
                     </span>
                   </div>
@@ -130,7 +130,7 @@ export default async function PangalaxyBusinessesPage() {
                   <Link
                     href={`/${store.slug}`}
                     target="_blank"
-                    className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-all text-xs flex items-center space-x-1"
+                    className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-all text-xs font-bold flex items-center space-x-1 shadow-xs"
                     title="Acessar site público da loja"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -139,7 +139,7 @@ export default async function PangalaxyBusinessesPage() {
                   <Link
                     href={`/${store.slug}/admin`}
                     target="_blank"
-                    className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-all text-xs flex items-center space-x-1"
+                    className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-all text-xs font-bold flex items-center space-x-1 shadow-xs"
                     title="Acessar admin da loja"
                   >
                     <BarChart2 className="h-3.5 w-3.5" />
@@ -151,56 +151,56 @@ export default async function PangalaxyBusinessesPage() {
               {/* Stats Row */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* Stat 1: Total searches */}
-                <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-550">
-                    <Activity className="h-3.5 w-3.5 text-[#5FC9C8]" />
+                <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-4 rounded-xl space-y-1 shadow-xs">
+                  <div className="flex items-center space-x-1.5 text-slate-500">
+                    <Activity className="h-3.5 w-3.5 text-[#0D9488]" />
                     <span className="text-[10px] font-bold uppercase tracking-wider">Buscas</span>
                   </div>
-                  <span className="text-xl font-black text-white block">{totalSearches}</span>
+                  <span className="text-xl font-black text-slate-900 block">{totalSearches}</span>
                 </div>
 
                 {/* Stat 2: Unique Visitors */}
-                <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-550">
-                    <User className="h-3.5 w-3.5 text-[#2F7DBB]" />
+                <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-4 rounded-xl space-y-1 shadow-xs">
+                  <div className="flex items-center space-x-1.5 text-slate-500">
+                    <User className="h-3.5 w-3.5 text-[#0D9488]" />
                     <span className="text-[10px] font-bold uppercase tracking-wider">Visitantes</span>
                   </div>
-                  <span className="text-xl font-black text-white block">{uniqueVisitors}</span>
+                  <span className="text-xl font-black text-slate-900 block">{uniqueVisitors}</span>
                 </div>
 
                 {/* Stat 3: Coverage Rate */}
-                <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-550">
-                    <Percent className="h-3.5 w-3.5 text-[#5FC9C8]" />
+                <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-4 rounded-xl space-y-1 shadow-xs">
+                  <div className="flex items-center space-x-1.5 text-slate-500">
+                    <Percent className="h-3.5 w-3.5 text-[#FF8A65]" />
                     <span className="text-[10px] font-bold uppercase tracking-wider">Cobertura</span>
                   </div>
-                  <span className="text-xl font-black text-[#5FC9C8] block">{successRate}%</span>
+                  <span className="text-xl font-black text-[#0D9488] block">{successRate}%</span>
                 </div>
 
                 {/* Stat 4: Avg Response Time */}
-                <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-xl space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-550">
-                    <Clock className="h-3.5 w-3.5 text-[#DCC8A5]" />
+                <div className="bg-[#FFFDFB] border border-[#F1ECE6] p-4 rounded-xl space-y-1 shadow-xs">
+                  <div className="flex items-center space-x-1.5 text-slate-500">
+                    <Clock className="h-3.5 w-3.5 text-amber-600" />
                     <span className="text-[10px] font-bold uppercase tracking-wider">Latência</span>
                   </div>
-                  <span className="text-xl font-black text-white block">{avgResponseTime} <span className="text-xs font-normal text-slate-400">ms</span></span>
+                  <span className="text-xl font-black text-slate-900 block">{avgResponseTime} <span className="text-xs font-normal text-slate-400">ms</span></span>
                 </div>
               </div>
 
               {/* Delivery ratio progress bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-semibold">
-                  <span className="text-slate-400">Sucesso na Cobertura de Entregas</span>
-                  <span className="text-slate-550">{successfulDeliveries} sim / {failedDeliveries} não</span>
+                  <span className="text-slate-600">Sucesso na Cobertura de Entregas</span>
+                  <span className="text-slate-500">{successfulDeliveries} sim / {failedDeliveries} não</span>
                 </div>
-                <div className="w-full h-2.5 bg-slate-955 rounded-full overflow-hidden flex border border-slate-900">
+                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden flex border border-slate-200">
                   <div 
-                    className="h-full bg-[#5FC9C8]" 
+                    className="h-full bg-[#0D9488]" 
                     style={{ width: `${totalSearches > 0 ? (successfulDeliveries / totalSearches) * 100 : 0}%` }}
                     title="Entregas Disponíveis"
                   ></div>
                   <div 
-                    className="h-full bg-[#1E3A5F]" 
+                    className="h-full bg-[#FF8A65]" 
                     style={{ width: `${totalSearches > 0 ? (failedDeliveries / totalSearches) * 100 : 0}%` }}
                     title="Fora da Cobertura"
                   ></div>
@@ -209,29 +209,29 @@ export default async function PangalaxyBusinessesPage() {
 
               {/* Top 3 Bairros */}
               <div className="space-y-4 pt-2">
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-                  <MapPin className="h-3.5 w-3.5 text-[#DCC8A5]" />
+                <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+                  <MapPin className="h-3.5 w-3.5 text-[#FF8A65]" />
                   <span>Bairros Mais Procurados nesta Loja</span>
                 </h3>
                 <div className="space-y-2.5">
                   {topNeighborhoods.length > 0 ? (
                     topNeighborhoods.map((n, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs border-b border-slate-955 pb-2">
-                        <span className="text-slate-300 flex items-center font-medium">
-                          <span className="text-[9px] bg-slate-955 border border-slate-900 text-slate-450 px-1.5 py-0.5 rounded mr-2 font-mono">#{idx+1}</span>
+                      <div key={idx} className="flex items-center justify-between text-xs border-b border-[#F1ECE6] pb-2">
+                        <span className="text-slate-700 flex items-center font-medium">
+                          <span className="text-[9px] bg-slate-100 border border-slate-200 text-slate-600 px-1.5 py-0.5 rounded mr-2 font-mono font-bold">#{idx+1}</span>
                           {n.name}
                         </span>
-                        <span className="text-white font-bold font-mono">{n.count} buscas</span>
+                        <span className="text-slate-900 font-bold font-mono">{n.count} buscas</span>
                       </div>
                     ))
                   ) : (
-                    <p className="text-xs text-slate-600 italic py-2">Nenhuma busca de CEP realizada nesta loja.</p>
+                    <p className="text-xs text-slate-400 italic py-2 font-medium">Nenhuma busca de CEP realizada nesta loja.</p>
                   )}
                 </div>
               </div>
 
               {/* Metadata Details */}
-              <div className="pt-4 border-t border-slate-950/60 text-[10px] text-slate-500 flex flex-col sm:flex-row justify-between gap-2">
+              <div className="pt-4 border-t border-[#F1ECE6] text-[10px] text-slate-400 flex flex-col sm:flex-row justify-between gap-2 font-medium">
                 <span>Endereço: {store.address}</span>
                 <span className="sm:text-right">Funcionamento: {store.operatingHours}</span>
               </div>

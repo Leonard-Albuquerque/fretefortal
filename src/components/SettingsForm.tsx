@@ -263,27 +263,27 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl bg-slate-900/30 border border-slate-900 rounded-2xl p-4 md:p-8 shadow-xl animate-fadeIn space-y-6">
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl bg-white border border-[#F1ECE6] rounded-2xl p-4 md:p-8 shadow-sm shadow-slate-900/5 animate-fadeIn space-y-6 text-slate-800">
       {message && (
         <div
           className={`p-4 rounded-xl flex items-center space-x-3 text-sm font-semibold animate-fadeIn ${message.type === 'success'
-              ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/20'
-              : 'bg-rose-955 text-rose-450 border border-rose-900/30'
+              ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1]'
+              : 'bg-rose-50 text-rose-700 border border-rose-200'
             }`}
         >
-          {message.type === 'success' && <CheckCircle className="h-5 w-5 text-[#5FC9C8] flex-shrink-0" />}
+          {message.type === 'success' && <CheckCircle className="h-5 w-5 text-[#0D9488] flex-shrink-0" />}
           <span>{message.text}</span>
         </div>
       )}
 
       {/* Tabs list */}
-      <div className="flex flex-wrap gap-1 bg-slate-950/60 p-1.5 rounded-xl border border-slate-900">
+      <div className="flex flex-wrap gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
         <button
           type="button"
           onClick={() => setActiveTab('loja')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'loja'
-              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
+              : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Building2 className="h-3.5 w-3.5" />
@@ -295,8 +295,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('canais')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'canais'
-              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
+              : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Globe className="h-3.5 w-3.5" />
@@ -307,8 +307,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('retirada')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'retirada'
-              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
+              : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <MapPin className="h-3.5 w-3.5" />
@@ -319,8 +319,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('horarios')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'horarios'
-              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
+              : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Clock className="h-3.5 w-3.5" />
@@ -331,8 +331,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('entrega')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'entrega'
-              ? 'bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white shadow'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
+              : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Truck className="h-3.5 w-3.5" />
@@ -345,13 +345,13 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         {/* LOJA TAB */}
         {activeTab === 'loja' && (
           <div className="space-y-5 animate-fadeIn">
-            <h3 className="text-sm font-extrabold text-white border-b border-slate-900 pb-2">
+            <h3 className="text-sm font-extrabold text-slate-900 border-b border-[#F1ECE6] pb-2">
               🏪 Dados Cadastrais da Loja
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Nome da Loja
                 </label>
                 <input
@@ -359,13 +359,13 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                   placeholder="Nome comercial"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   WhatsApp (com DDD, apenas números)
                 </label>
                 <input
@@ -373,21 +373,21 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                   required
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                   placeholder="Ex: 85999999999"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                 Descrição Curta (exibida na página pública)
               </label>
               <textarea
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium resize-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium resize-none"
                 placeholder="Ex.: A melhor hamburgueria artesanal do Cocó. Peça agora!"
               />
             </div>
@@ -395,20 +395,20 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
               {/* Logo Upload */}
               <div className="space-y-3">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Logo da Loja
                 </label>
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-full border border-slate-800 bg-slate-950/40 flex items-center justify-center overflow-hidden flex-shrink-0 relative group">
+                  <div className="w-16 h-16 rounded-full border border-slate-200 bg-[#FFFDFB] flex items-center justify-center overflow-hidden flex-shrink-0 relative group shadow-xs">
                     {logoUrl ? (
                       <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
                     ) : (
-                      <Building2 className="h-6 w-6 text-slate-700" />
+                      <Building2 className="h-6 w-6 text-slate-400" />
                     )}
                   </div>
                   <div className="flex-1">
-                    <label className="inline-flex items-center space-x-2 bg-slate-950 hover:bg-slate-900 border border-slate-850 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white cursor-pointer transition-colors active:scale-98">
-                      <Upload className="h-4 w-4 text-[#5FC9C8]" />
+                    <label className="inline-flex items-center space-x-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 cursor-pointer transition-colors active:scale-98 shadow-xs">
+                      <Upload className="h-4 w-4 text-[#0D9488]" />
                       <span>Selecionar Logo</span>
                       <input
                         type="file"
@@ -417,39 +417,10 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                         className="hidden"
                       />
                     </label>
-                    <p className="text-[10px] text-slate-500 mt-1.5">PNG, JPG de até 8MB. Será redimensionado.</p>
+                    <p className="text-[10px] text-slate-400 mt-1.5 font-medium">PNG, JPG de até 8MB. Será redimensionado.</p>
                   </div>
                 </div>
               </div>
-
-              {/* Banner Upload */}
-              {/* <div className="space-y-3">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
-                  Banner de Fundo
-                </label>
-                <div className="flex items-center space-x-4">
-                  <div className="w-24 h-16 rounded-xl border border-slate-800 bg-slate-950/40 flex items-center justify-center overflow-hidden flex-shrink-0 relative group">
-                    {bannerUrl ? (
-                      <img src={bannerUrl} alt="Banner" className="w-full h-full object-cover" />
-                    ) : (
-                      <Globe className="h-6 w-6 text-slate-700" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <label className="inline-flex items-center space-x-2 bg-slate-950 hover:bg-slate-900 border border-slate-850 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white cursor-pointer transition-colors active:scale-98">
-                      <Upload className="h-4 w-4 text-[#5FC9C8]" />
-                      <span>Selecionar Banner</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageFileChange(e, 'banner')}
-                        className="hidden"
-                      />
-                    </label>
-                    <p className="text-[10px] text-slate-500 mt-1.5">PNG, JPG de até 8MB. Proporção 3:1 recomendada.</p>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </div>
         )}
@@ -457,46 +428,46 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         {/* CANAIS TAB */}
         {activeTab === 'canais' && (
           <div className="space-y-5 animate-fadeIn">
-            <h3 className="text-sm font-extrabold text-white border-b border-slate-900 pb-2">
+            <h3 className="text-sm font-extrabold text-slate-900 border-b border-[#F1ECE6] pb-2">
               🌐 Redes Sociais e Canais de Contato
             </h3>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Instagram (Nome de usuário ou Link)
                 </label>
                 <input
                   type="text"
                   value={instagram}
                   onChange={(e) => setInstagram(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                   placeholder="Ex: @minhaloja ou https://instagram.com/minhaloja"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Link do Catálogo (WhatsApp, Nuvemshop, Shopify, etc.)
                 </label>
                 <input
                   type="text"
                   value={catalogUrl}
                   onChange={(e) => setCatalogUrl(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                   placeholder="Ex: https://catalogo.sualoja.com.br"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Site Principal (Opcional)
                 </label>
                 <input
                   type="text"
                   value={websiteUrl}
                   onChange={(e) => setWebsiteUrl(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                   placeholder="Ex: https://www.sualoja.com.br"
                 />
               </div>
@@ -507,14 +478,14 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         {/* RETIRADA TAB */}
         {activeTab === 'retirada' && (
           <div className="space-y-5 animate-fadeIn">
-            <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-              <h3 className="text-sm font-extrabold text-white">
+            <div className="flex items-center justify-between border-b border-[#F1ECE6] pb-2">
+              <h3 className="text-sm font-extrabold text-slate-900">
                 📍 Configuração de Retiradas
               </h3>
               <button
                 type="button"
                 onClick={() => setPickupEnabled(!pickupEnabled)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${pickupEnabled ? 'bg-[#2F7DBB]' : 'bg-slate-800'
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${pickupEnabled ? 'bg-[#0D9488]' : 'bg-slate-200'
                   }`}
               >
                 <span
@@ -527,13 +498,13 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
             {pickupEnabled ? (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-450 font-semibold">
+                  <span className="text-xs text-slate-500 font-medium">
                     Gerencie os locais disponíveis para o cliente buscar o pedido.
                   </span>
                   <button
                     type="button"
                     onClick={addPickupPoint}
-                    className="flex items-center space-x-1.5 bg-[#1E3A5F]/20 hover:bg-[#1E3A5F]/35 border border-[#2F7DBB]/30 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#5FC9C8] transition-colors cursor-pointer"
+                    className="flex items-center space-x-1.5 bg-[#F0FDFA] hover:bg-[#CCFBF1] border border-[#CCFBF1] px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#0D9488] transition-colors cursor-pointer shadow-xs"
                   >
                     <Plus className="h-4 w-4" />
                     <span>Novo Ponto</span>
@@ -541,7 +512,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                 </div>
 
                 {pickupPoints.length === 0 ? (
-                  <div className="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500 bg-slate-950/20">
+                  <div className="p-8 rounded-xl border border-dashed border-slate-200 text-center text-xs text-slate-400 bg-[#FFFDFB] font-medium">
                     Nenhum ponto de retirada cadastrado. Adicione pelo menos um local físico.
                   </div>
                 ) : (
@@ -549,16 +520,16 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                     {pickupPoints.map((point, index) => (
                       <div
                         key={index}
-                        className="bg-slate-950/40 border border-slate-900 rounded-xl p-4 space-y-4 relative animate-fadeIn"
+                        className="bg-[#FFFDFB] border border-[#F1ECE6] rounded-xl p-4 space-y-4 relative animate-fadeIn shadow-xs"
                       >
-                        <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                          <span className="text-xs font-extrabold text-white uppercase tracking-wider">
+                        <div className="flex items-center justify-between border-b border-[#F1ECE6] pb-2">
+                          <span className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">
                             Ponto #{index + 1}
                           </span>
                           <button
                             type="button"
                             onClick={() => removePickupPoint(index)}
-                            className="text-slate-500 hover:text-rose-450 p-1.5 rounded-lg hover:bg-slate-900/60 transition-all cursor-pointer"
+                            className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-all cursor-pointer"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -566,34 +537,34 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase block">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase block">
                               Nome do Ponto (ex.: "Loja Aldeota")
                             </label>
                             <input
                               type="text"
                               value={point.name}
                               onChange={(e) => updatePickupPoint(index, 'name', e.target.value)}
-                              className="w-full px-3 py-2 rounded-lg border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs"
+                              className="w-full px-3 py-2 rounded-lg border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                               placeholder="Identificação opcional"
                             />
                           </div>
 
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase block">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase block">
                               Instruções de Retirada (opcional)
                             </label>
                             <input
                               type="text"
                               value={point.instructions}
                               onChange={(e) => updatePickupPoint(index, 'instructions', e.target.value)}
-                              className="w-full px-3 py-2 rounded-lg border border-slate-900 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs"
+                              className="w-full px-3 py-2 rounded-lg border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                               placeholder="Ex: Entrar no estacionamento comercial"
                             />
                           </div>
                         </div>
 
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase block">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase block">
                             Buscar Endereço (Autocomplete)
                           </label>
                           <AddressAutocomplete
@@ -608,7 +579,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                         </div>
 
                         {point.latitude && point.longitude && (
-                          <div className="flex items-center space-x-1.5 text-[9px] font-extrabold text-[#5FC9C8]/80 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-900/50 w-max uppercase tracking-wider">
+                          <div className="flex items-center space-x-1.5 text-[9px] font-extrabold text-[#0D9488] bg-[#F0FDFA] px-2.5 py-1.5 rounded-lg border border-[#CCFBF1] w-max uppercase tracking-wider">
                             <MapPin className="h-3 w-3" />
                             <span>Coordenadas Capturadas: Lat {point.latitude.toFixed(5)} / Lon {point.longitude.toFixed(5)}</span>
                           </div>
@@ -619,7 +590,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                 )}
               </div>
             ) : (
-              <div className="p-8 rounded-xl bg-slate-950/20 border border-slate-900 text-center text-xs text-slate-500">
+              <div className="p-8 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500 font-medium">
                 A retirada no local está desativada. Ative o botão acima para cadastrar locais e disponibilizar aos clientes.
               </div>
             )}
@@ -629,14 +600,14 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         {/* FUNCIONAMENTO TAB */}
         {activeTab === 'horarios' && (
           <div className="space-y-5 animate-fadeIn">
-            <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-              <h3 className="text-sm font-extrabold text-white">
+            <div className="flex items-center justify-between border-b border-[#F1ECE6] pb-2">
+              <h3 className="text-sm font-extrabold text-slate-900">
                 🕒 Horário de Funcionamento Estruturado
               </h3>
               <button
                 type="button"
                 onClick={copyHoursToAllDays}
-                className="flex items-center space-x-1.5 bg-[#1E3A5F]/20 hover:bg-[#1E3A5F]/35 border border-[#2F7DBB]/30 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#5FC9C8] transition-colors cursor-pointer"
+                className="flex items-center space-x-1.5 bg-[#F0FDFA] hover:bg-[#CCFBF1] border border-[#CCFBF1] px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#0D9488] transition-colors cursor-pointer shadow-xs"
               >
                 <Copy className="h-3.5 w-3.5" />
                 <span>Copiar horário de Segunda para todos</span>
@@ -647,16 +618,16 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
               {operatingHours.map((h, i) => (
                 <div
                   key={h.day}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-950/40 border border-slate-900 rounded-xl p-3.5 gap-3"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between bg-[#FFFDFB] border border-[#F1ECE6] rounded-xl p-3.5 gap-3 shadow-xs"
                 >
                   <div className="flex items-center justify-between sm:justify-start sm:space-x-4 min-w-[150px]">
-                    <span className="text-xs font-bold text-white">{h.label}</span>
+                    <span className="text-xs font-bold text-slate-900">{h.label}</span>
                     <button
                       type="button"
                       onClick={() => handleDayHoursChange(i, 'open', !h.open)}
                       className={`px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition-colors cursor-pointer ${h.open
-                          ? 'bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/20'
-                          : 'bg-slate-900 text-slate-500 border border-slate-800'
+                          ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1]'
+                          : 'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}
                     >
                       {h.open ? 'Aberto' : 'Fechado'}
@@ -669,18 +640,18 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                         type="time"
                         value={h.openTime}
                         onChange={(e) => handleDayHoursChange(i, 'openTime', e.target.value)}
-                        className="px-2.5 py-1.5 rounded-lg border border-slate-900 bg-slate-950 text-white text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5FC9C8]"
+                        className="px-2.5 py-1.5 rounded-lg border border-[#EAE4DC] bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#0D9488]"
                       />
-                      <span className="text-xs font-bold text-slate-500">até</span>
+                      <span className="text-xs font-bold text-slate-400">até</span>
                       <input
                         type="time"
                         value={h.closeTime}
                         onChange={(e) => handleDayHoursChange(i, 'closeTime', e.target.value)}
-                        className="px-2.5 py-1.5 rounded-lg border border-slate-900 bg-slate-950 text-white text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5FC9C8]"
+                        className="px-2.5 py-1.5 rounded-lg border border-[#EAE4DC] bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#0D9488]"
                       />
                     </div>
                   ) : (
-                    <span className="text-xs font-bold text-slate-650 self-end sm:self-auto uppercase tracking-widest text-[10px]">
+                    <span className="text-xs font-bold text-slate-400 self-end sm:self-auto uppercase tracking-widest text-[10px]">
                       Não funciona
                     </span>
                   )}
@@ -693,13 +664,13 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         {/* ENTREGA TAB */}
         {activeTab === 'entrega' && (
           <div className="space-y-5 animate-fadeIn">
-            <h3 className="text-sm font-extrabold text-white border-b border-slate-900 pb-2">
+            <h3 className="text-sm font-extrabold text-slate-900 border-b border-[#F1ECE6] pb-2">
               🚚 Configurações Globais de Entrega
             </h3>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Tempo Padrão de Entrega (Ex.: 2 horas ou 45 min)
                 </label>
                 <input
@@ -707,66 +678,66 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                   required
                   value={deliveryTimeDefault}
                   onChange={(e) => setDeliveryTimeDefault(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                   placeholder="Ex: 2 horas"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Mensagem Personalizada - Entrega Disponível
                 </label>
                 <textarea
                   rows={2}
                   value={deliveryAvailableMsg}
                   onChange={(e) => setDeliveryAvailableMsg(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium resize-none"
                   placeholder="Ex: Receba hoje em até {deliveryTime}."
                 />
-                <p className="text-[10px] text-slate-500 font-semibold">Dica: Use {"{deliveryTime}"} para injetar o tempo de entrega configurado para o bairro.</p>
+                <p className="text-[10px] text-slate-400 font-medium">Dica: Use {"{deliveryTime}"} para injetar o tempo de entrega configurado para o bairro.</p>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                   Mensagem Personalizada - Entrega Indisponível
                 </label>
                 <textarea
                   rows={2}
                   value={deliveryUnavailableMsg}
                   onChange={(e) => setDeliveryUnavailableMsg(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium resize-none"
                   placeholder="Ex: Sem entregas disponíveis para sua região."
                 />
               </div>
 
-              <div className="border-t border-slate-900/60 pt-4 space-y-4">
-                <div className="flex items-center space-x-2 text-amber-500/80">
+              <div className="border-t border-[#F1ECE6] pt-4 space-y-4">
+                <div className="flex items-center space-x-2 text-[#FF8A65]">
                   <AlertTriangle className="h-4 w-4" />
                   <span className="text-[10px] font-extrabold uppercase tracking-wider">Horário Limite no Mesmo Dia (Same Day)</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                       Pedidos fechados até:
                     </label>
                     <input
                       type="time"
                       value={sameDayCutoff}
                       onChange={(e) => setSameDayCutoff(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-semibold"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-semibold"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
                       Aviso exibido após o horário limite:
                     </label>
                     <input
                       type="text"
                       value={cutoffMessage}
                       onChange={(e) => setCutoffMessage(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-900 bg-slate-950/40 text-white focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] text-xs font-medium"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-xs font-medium"
                       placeholder="Ex: Pedidos após esse horário serão entregues no próximo dia útil."
                     />
                   </div>
@@ -778,11 +749,11 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
       </div>
 
       {/* Save Button */}
-      <div className="pt-4 border-t border-slate-900 flex justify-end">
+      <div className="pt-4 border-t border-[#F1ECE6] flex justify-end">
         <button
           type="submit"
           disabled={loading}
-          className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer shadow shadow-[#1E3A5F]/10 active:scale-95 border border-[#2F7DBB]/30 text-xs"
+          className="bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer shadow-md shadow-[#2E5B9A]/20 active:scale-95 border border-[#2E5B9A]/20 text-xs"
         >
           <Save className="h-4 w-4" />
           <span>{loading ? 'Salvando...' : 'Salvar Configurações'}</span>

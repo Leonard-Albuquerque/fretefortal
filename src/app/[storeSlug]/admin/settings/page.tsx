@@ -55,8 +55,8 @@ export default async function SettingsPage({ params }: PageProps) {
 
   return (
     <div className="max-w-2xl mx-auto flex flex-col justify-center min-h-[calc(100vh-12rem)] space-y-6 py-4 animate-fadeIn">
-      <div className="text-center border-b border-slate-900 pb-6">
-        <h1 className="text-3xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+      <div className="text-center border-b border-[#F1ECE6] pb-6">
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
           Configurações da Loja
         </h1>
       </div>

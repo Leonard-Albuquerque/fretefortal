@@ -181,19 +181,19 @@ export default function NeighborhoodSidebar({
   };
 
   return (
-    <div className="w-96 bg-slate-955 border-l border-slate-900 shadow-2xl h-full flex flex-col z-20 animate-fadeIn">
+    <div className="w-96 bg-white border-l border-[#F1ECE6] shadow-xl h-full flex flex-col z-20 animate-fadeIn text-slate-800">
       {/* Sidebar Header */}
-      <div className="p-6 border-b border-slate-900 flex items-center justify-between">
+      <div className="p-6 border-b border-[#F1ECE6] flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-lg text-white tracking-tight">
+          <h3 className="font-extrabold text-lg text-slate-900 tracking-tight">
             {neighborhood.officialName}
           </h3>
-          <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Configuração de Entrega</span>
+          <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Configuração de Entrega</span>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-900 hover:text-white transition-colors cursor-pointer border border-transparent hover:border-slate-800"
+          className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer border border-transparent hover:border-slate-200"
         >
           <X className="h-5 w-5" />
         </button>
@@ -201,19 +201,19 @@ export default function NeighborhoodSidebar({
 
       <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
         {success && (
-          <div className="bg-[#5FC9C8]/10 text-[#5FC9C8] border border-[#5FC9C8]/20 p-3.5 rounded-xl flex items-center space-x-2.5 text-xs font-semibold animate-fadeIn">
+          <div className="bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1] p-3.5 rounded-xl flex items-center space-x-2.5 text-xs font-semibold animate-fadeIn">
             <CheckCircle className="h-4.5 w-4.5 flex-shrink-0" />
             <span>Configurações salvas com sucesso!</span>
           </div>
         )}
 
         {/* Status Toggle Switch */}
-        <div className="flex items-center justify-between p-4 border border-slate-900 rounded-xl bg-slate-950/40">
+        <div className="flex items-center justify-between p-4 border border-[#F1ECE6] rounded-xl bg-[#FFFDFB]">
           <div className="space-y-0.5">
-            <span className="text-sm font-bold text-slate-200 block">
+            <span className="text-sm font-bold text-slate-900 block">
               Entregar neste bairro
             </span>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-slate-500 font-medium">
               {deliveryEnabled ? 'Entrega Habilitada' : 'Entrega Desativada'}
             </span>
           </div>
@@ -221,7 +221,7 @@ export default function NeighborhoodSidebar({
             type="button"
             onClick={() => setDeliveryEnabled(!deliveryEnabled)}
             className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              deliveryEnabled ? 'bg-[#2F7DBB]' : 'bg-slate-800'
+              deliveryEnabled ? 'bg-[#0D9488]' : 'bg-slate-200'
             }`}
           >
             <span
@@ -236,12 +236,12 @@ export default function NeighborhoodSidebar({
           <div className="space-y-5 animate-fadeIn">
             {/* Delivery Fee Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400 block">
+              <label className="text-xs font-semibold text-slate-600 block">
                 Valor do Frete (R$)
               </label>
-              <div className="relative rounded-xl shadow-sm">
+              <div className="relative rounded-xl shadow-xs">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="text-slate-550 text-xs font-semibold">R$</span>
+                  <span className="text-slate-400 text-xs font-semibold">R$</span>
                 </div>
                 <input
                   type="number"
@@ -250,7 +250,7 @@ export default function NeighborhoodSidebar({
                   required
                   value={fee}
                   onChange={(e) => setFee(e.target.value)}
-                  className="block w-full rounded-xl border border-slate-900 bg-slate-950/40 py-2 pl-8 pr-3 text-sm text-white placeholder:text-slate-655 focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all"
+                  className="block w-full rounded-xl border border-[#EAE4DC] bg-white py-2 pl-8 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all font-medium"
                   placeholder="0,00"
                 />
               </div>
@@ -258,7 +258,7 @@ export default function NeighborhoodSidebar({
 
             {/* Delivery Time Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400 block">
+              <label className="text-xs font-semibold text-slate-600 block">
                 Prazo de Entrega
               </label>
               <input
@@ -266,19 +266,19 @@ export default function NeighborhoodSidebar({
                 required
                 value={deliveryTime}
                 onChange={(e) => setDeliveryTime(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-900 bg-slate-950/40 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all"
+                className="w-full px-3 py-2 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all font-medium"
                 placeholder="Ex: 24h, 2 horas, 2 dias"
               />
             </div>
 
             {/* Minimum Order Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400 block">
+              <label className="text-xs font-semibold text-slate-600 block">
                 Pedido Mínimo (Opcional)
               </label>
-              <div className="relative rounded-xl shadow-sm">
+              <div className="relative rounded-xl shadow-xs">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="text-slate-550 text-xs font-semibold">R$</span>
+                  <span className="text-slate-400 text-xs font-semibold">R$</span>
                 </div>
                 <input
                   type="number"
@@ -286,7 +286,7 @@ export default function NeighborhoodSidebar({
                   min="0"
                   value={minimumOrder}
                   onChange={(e) => setMinimumOrder(e.target.value)}
-                  className="block w-full rounded-xl border border-slate-900 bg-slate-950/40 py-2 pl-8 pr-3 text-sm text-white placeholder:text-slate-655 focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all"
+                  className="block w-full rounded-xl border border-[#EAE4DC] bg-white py-2 pl-8 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all font-medium"
                   placeholder="Sem valor mínimo"
                 />
               </div>
@@ -294,12 +294,12 @@ export default function NeighborhoodSidebar({
 
             {/* Free Delivery Threshold Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400 block">
+              <label className="text-xs font-semibold text-slate-600 block">
                 Frete Grátis Acima de (Opcional)
               </label>
-              <div className="relative rounded-xl shadow-sm">
+              <div className="relative rounded-xl shadow-xs">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="text-slate-550 text-xs font-semibold">R$</span>
+                  <span className="text-slate-400 text-xs font-semibold">R$</span>
                 </div>
                 <input
                   type="number"
@@ -307,7 +307,7 @@ export default function NeighborhoodSidebar({
                   min="0"
                   value={freeDeliveryThreshold}
                   onChange={(e) => setFreeDeliveryThreshold(e.target.value)}
-                  className="block w-full rounded-xl border border-slate-900 bg-slate-950/40 py-2 pl-8 pr-3 text-sm text-white placeholder:text-slate-655 focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all"
+                  className="block w-full rounded-xl border border-[#EAE4DC] bg-white py-2 pl-8 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all font-medium"
                   placeholder="Sem frete grátis"
                 />
               </div>
@@ -315,14 +315,14 @@ export default function NeighborhoodSidebar({
 
             {/* Notes Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400 block">
+              <label className="text-xs font-semibold text-slate-600 block">
                 Observações (Opcional)
               </label>
               <textarea
                 rows={3}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-900 bg-slate-950/40 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#5FC9C8] focus:border-transparent transition-all resize-none"
+                className="w-full px-3 py-2 rounded-xl border border-[#EAE4DC] bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all resize-none font-medium"
                 placeholder="Ex: Entregamos somente no período da noite neste bairro."
               />
             </div>
@@ -330,9 +330,9 @@ export default function NeighborhoodSidebar({
         )}
 
         {!deliveryEnabled && (
-          <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-900 flex items-start space-x-3 text-slate-450">
-            <ShieldAlert className="h-4.5 w-4.5 flex-shrink-0 mt-0.5" />
-            <span className="text-xs leading-relaxed text-slate-500">
+          <div className="p-4 rounded-xl bg-[#FFFDFB] border border-[#F1ECE6] flex items-start space-x-3 text-slate-600">
+            <ShieldAlert className="h-4.5 w-4.5 flex-shrink-0 mt-0.5 text-[#FF8A65]" />
+            <span className="text-xs leading-relaxed text-slate-500 font-medium">
               A entrega está desativada para este bairro. Clientes que buscarem por CEPs nesta localidade receberão a opção de retirada física na loja (se ativada).
             </span>
           </div>
@@ -340,15 +340,15 @@ export default function NeighborhoodSidebar({
       </form>
 
       {/* Footer Sidebar Actions */}
-      <div className="p-5 border-t border-slate-900 bg-slate-950/20 flex flex-col space-y-2.5">
+      <div className="p-5 border-t border-[#F1ECE6] bg-[#FFFDFB] flex flex-col space-y-2.5">
         <div className="flex items-center justify-between px-1">
           {isDirty ? (
-            <span className="text-[10px] text-[#5FC9C8] font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#5FC9C8] animate-pulse"></span>
+            <span className="text-[10px] text-[#FF8A65] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF8A65] animate-pulse"></span>
               Não salvo
             </span>
           ) : (
-            <span className="text-[10px] text-slate-500 font-medium">Sincronizado</span>
+            <span className="text-[10px] text-slate-400 font-medium">Sincronizado</span>
           )}
         </div>
         
@@ -357,7 +357,7 @@ export default function NeighborhoodSidebar({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 bg-slate-900 text-slate-350 border border-slate-800 hover:bg-slate-850 hover:text-white font-bold px-3 py-2.5 rounded-xl transition-all text-xs cursor-pointer active:scale-95 shadow-sm"
+            className="flex-1 bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 hover:text-slate-900 font-bold px-3 py-2.5 rounded-xl transition-all text-xs cursor-pointer active:scale-95 shadow-xs"
           >
             Fechar
           </button>
@@ -367,7 +367,7 @@ export default function NeighborhoodSidebar({
             type="button"
             disabled={loading}
             onClick={handleSubmit}
-            className="flex-1 bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] hover:from-[#1A3354] hover:to-[#276AA3] text-white font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs shadow-sm flex items-center justify-center space-x-1.5 active:scale-95 border border-[#2F7DBB]/30"
+            className="flex-1 bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs shadow-md shadow-[#2E5B9A]/20 flex items-center justify-center space-x-1.5 active:scale-95 border border-[#2E5B9A]/20"
           >
             <Save className="h-4 w-4" />
             <span>{loading ? 'Salvando...' : 'Salvar'}</span>
@@ -378,7 +378,7 @@ export default function NeighborhoodSidebar({
             type="button"
             disabled={loading}
             onClick={handleSaveAndNextClick}
-            className="flex-1 bg-slate-900 text-slate-350 border border-slate-800 hover:bg-slate-850 hover:text-white font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs shadow-sm flex items-center justify-center space-x-1.5 active:scale-95"
+            className="flex-1 bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 hover:text-slate-900 font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs shadow-xs flex items-center justify-center space-x-1.5 active:scale-95"
           >
             <ArrowRight className="h-4 w-4" />
             <span>Próximo</span>

@@ -147,7 +147,7 @@ export default function LeafletMap({
         fillOpacity = 0.45;
         // Dynamic fee-based logistics range mapping
         if (dbNeighborhood.fee <= 5) {
-          fillColor = '#DCC8A5'; // Areia: low fee / point of origin
+          fillColor = '#FF8A65'; // Pêssego: low fee / point of origin
         } else if (dbNeighborhood.fee <= 12) {
           fillColor = '#5FC9C8'; // Turquesa: medium fee / transition zone
         } else {
@@ -311,7 +311,7 @@ export default function LeafletMap({
       <div className="hidden md:block absolute top-4 left-4 bg-slate-900/95 backdrop-blur border border-slate-800 p-3.5 rounded-xl shadow-lg z-[500] space-y-2 text-[11px] font-semibold transition-all text-slate-300">
         <span className="text-slate-500 block text-[9px] uppercase tracking-wider font-bold">Legenda de Frete</span>
         <div className="flex items-center space-x-2.5">
-          <span className="w-3.5 h-3.5 bg-[#DCC8A5]/45 border border-[#DCC8A5] rounded-md"></span>
+          <span className="w-3.5 h-3.5 bg-[#FF8A65]/45 border border-[#FF8A65] rounded-md"></span>
           <span>Econômico (≤ R$ 5,00)</span>
         </div>
         <div className="flex items-center space-x-2.5">

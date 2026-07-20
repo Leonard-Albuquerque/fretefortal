@@ -50,11 +50,11 @@ export default async function NeighborhoodsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-fadeIn">
-      <div className="border-b border-slate-900 pb-6 space-y-2">
-        <h1 className="text-3xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+      <div className="border-b border-[#F1ECE6] pb-6 space-y-2">
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
           Bairros e Taxas de Entrega
         </h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-500">
           Gerencie a cobertura de frete por bairros de Fortaleza para a loja <strong>{store.name}</strong> utilizando a lista ou o mapa interativo.
         </p>
       </div>

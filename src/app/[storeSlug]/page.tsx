@@ -67,27 +67,27 @@ export default async function StoreHome({ params }: PageProps) {
   }));
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100 transition-colors">
+    <div className="flex flex-col min-h-screen bg-[#FFFDFB] text-slate-800 transition-colors">
       {/* Top Navbar */}
-      <header className="bg-slate-950/80 backdrop-blur border-b border-slate-900 sticky top-0 z-50 transition-colors">
+      <header className="bg-white/80 backdrop-blur-md border-b border-[#F1ECE6] sticky top-0 z-50 transition-colors shadow-sm shadow-slate-900/5">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2.5">
             {store.logoUrl ?
               <div className="flex items-center">
-                <img src={store.logoUrl} alt={store.name} className=" object-contain  w-10 max-h-8 rounded-full text-white flex items-center justify-center" />
+                <img src={store.logoUrl} alt={store.name} className="object-contain w-9 h-9 rounded-xl border border-slate-100 shadow-xs" />
               </div>
               :
-              <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] p-1.5 rounded-lg text-white">
+              <div className="bg-gradient-to-r from-[#0D9488] to-[#14B8A6] p-2 rounded-xl text-white shadow-xs">
                 <Building2 className="h-5 w-5" />
               </div>
             }
-            <span className="font-bold text-lg text-white tracking-tight">{store.name}</span>
+            <span className="font-bold text-lg text-slate-900 tracking-tight">{store.name}</span>
           </Link>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 relative w-full h-[calc(100vh-4rem)] overflow-hidden bg-slate-950 flex flex-col">
+      <main className="flex-1 relative w-full h-[calc(100vh-4rem)] overflow-hidden bg-[#FFFDFB] flex flex-col">
         <PublicLookup
           storeSlug={storeSlug}
           storeName={store.name}
