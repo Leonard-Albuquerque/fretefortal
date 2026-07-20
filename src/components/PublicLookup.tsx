@@ -20,6 +20,8 @@ import {
   Info,
   Globe,
   Navigation,
+  Copy,
+  Check,
 } from 'lucide-react';
 import AddressAutocomplete from './AddressAutocomplete';
 
@@ -106,6 +108,7 @@ export default function PublicLookup({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
   const [selectedMapBairroName, setSelectedMapBairroName] = useState<string | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const isPending = loading || geolocating;
 
@@ -183,18 +186,12 @@ export default function PublicLookup({
     }
   };
 
-  const open99Pop = (lat: number, lon: number, name: string) => {
-    const deepLink = `didi-passenger://didi-passenger/call_a_car?dropoff_lat=${lat}&dropoff_lng=${lon}&dropoff_name=${encodeURIComponent(name)}`;
-
-    // Try to open the deep link
-    window.location.href = deepLink;
-
-    // Fallback to 99app.com website after a delay if the deep link doesn't trigger
+  const handleCopyAddress = (address: string, index: number) => {
+    navigator.clipboard.writeText(address);
+    setCopiedIndex(index);
     setTimeout(() => {
-      if (document.hasFocus()) {
-        window.open('https://99app.com/', '_blank');
-      }
-    }, 1500);
+      setCopiedIndex(null);
+    }, 2000);
   };
 
   // Lock body scroll on mobile when search result is active to prevent scroll conflict
@@ -491,16 +488,24 @@ export default function PublicLookup({
                     </a>
                   )}
 
-                  {/* 99Pop ride link */}
-                  {p.latitude && p.longitude && (
-                    <button
-                      type="button"
-                      onClick={() => open99Pop(p.latitude!, p.longitude!, p.name || p.address)}
-                      className="flex items-center space-x-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[#E9B824] hover:text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
-                    >
-                      <span className="font-bold text-[9px]">99Pop</span>
-                    </button>
-                  )}
+                  {/* Copy address button */}
+                  <button
+                    type="button"
+                    onClick={() => handleCopyAddress(p.address, idx)}
+                    className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-all cursor-pointer"
+                  >
+                    {copiedIndex === idx ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-emerald-400" />
+                        <span className="text-emerald-400">Copiado!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3 text-[#E9B824]" />
+                        <span>Copiar endereço</span>
+                      </>
+                    )}
+                  </button>
 
                   {/* Combine via WhatsApp */}
                   <a

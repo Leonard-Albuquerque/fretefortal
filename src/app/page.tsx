@@ -10,11 +10,29 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const stores = await prisma.store.findMany({
+  const dbStores = await prisma.store.findMany({
     orderBy: {
       name: 'asc',
     },
+    include: {
+      neighborhoods: {
+        select: {
+          deliveryEnabled: true,
+        },
+      },
+    },
   });
+
+  const stores = dbStores.map((store) => ({
+    id: store.id,
+    slug: store.slug,
+    logoUrl: store.logoUrl || null,
+    name: store.name,
+    address: store.address,
+    operatingHours: store.operatingHours,
+    pickupEnabled: store.pickupEnabled,
+    hasDelivery: store.neighborhoods.some((n) => n.deliveryEnabled),
+  }));
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-955 text-slate-100 transition-colors">
@@ -25,9 +43,9 @@ export default async function HomePage() {
             <img src="/logo.png" alt="Cobertura085 Logo" className=" object-contain  w-10 rounded-lg text-white flex items-center justify-center" />
             <span className="font-bold text-lg text-white tracking-tight">Cobertura085</span>
           </div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5FC9C8] bg-[#5FC9C8]/10 border border-[#5FC9C8]/10 px-1.5 py-1 rounded-full">
+          {/* <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5FC9C8] bg-[#5FC9C8]/10 border border-[#5FC9C8]/10 px-1.5 py-1 rounded-full">
             Fortaleza - CE
-          </span>
+          </span> */}
         </div>
       </header>
 

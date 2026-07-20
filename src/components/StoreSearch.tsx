@@ -11,6 +11,8 @@ interface Store {
   address: string;
   operatingHours: string;
   pickupEnabled: boolean;
+  logoUrl: string | null;
+  hasDelivery: boolean;
 }
 
 interface StoreSearchProps {
@@ -72,9 +74,13 @@ export default function StoreSearch({ initialStores }: StoreSearchProps) {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative">
                   <div className="space-y-3 flex-1">
                     <div className="flex items-center space-x-3">
-                      <div className="bg-gradient-to-r from-[#1E3A5F]/10 to-[#2F7DBB]/10 p-2.5 rounded-xl text-[#5FC9C8] flex-shrink-0 group-hover:scale-105 transition-transform duration-300 border border-[#5FC9C8]/10">
-                        <StoreIcon className="h-5 w-5" />
-                      </div>
+                      {store.logoUrl ? (
+                        <img src={store.logoUrl} alt={store.name} className="h-10 w-10 rounded-xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="bg-gradient-to-r from-[#1E3A5F]/10 to-[#2F7DBB]/10 p-2.5 rounded-xl text-[#5FC9C8] flex-shrink-0 group-hover:scale-105 transition-transform duration-300 border border-[#5FC9C8]/10">
+                          <StoreIcon className="h-5 w-5" />
+                        </div>
+                      )}
                       <h3 className="font-bold text-lg text-white group-hover:text-[#5FC9C8] transition-colors">
                         {store.name}
                       </h3>
@@ -93,11 +99,27 @@ export default function StoreSearch({ initialStores }: StoreSearchProps) {
                   </div>
 
                   <div className="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t border-slate-900 md:border-0">
-                    {store.pickupEnabled && (
-                      <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 uppercase tracking-widest">
-                        Retirada Habilitada
-                      </span>
-                    )}
+                    <div className="flex flex-col items-start md:items-end gap-1.5">
+                      {store.pickupEnabled ? (
+                        <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 uppercase tracking-widest text-center">
+                          Retirada disponível
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-slate-900/60 border border-slate-800/80 text-slate-500 uppercase tracking-widest text-center">
+                          Retirada indisponível
+                        </span>
+                      )}
+
+                      {store.hasDelivery ? (
+                        <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-teal-950/40 border border-teal-500/20 text-teal-400 uppercase tracking-widest text-center">
+                          Fazemos entrega
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-slate-900/60 border border-slate-800/80 text-slate-500 uppercase tracking-widest text-center">
+                          Sem entrega oficial
+                        </span>
+                      )}
+                    </div>
                     <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2F7DBB] text-white p-2.5 rounded-xl transition-all shadow-lg shadow-[#1E3A5F]/10 group-hover:translate-x-1 duration-300 flex items-center justify-center">
                       <ArrowRight className="h-4 w-4" />
                     </div>
