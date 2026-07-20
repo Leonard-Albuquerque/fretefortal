@@ -20,6 +20,11 @@ export default async function HomePage() {
           deliveryEnabled: true,
         },
       },
+      _count: {
+        select: {
+          pickupPoints: true,
+        },
+      },
     },
   });
 
@@ -32,6 +37,7 @@ export default async function HomePage() {
     operatingHours: store.operatingHours,
     pickupEnabled: store.pickupEnabled,
     hasDelivery: store.neighborhoods.some((n) => n.deliveryEnabled),
+    pickupPointsCount: store._count.pickupPoints,
   }));
 
   return (

@@ -13,6 +13,7 @@ interface Store {
   pickupEnabled: boolean;
   logoUrl: string | null;
   hasDelivery: boolean;
+  pickupPointsCount: number;
 }
 
 interface StoreSearchProps {
@@ -89,7 +90,14 @@ export default function StoreSearch({ initialStores }: StoreSearchProps) {
                     <div className="space-y-1.5 text-xs font-semibold text-slate-400">
                       <div className="flex items-start space-x-2">
                         <MapPin className="h-4 w-4 text-slate-500 mt-0.5 flex-shrink-0" />
-                        <span>{store.address}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <span>{store.address}</span>
+                          {store.pickupPointsCount > 1 && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-[#1E3A5F]/40 border border-[#5FC9C8]/20 text-[#5FC9C8] uppercase tracking-wider w-fit">
+                              +{store.pickupPointsCount} endereços
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4 text-slate-500 flex-shrink-0" />
