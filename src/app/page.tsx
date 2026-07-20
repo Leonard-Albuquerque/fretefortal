@@ -49,21 +49,21 @@ export default async function HomePage() {
             <img src="/logo.png" alt="Cobertura085 Logo" className="object-contain w-9 rounded-lg" />
             <span className="font-bold text-lg text-slate-900 tracking-tight">Cobertura085</span>
           </div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D9488] bg-[#F0FDFA] border border-[#CCFBF1] px-2.5 py-1 rounded-full shadow-xs">
+          {/* <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D9488] bg-[#F0FDFA] border border-[#CCFBF1] px-2.5 py-1 rounded-full shadow-xs">
             Fortaleza - CE
-          </span>
+          </span> */}
         </div>
       </header>
 
       {/* Main Container */}
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-12 md:py-16 flex flex-col justify-center space-y-10">
         <div className="text-center space-y-4 max-w-xl mx-auto">
-          <div className="inline-flex items-center space-x-2 bg-[#FFF4F0] border border-[#FFE3DC] px-3.5 py-1 rounded-full shadow-xs">
+          {/* <div className="inline-flex items-center space-x-2 bg-[#FFF4F0] border border-[#FFE3DC] px-3.5 py-1 rounded-full shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FF8A65] animate-pulse"></span>
             <span className="text-[#E0533C] text-[10px] font-bold tracking-widest uppercase">
               ESTABELECIMENTOS
             </span>
-          </div>
+          </div> */}
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] bg-clip-text text-transparent">
             Encontre sua Loja
           </h1>
