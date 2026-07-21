@@ -365,7 +365,7 @@ export default function NeighborhoodSidebar({
             type="button"
             disabled={loading}
             onClick={handleSubmit}
-            className="flex-1 bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs  flex items-center justify-center space-x-1.5 active:scale-95 border border-[#2E5B9A]/20"
+            className="flex-1 bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs  flex items-center justify-center space-x-1.5 active:scale-95 border border-[#2E5B9A]/20"
           >
             <Save className="h-4 w-4" />
             <span>{loading ? 'Salvando...' : 'Salvar'}</span>
