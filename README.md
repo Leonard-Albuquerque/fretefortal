@@ -1,140 +1,90 @@
 # FreteFortal 🚚
 
-**FreteFortal** é um sistema moderno e intuitivo para consulta e gestão de taxas de entrega (frete) por bairros na cidade de **Fortaleza (CE)**. O objetivo principal deste projeto é automatizar o atendimento a clientes, eliminando a necessidade de responder manualmente sobre taxas de entrega e prazos no WhatsApp.
-
-O projeto foi estruturado como um MVP (Minimum Viable Product) focado na simplicidade, velocidade e usabilidade, tanto para o lojista quanto para o cliente final.
+## 🎯 Intenção do Projeto
+O **FreteFortal** foi idealizado para simplificar e automatizar a consulta de taxas e prazos de entrega (frete) por bairros na cidade de Fortaleza (CE). O objetivo principal é servir como um MVP (Minimum Viable Product) prático, eficiente e direto ao ponto, otimizando a comunicação entre lojistas e clientes sem complexidades desnecessárias.
 
 ---
 
-## 🚀 Funcionalidades Principais
+## 💡 O que o Projeto Solve
+Nas operações de comércio local, o processo de responder manualmente a dúvidas sobre taxas e prazos de entrega via WhatsApp ou redes sociais gera gargalos no atendimento e consome tempo precioso.
 
-### 👤 Área Pública (Cliente)
-* **Consulta por CEP:** O cliente insere seu CEP, o sistema busca os dados do endereço (via API ViaCEP) e exibe as informações de frete.
-* **Consulta por Endereço:** O cliente pesquisa pelo nome da sua rua, e o sistema identifica automaticamente o bairro (via OpenStreetMap/Nominatim).
-* **Feedback de Entrega:**
-  * **Caso atenda:** Exibe o bairro, valor do frete, prazo estimado de entrega, pedido mínimo (se houver), regras de frete grátis e um botão direto para iniciar a conversa no WhatsApp com o carrinho.
-  * **Caso não atenda:** Informa a indisponibilidade de entrega e apresenta a opção de retirada física na loja (se configurada).
+O FreteFortal resolve esse problema ao:
+* **Automatizar a consulta do cliente:** O cliente digita seu CEP ou endereço e descobre instantaneamente se a loja entrega em seu bairro, o valor do frete, o prazo estimado e se há regras para frete grátis.
+* **Direcionar para o canal de venda:** Disponibiliza um botão de contato rápido via WhatsApp pré-configurado com as informações de entrega.
+* **Simplificar a gestão para o lojista:** Oferece um painel simples e visual (com mapa e lista dos bairros de Fortaleza) para o lojista definir e atualizar valores e regras de entrega em poucos cliques.
 
-### ⚙️ Área Administrativa (Lojista)
-* **Configuração da Loja:** Gerenciamento dos dados públicos da loja (Nome, Logotipo, WhatsApp de contato, Horário de Funcionamento e Endereço físico).
-* **Gestão de Bairros:**
-  * **Visão em Lista:** Tabela com busca em tempo real de todos os bairros oficiais de Fortaleza.
-  * **Visão em Mapa:** Um mapa interativo completo de Fortaleza dividido por bairros, coloridos conforme o status (Verde = Entrega Ativa, Vermelho = Entrega Inativa, Cinza = Bairro não configurado).
-  * **Painel de Edição Rápida:** Ao clicar em um bairro (no mapa ou lista), abre-se uma barra lateral para configurar valor de entrega, prazo, pedido mínimo, limite para frete grátis e observações específicas.
-  * **Edição em Massa:** Ferramenta para selecionar múltiplos bairros de uma vez e alterar suas regras de entrega simultaneamente.
-* **Dashboard Simples:** Métricas rápidas sobre o total de bairros ativos, inativos, valor médio de frete cobrado e data de última atualização.
+---
+
+## 📌 Visão Geral do Sistema
+
+### 🔍 Área Pública (Cliente)
+* Consulta simples por CEP ou nome da rua/endereço.
+* Exibição de regras de entrega (valor do frete, prazo estimado, pedido mínimo e limite para frete grátis).
+* Indicação da opção de retirada na loja para locais não atendidos pela entrega.
+* Botão para contato direto com a loja.
+
+### ⚙️ Painel de Gestão (Lojista)
+* Visualização integrada por Lista e por Mapa Interativo.
+* Configuração individual por bairro e ferramenta de edição de regras em massa.
+* Gerenciamento das informações públicas da loja (nome, WhatsApp, horário de funcionamento e endereço físico).
+* Indicadores simples de status e cobertura de entrega.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
-
-O projeto foi construído utilizando um ecossistema moderno e robusto de JavaScript/TypeScript:
-
-* **Framework:** [Next.js 16](https://nextjs.org/) (App Router & React Server Components)
-* **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
-* **Estilização:** [Tailwind CSS v4](https://tailwindcss.com/) & Vanilla CSS
-* **Banco de Dados & ORM:** [PostgreSQL](https://www.postgresql.org/) com [Prisma ORM](https://www.prisma.io/)
-* **Mapas & Geocodificação:**
-  * [Leaflet](https://leafletjs.org/) & [React Leaflet](https://react-leaflet.js.org/) (Renderização do mapa interativo no cliente)
-  * [OpenStreetMap / Nominatim API](https://nominatim.org/) (Geocodificação de endereços em texto corrido)
-  * [ViaCEP](https://viacep.com.br/) (Busca de endereços a partir do CEP brasileiro)
-  * [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) (Para extração dos limites geográficos dos bairros)
+* **Frontend & Backend:** React, Next.js (App Router), TypeScript
+* **Estilização:** CSS / Tailwind CSS
+* **Banco de Dados:** PostgreSQL & Prisma ORM
+* **Geocodificação & Mapas:** Leaflet / OpenStreetMap / ViaCEP
 
 ---
 
-## 📁 Estrutura de Pastas do Projeto
-
-```text
-├── prisma/
-│   ├── schema.prisma       # Modelagem do banco de dados (Store, Neighborhood)
-│   └── seed.ts             # Script de população inicial com os 124 bairros de Fortaleza
-├── public/
-│   ├── bairros-fortaleza.geojson # Malha geográfica de polígonos de Fortaleza
-│   └── *.svg               # Ativos estáticos e ícones da aplicação
-├── src/
-│   ├── app/                # Rotas da aplicação (App Router)
-│   │   ├── admin/          # Rotas restritas do administrador
-│   │   ├── actions.ts      # Server Actions para busca de CEP/endereço no cliente
-│   │   ├── layout.tsx      # Layout global da aplicação
-│   │   └── page.tsx        # Página de consulta pública do cliente
-│   ├── components/         # Componentes reutilizáveis do React
-│   │   ├── LeafletMap.tsx  # Componente do mapa interativo (renderizado no cliente)
-│   │   ├── NeighborhoodsConfigurator.tsx # Painel central de gestão (Mapa/Lista)
-│   │   ├── NeighborhoodSidebar.tsx       # Barra lateral de edição do bairro
-│   │   └── BulkEditModal.tsx             # Modal para edição de bairros em massa
-│   ├── lib/
-│   │   └── prisma.ts       # Inicialização e cache do cliente do Prisma
-│   └── scripts/
-│       ├── fetch-geojson.ts # Script utilitário para baixar a malha de bairros via Overpass API
-│       └── diff-check.ts    # Script de auditoria para verificar integridade da base
-```
-
----
-
-## 💻 Como Executar o Projeto Localmente
+## 🚀 Como Executar Localmente
 
 ### Pré-requisitos
-* Node.js (versão 18 ou superior recomendado)
-* Gerenciador de pacotes `npm`, `pnpm` ou `yarn`
-* Banco de dados PostgreSQL rodando localmente ou na nuvem (ex: Neon)
+* Node.js (v18+)
+* Gerenciador de pacotes (`npm` ou `pnpm`)
+* Instância do PostgreSQL
 
-### Passos de Instalação
+### Passo a Passo
 
-1. **Clonar o Repositório**
-   ```bash
-   git clone https://github.com/seu-usuario/fretefortal.git
-   cd fretefortal
-   ```
-
-2. **Instalar Dependências**
+1. **Instalar dependências**
    ```bash
    pnpm install
-   # ou
-   npm install
+   # ou npm install
    ```
 
-3. **Configurar Variáveis de Ambiente**
-   Crie um arquivo `.env` na raiz do projeto com a seguinte variável (use o banco local ou na nuvem):
+2. **Configurar Variáveis de Ambiente**
+   Crie um arquivo `.env` na raiz do projeto contendo a variável de conexão:
    ```env
-   DATABASE_URL="postgresql://usuario:senha@localhost:5432/fretefortal?schema=public"
+   DATABASE_URL="sua-string-de-conexao-postgresql"
    ```
 
-4. **Configurar o Banco de Dados (Prisma)**
-   Execute as migrações para criar as tabelas no banco de dados:
+3. **Sincronizar o Banco de Dados**
    ```bash
    npx prisma db push
-   ```
-
-5. **Popular o Banco de Dados (Seed)**
-   Popule o banco de dados com a configuração padrão da loja e a lista oficial de bairros de Fortaleza mapeados:
-   ```bash
    npx prisma db seed
    ```
 
-6. **Iniciar o Servidor de Desenvolvimento**
+4. **Iniciar o Servidor de Desenvolvimento**
    ```bash
    pnpm dev
-   # ou
-   npm run dev
+   # ou npm run dev
    ```
-   Acesse a aplicação em `http://localhost:3000`. A área administrativa pode ser acessada em `http://localhost:3000/admin/neighborhoods`.
 
 ---
 
-## 📈 Acompanhamento de Avanço & Roadmap
+## 📊 Andamento do Projeto
 
-* [x] Estruturação da base do banco de dados (Prisma).
-* [x] Script de extração automática dos limites geográficos dos bairros de Fortaleza.
-* [x] Painel administrativo para edição individual e em lote dos bairros.
-* [x] Integração completa do mapa interativo Leaflet com os dados do Prisma.
-* [x] Mecanismo de busca pública por CEP e geocodificação Nominatim.
-* [x] Sincronização e correção ortográfica de 100% da base de dados e do mapa.
-* [ ] Implementação de controle de login e autenticação na Área Administrativa.
-* [ ] Opção de múltiplos horários e taxas especiais diferenciadas por turnos.
-* [ ] Integração nativa com APIs de frete terceirizadas.
+- [x] Mapeamento e povoamento da base de bairros de Fortaleza.
+- [x] Sistema de consulta pública por CEP e geocodificação por endereço.
+- [x] Painel de gestão interativo (visão por mapa e tabela).
+- [x] Edição de regras por bairro e edição em massa.
+- [x] Gestão de perfil e dados da loja.
+- [ ] Implementação de controle de login e autenticação na Área Administrativa.
+- [ ] Suporte a regras de entrega por horários ou turnos.
 
 ---
 
 ## 📄 Licença
-
-Este projeto é desenvolvido para fins de validação de produto e aprendizado prático, disponível sob a licença MIT. Sinta-se livre para contribuir e sugerir melhorias!
+Projeto desenvolvido para fins de validação de produto e aprendizado prático.

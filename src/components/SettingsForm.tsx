@@ -15,6 +15,7 @@ import {
   Copy,
   Upload,
   AlertTriangle,
+  Timer,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import AddressAutocomplete from './AddressAutocomplete';
@@ -600,18 +601,24 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         {/* FUNCIONAMENTO TAB */}
         {activeTab === 'horarios' && (
           <div className="space-y-5 animate-fadeIn">
-            <div className="flex items-center justify-between border-b border-[#F1ECE6] pb-2">
-              <h3 className="text-sm font-extrabold text-slate-900">
-                🕒 Horário de Funcionamento Estruturado
-              </h3>
-              <button
-                type="button"
-                onClick={copyHoursToAllDays}
-                className="flex items-center space-x-1.5 bg-[#F0FDFA] hover:bg-[#CCFBF1] border border-[#CCFBF1] px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#0D9488] transition-colors cursor-pointer shadow-xs"
-              >
-                <Copy className="h-3.5 w-3.5" />
-                <span>Copiar horário de Segunda para todos</span>
-              </button>
+            <div className="flex flex-col md:flex-row items-center justify-between border-b border-[#F1ECE6] pb-2 space-y-2">
+
+              <div className="flex items-center space-x-2 mb-2 md:mb-0">
+                <Timer className="h-4 w-4 text-[#0D9488]" />
+                <h3 className="text-md font-extrabold text-slate-900">
+                  Horário de Funcionamento
+                </h3>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={copyHoursToAllDays}
+                  className="flex items-center space-x-1.5 bg-[#F0FDFA] hover:bg-[#CCFBF1] border border-[#CCFBF1] px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#0D9488] transition-colors cursor-pointer shadow-xs"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  <span>Copiar horário de Segunda para todos</span>
+                </button>
+              </div>
             </div>
 
             <div className="space-y-3.5">
@@ -652,7 +659,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                     </div>
                   ) : (
                     <span className="text-xs font-bold text-slate-400 self-end sm:self-auto uppercase tracking-widest text-[10px]">
-                      Não funciona
+                      Não abrimos hoje
                     </span>
                   )}
                 </div>
