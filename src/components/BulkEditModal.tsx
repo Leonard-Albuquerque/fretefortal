@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { updateMultipleNeighborhoods } from '@/app/admin/neighborhoods/actions';
-import { X, Check, Save, Settings } from 'lucide-react';
+import { X, Check, Save, Settings, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
 interface Neighborhood {
@@ -26,8 +27,18 @@ export default function BulkEditModal({
 }: BulkEditModalProps) {
   const params = useParams();
   const storeSlug = params?.storeSlug as string;
+  const [step, setStep] = useState<1 | 2>(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   // Field values to update
   const [updateDelivery, setUpdateDelivery] = useState<boolean | null>(null);
@@ -89,22 +100,40 @@ export default function BulkEditModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn">
-      <div className="bg-white rounded-2xl border border-[#F1ECE6] shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden text-slate-800">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn">
+      <div className="bg-white rounded-2xl border border-[#F1ECE6] shadow-2xl w-full max-w-xl max-h-[85vh] flex flex-col overflow-hidden text-slate-800 transition-all">
         {/* Header */}
-        <div className="p-6 border-b border-[#F1ECE6] flex items-center justify-between">
+        <div className="p-5 border-b border-[#F1ECE6] flex items-center justify-between bg-white">
           <div className="flex items-center space-x-3">
             <div className="bg-[#F0FDFA] border border-[#CCFBF1] p-2.5 rounded-xl text-[#0D9488]">
-              <Settings className="h-6 w-6" />
+              <Settings className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-extrabold text-lg text-slate-900">
-                Editar em Massa (Fortaleza)
+              <h3 className="font-extrabold text-base text-slate-900 leading-snug">
+                Editar em Massa
               </h3>
-              <span className="text-xs text-slate-500 font-medium">
-                Configure múltiplos bairros de uma só vez
-              </span>
+              <div className="flex items-center space-x-2 mt-1">
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors ${step === 1
+                    ? 'bg-[#0D9488] text-white'
+                    : 'bg-slate-100 text-slate-500'
+                    }`}
+                >
+                  1. Bairros ({selectedIds.length})
+                </span>
+                <span className="text-slate-300 text-xs">•</span>
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors ${step === 2
+                    ? 'bg-[#0D9488] text-white'
+                    : 'bg-slate-100 text-slate-500'
+                    }`}
+                >
+                  2. Configuração
+                </span>
+              </div>
             </div>
           </div>
           <button
@@ -115,13 +144,17 @@ export default function BulkEditModal({
           </button>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-hidden flex flex-col md:flex-row min-h-0">
-          {/* Left Panel: Neighborhood Selection */}
-          <div className="w-full md:w-1/2 p-6 border-r border-[#F1ECE6] flex flex-col min-h-0">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-3">
-              1. Selecionar Bairros ({selectedIds.length} selecionados)
-            </span>
+        {/* Content Step 1 */}
+        {step === 1 && (
+          <div className="flex-1 p-5 flex flex-col min-h-0 overflow-hidden bg-white">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                Selecione os bairros
+              </span>
+              <span className="text-xs font-extrabold text-[#0D9488] bg-[#F0FDFA] border border-[#CCFBF1] px-2.5 py-0.5 rounded-full">
+                {selectedIds.length} selecionado{selectedIds.length === 1 ? '' : 's'}
+              </span>
+            </div>
 
             <input
               type="text"
@@ -133,12 +166,14 @@ export default function BulkEditModal({
 
             <div className="flex items-center space-x-2 mb-3">
               <button
+                type="button"
                 onClick={selectAll}
                 className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer uppercase tracking-wider"
               >
-                Selecionar Todos Filtrados
+                Selecionar Todos ({filtered.length})
               </button>
               <button
+                type="button"
                 onClick={selectNone}
                 className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer uppercase tracking-wider"
               >
@@ -146,16 +181,17 @@ export default function BulkEditModal({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto border border-[#F1ECE6] rounded-xl p-2 space-y-1 bg-[#FFFDFB]">
+            <div className="flex-1 overflow-y-auto border border-[#F1ECE6] rounded-xl p-2 space-y-1 bg-[#FFFDFB] max-h-[360px]">
               {filtered.map((n) => {
                 const isSelected = selectedIds.includes(n.id);
                 return (
                   <button
                     key={n.id}
+                    type="button"
                     onClick={() => toggleSelect(n.id)}
-                    className={`w-full flex items-center justify-between p-2 rounded-xl transition-all text-left text-sm ${isSelected
-                        ? 'bg-[#F0FDFA] text-[#0D9488] font-bold'
-                        : 'hover:bg-slate-100 text-slate-700'
+                    className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all text-left text-sm cursor-pointer ${isSelected
+                      ? 'bg-[#F0FDFA] text-[#0D9488] font-bold border border-[#CCFBF1]'
+                      : 'hover:bg-slate-100 text-slate-700 border border-transparent'
                       }`}
                   >
                     <span>{n.officialName}</span>
@@ -164,26 +200,66 @@ export default function BulkEditModal({
                         <Check className="h-3.5 w-3.5" />
                       </span>
                     ) : (
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${n.deliveryEnabled
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${n.deliveryEnabled
                           ? 'bg-[#F0FDFA] text-[#0D9488] border-[#CCFBF1]'
                           : 'bg-rose-50 text-rose-700 border-rose-200'
-                        }`}>
+                          }`}
+                      >
                         {n.deliveryEnabled ? 'Ativo' : 'Inativo'}
                       </span>
                     )}
                   </button>
                 );
               })}
+              {filtered.length === 0 && (
+                <div className="py-8 text-center text-xs text-slate-400 italic">
+                  Nenhum bairro encontrado.
+                </div>
+              )}
+            </div>
+
+            {/* Step 1 Footer */}
+            <div className="pt-4 border-t border-[#F1ECE6] mt-4 flex space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 transition-all cursor-pointer text-center"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (selectedIds.length === 0) {
+                    alert('Selecione pelo menos um bairro para avançar.');
+                    return;
+                  }
+                  setStep(2);
+                }}
+                disabled={selectedIds.length === 0}
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center space-x-2"
+              >
+                <span>Avançar</span>
+                <ArrowRight className="h-4 w-4 text-white" />
+              </button>
             </div>
           </div>
+        )}
 
-          {/* Right Panel: Fields Configuration */}
-          <div className="w-full md:w-1/2 p-6 flex flex-col justify-between overflow-y-auto border-t md:border-t-0 border-[#F1ECE6]">
-            <div className="space-y-4">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                2. Configurar Atualização
+        {/* Content Step 2 */}
+        {step === 2 && (
+          <div className="flex-1 p-5 flex flex-col min-h-0 overflow-y-auto bg-white">
+            <div className="bg-[#F0FDFA] border border-[#CCFBF1] rounded-xl p-3 mb-4 flex items-center justify-between">
+              <span className="text-xs text-slate-600 font-medium">
+                Aplicando alterações em:
               </span>
+              <span className="text-xs font-bold text-[#0D9488]">
+                {selectedIds.length} bairro{selectedIds.length === 1 ? '' : 's'} selecionado{selectedIds.length === 1 ? '' : 's'}
+              </span>
+            </div>
 
+            <div className="space-y-4 flex-1">
               {/* Delivery Status Option */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-600 block">
@@ -191,28 +267,31 @@ export default function BulkEditModal({
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
+                    type="button"
                     onClick={() => setUpdateDelivery(true)}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-center border ${updateDelivery === true
-                        ? 'bg-[#0D9488] text-white border-transparent shadow-xs'
-                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      ? 'bg-[#0D9488] text-white border-transparent shadow-xs'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                       }`}
                   >
                     Habilitar
                   </button>
                   <button
+                    type="button"
                     onClick={() => setUpdateDelivery(false)}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-center border ${updateDelivery === false
-                        ? 'bg-rose-600 text-white border-transparent shadow-xs'
-                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      ? 'bg-rose-600 text-white border-transparent shadow-xs'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                       }`}
                   >
                     Desabilitar
                   </button>
                   <button
+                    type="button"
                     onClick={() => setUpdateDelivery(null)}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-center border ${updateDelivery === null
-                        ? 'bg-slate-800 text-white border-slate-800'
-                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      ? 'bg-slate-800 text-white border-slate-800'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                       }`}
                   >
                     Manter Atual
@@ -283,27 +362,30 @@ export default function BulkEditModal({
               </div>
             </div>
 
-            <div className="pt-6 border-t border-[#F1ECE6] mt-6 flex space-x-3">
+            {/* Step 2 Footer */}
+            <div className="pt-4 border-t border-[#F1ECE6] mt-4 flex space-x-3">
               <button
                 type="button"
-                onClick={onClose}
-                className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 transition-all cursor-pointer text-center"
+                onClick={() => setStep(1)}
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 transition-all cursor-pointer flex items-center justify-center space-x-1.5"
               >
-                Cancelar
+                <ArrowLeft className="h-4 w-4" />
+                <span>Voltar</span>
               </button>
               <button
                 type="button"
                 onClick={handleSave}
                 disabled={loading || selectedIds.length === 0}
-                className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center space-x-2 shadow-md shadow-[#2E5B9A]/20 border border-[#2E5B9A]/20"
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center  "
               >
-                <Save className="h-4.5 w-4.5 text-slate-950" />
+                <Save className="h-5 w-5 text-white ml-4" />
                 <span>{loading ? 'Atualizando...' : 'Atualizar Selecionados'}</span>
               </button>
             </div>
           </div>
-        </div>
+        )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

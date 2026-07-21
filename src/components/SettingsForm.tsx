@@ -267,8 +267,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
       {message && (
         <div
           className={`p-4 rounded-xl flex items-center space-x-3 text-sm font-semibold animate-fadeIn ${message.type === 'success'
-              ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1]'
-              : 'bg-rose-50 text-rose-700 border border-rose-200'
+            ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1]'
+            : 'bg-rose-50 text-rose-700 border border-rose-200'
             }`}
         >
           {message.type === 'success' && <CheckCircle className="h-5 w-5 text-[#0D9488] flex-shrink-0" />}
@@ -282,8 +282,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('loja')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'loja'
-              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 '
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Building2 className="h-3.5 w-3.5" />
@@ -295,8 +295,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('canais')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'canais'
-              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 '
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Globe className="h-3.5 w-3.5" />
@@ -307,8 +307,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('retirada')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'retirada'
-              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 '
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <MapPin className="h-3.5 w-3.5" />
@@ -319,8 +319,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('horarios')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'horarios'
-              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 '
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Clock className="h-3.5 w-3.5" />
@@ -331,8 +331,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
           type="button"
           onClick={() => setActiveTab('entrega')}
           className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'entrega'
-              ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 '
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Truck className="h-3.5 w-3.5" />
@@ -626,8 +626,8 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                       type="button"
                       onClick={() => handleDayHoursChange(i, 'open', !h.open)}
                       className={`px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition-colors cursor-pointer ${h.open
-                          ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1]'
-                          : 'bg-slate-100 text-slate-500 border border-slate-200'
+                        ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1]'
+                        : 'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}
                     >
                       {h.open ? 'Aberto' : 'Fechado'}
@@ -753,7 +753,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
         <button
           type="submit"
           disabled={loading}
-          className="bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer shadow-md shadow-[#2E5B9A]/20 active:scale-95 border border-[#2E5B9A]/20 text-xs"
+          className="bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors disabled:opacity-50 cursor-pointer  active:scale-95  text-xs"
         >
           <Save className="h-4 w-4" />
           <span>{loading ? 'Salvando...' : 'Salvar Configurações'}</span>

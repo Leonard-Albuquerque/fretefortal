@@ -195,8 +195,8 @@ export default function NeighborhoodsConfigurator({
                 type="button"
                 onClick={() => setActiveTab('map')}
                 className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'map'
-                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white '
+                  : 'text-black hover:text-slate-900'
                   }`}
               >
                 <Map className="h-4 w-4" />
@@ -206,8 +206,8 @@ export default function NeighborhoodsConfigurator({
                 type="button"
                 onClick={() => setActiveTab('list')}
                 className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'list'
-                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white '
+                  : 'text-black hover:text-slate-900'
                   }`}
               >
                 <List className="h-4 w-4" />
@@ -219,7 +219,7 @@ export default function NeighborhoodsConfigurator({
             <button
               type="button"
               onClick={() => setBulkEditOpen(true)}
-              className="bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+              className="bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer "
             >
               <Settings className="h-4 w-4" />
               <span>Editar em Massa</span>

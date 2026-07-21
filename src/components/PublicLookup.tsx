@@ -683,7 +683,7 @@ export default function PublicLookup({
                 disabled={isPending}
                 onClick={() => switchMode('cep')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'cep'
-                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white shadow-md shadow-[#2E5B9A]/20'
+                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white '
                   : 'text-slate-900 hover:text-black hover:bg-slate-200/60'
                   }`}
               >
@@ -694,7 +694,7 @@ export default function PublicLookup({
                 disabled={isPending}
                 onClick={() => switchMode('address')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'address'
-                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white shadow-md shadow-[#2E5B9A]/20'
+                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white '
                   : 'text-slate-900 hover:text-black hover:bg-slate-200/60'
                   }`}
               >
@@ -758,7 +758,7 @@ export default function PublicLookup({
                   <button
                     type="submit"
                     disabled={isPending || inputValue.length < 8}
-                    className="w-full bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md shadow-[#2E5B9A]/20 text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+                    className="w-full bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-white font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 transition-all  text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
                   >
                     {loading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -919,7 +919,7 @@ export default function PublicLookup({
                       href={getWhatsAppLink()}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md shadow-[#2E5B9A]/20 text-xs cursor-pointer active:scale-98"
+                      className="w-full bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 transition-all  text-xs cursor-pointer active:scale-98"
                     >
                       <MessageSquare className="h-4 w-4 fill-current text-white" />
                       <span>Enviar Pedido via WhatsApp</span>

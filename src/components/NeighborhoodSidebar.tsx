@@ -80,7 +80,7 @@ export default function NeighborhoodSidebar({
         currentFreeThreshold !== originalFreeThreshold ||
         currentNotes !== originalNotes
       );
-      
+
       setIsDirty(dirty);
       if (onDirtyChange) {
         onDirtyChange(dirty);
@@ -164,7 +164,7 @@ export default function NeighborhoodSidebar({
           ...payload,
           fee: Number(fee) || 0,
         });
-        
+
         setTimeout(() => {
           setSuccess(false);
           if (onSaveAndNext) {
@@ -220,14 +220,12 @@ export default function NeighborhoodSidebar({
           <button
             type="button"
             onClick={() => setDeliveryEnabled(!deliveryEnabled)}
-            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              deliveryEnabled ? 'bg-[#0D9488]' : 'bg-slate-200'
-            }`}
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${deliveryEnabled ? 'bg-[#0D9488]' : 'bg-slate-200'
+              }`}
           >
             <span
-              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                deliveryEnabled ? 'translate-x-5' : 'translate-x-0'
-              }`}
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${deliveryEnabled ? 'translate-x-5' : 'translate-x-0'
+                }`}
             />
           </button>
         </div>
@@ -351,7 +349,7 @@ export default function NeighborhoodSidebar({
             <span className="text-[10px] text-slate-400 font-medium">Sincronizado</span>
           )}
         </div>
-        
+
         <div className="flex gap-2">
           {/* Secondary Close/Cancel Button */}
           <button
@@ -367,12 +365,12 @@ export default function NeighborhoodSidebar({
             type="button"
             disabled={loading}
             onClick={handleSubmit}
-            className="flex-1 bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs shadow-md shadow-[#2E5B9A]/20 flex items-center justify-center space-x-1.5 active:scale-95 border border-[#2E5B9A]/20"
+            className="flex-1 bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-3 py-2.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer text-xs  flex items-center justify-center space-x-1.5 active:scale-95 border border-[#2E5B9A]/20"
           >
             <Save className="h-4 w-4" />
             <span>{loading ? 'Salvando...' : 'Salvar'}</span>
           </button>
-          
+
           {/* Save & Next Button */}
           <button
             type="button"

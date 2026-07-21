@@ -79,7 +79,7 @@ export default function AdminSidebar() {
               title={isCollapsed ? item.name : undefined}
               className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all ${isCollapsed ? 'justify-center' : 'space-x-3'
                 } ${isActive
-                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 shadow-md shadow-[#2E5B9A]/20 font-bold'
+                  ? 'bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950  font-bold'
                   : 'text-slate-600 hover:bg-[#FFFDFB] hover:text-slate-900 border border-transparent hover:border-[#F1ECE6]'
                 }`}
             >
@@ -146,18 +146,16 @@ export function AdminMobileNav() {
             className="flex-1 flex flex-col items-center justify-center py-1.5 px-2 group transition-transform duration-200 active:scale-95"
           >
             <Icon
-              className={`h-5 w-5 stroke-[1.75] transition-all duration-200 ${
-                isActive
+              className={`h-5 w-5 stroke-[1.75] transition-all duration-200 ${isActive
                   ? 'text-[#2E5B9A] scale-110'
                   : 'text-slate-400 group-hover:text-slate-600 group-hover:scale-105'
-              }`}
+                }`}
             />
             <span
-              className={`text-[10px] tracking-tight transition-colors duration-200 mt-1 whitespace-nowrap ${
-                isActive
+              className={`text-[10px] tracking-tight transition-colors duration-200 mt-1 whitespace-nowrap ${isActive
                   ? 'text-[#2E5B9A] font-semibold'
                   : 'text-slate-400 font-medium group-hover:text-slate-600'
-              }`}
+                }`}
             >
               {item.name}
             </span>
