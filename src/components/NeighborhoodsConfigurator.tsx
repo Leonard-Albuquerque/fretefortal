@@ -219,7 +219,7 @@ export default function NeighborhoodsConfigurator({
             <button
               type="button"
               onClick={() => setBulkEditOpen(true)}
-              className="bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-md shadow-[#2E5B9A]/20 active:scale-95 border border-[#2E5B9A]/20"
+              className="bg-gradient-to-r from-[#2E5B9A] via-[#59C8CF] to-[#FFD7B5] text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all cursor-pointer"
             >
               <Settings className="h-4 w-4" />
               <span>Editar em Massa</span>

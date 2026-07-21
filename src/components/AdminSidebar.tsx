@@ -40,7 +40,7 @@ export default function AdminSidebar() {
   const widthClass = !isMounted ? 'w-64' : (isCollapsed ? 'w-20' : 'w-64');
 
   return (
-    <aside className={`${widthClass} bg-white text-slate-800 flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-20 flex-shrink-0 border-r border-[#F1ECE6] shadow-xs`}>
+    <aside className={`hidden md:flex ${widthClass} bg-white text-slate-800 flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-20 flex-shrink-0 border-r border-[#F1ECE6] shadow-xs`}>
       {/* Sidebar Header with Toggle Button on the Left */}
       <div className={`border-b border-[#F1ECE6] flex items-center overflow-hidden transition-all duration-300 ${isMounted && isCollapsed ? 'p-4 justify-center' : 'p-6 space-x-3'
         }`}>
@@ -110,5 +110,60 @@ export default function AdminSidebar() {
         </Link>
       </div>
     </aside>
+  );
+}
+
+export function AdminMobileNav() {
+  const pathname = usePathname();
+  const params = useParams();
+  const storeSlugFromParams = params?.storeSlug as string;
+  const segments = pathname ? pathname.split('/').filter(Boolean) : [];
+  const storeSlug = storeSlugFromParams || segments[0] || '';
+
+  // Only render on store admin pages
+  const isAdminPage = pathname ? /\/[^\/]+\/admin(\/|$)/.test(pathname) : false;
+  if (!isAdminPage) {
+    return null;
+  }
+
+  const mobileItems = [
+    { name: 'Dashboard', href: `/${storeSlug}/admin`, icon: LayoutDashboard },
+    { name: 'Bairros', href: `/${storeSlug}/admin/neighborhoods`, icon: Map },
+    { name: 'Ajustes', href: `/${storeSlug}/admin/settings`, icon: Settings },
+    { name: 'Ver Loja', href: `/${storeSlug}`, icon: ExternalLink, external: true },
+  ];
+
+  return (
+    <nav className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] left-4 right-4 max-w-md mx-auto z-50 md:hidden bg-white/95 backdrop-blur-md border border-[#F1ECE6] shadow-xl shadow-slate-900/15 rounded-full px-3 py-2 flex items-center justify-around transition-all">
+      {mobileItems.map((item) => {
+        const Icon = item.icon;
+        const isActive = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            target={item.external ? "_blank" : undefined}
+            className="flex-1 flex flex-col items-center justify-center py-1.5 px-2 group transition-transform duration-200 active:scale-95"
+          >
+            <Icon
+              className={`h-5 w-5 stroke-[1.75] transition-all duration-200 ${
+                isActive
+                  ? 'text-[#2E5B9A] scale-110'
+                  : 'text-slate-400 group-hover:text-slate-600 group-hover:scale-105'
+              }`}
+            />
+            <span
+              className={`text-[10px] tracking-tight transition-colors duration-200 mt-1 whitespace-nowrap ${
+                isActive
+                  ? 'text-[#2E5B9A] font-semibold'
+                  : 'text-slate-400 font-medium group-hover:text-slate-600'
+              }`}
+            >
+              {item.name}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
