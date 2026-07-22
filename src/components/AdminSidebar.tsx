@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { LayoutDashboard, Map, Settings, ExternalLink, Motorbike, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Map, Settings, ExternalLink, Motorbike, ChevronLeft, ChevronRight, Wrench } from 'lucide-react';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -34,6 +34,7 @@ export default function AdminSidebar() {
   const menuItems = [
     { name: 'Dashboard', href: `/${storeSlug}/admin`, icon: LayoutDashboard },
     { name: 'Bairros e Taxas', href: `/${storeSlug}/admin/neighborhoods`, icon: Map },
+    { name: 'Recursos', href: `/${storeSlug}/admin/resources`, icon: Wrench },
     { name: 'Configurações', href: `/${storeSlug}/admin/settings`, icon: Settings },
   ];
 
@@ -129,6 +130,7 @@ export function AdminMobileNav() {
   const mobileItems = [
     { name: 'Dashboard', href: `/${storeSlug}/admin`, icon: LayoutDashboard },
     { name: 'Bairros', href: `/${storeSlug}/admin/neighborhoods`, icon: Map },
+    { name: 'Recursos', href: `/${storeSlug}/admin/resources`, icon: Wrench },
     { name: 'Ajustes', href: `/${storeSlug}/admin/settings`, icon: Settings },
     { name: 'Ver Loja', href: `/${storeSlug}`, icon: ExternalLink, external: true },
   ];

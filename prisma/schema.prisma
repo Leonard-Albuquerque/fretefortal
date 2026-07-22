@@ -31,6 +31,7 @@ model Store {
   cutoffMessage          String?
   lineOfBusiness         String?
   customLineOfBusiness   String?
+  qrToken                String         @unique @default(uuid())
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   

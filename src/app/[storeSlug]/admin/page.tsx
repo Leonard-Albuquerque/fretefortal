@@ -144,17 +144,16 @@ export default async function AdminDashboard({ params }: PageProps) {
           <div className="border border-[#F1ECE6] rounded-xl p-5 bg-[#FFFDFB] space-y-3 shadow-xs">
             <h4 className="font-bold text-slate-900 flex items-center space-x-2.5">
               <span className="bg-[#FF8A65] text-white rounded-full h-6 w-6 inline-flex items-center justify-center text-xs font-extrabold shadow-xs">3</span>
-              <span>Divulgar o Link</span>
+              <span>QR Code e Recursos</span>
             </h4>
             <p className="text-xs leading-relaxed text-slate-600 font-normal">
-              Compartilhe o site público com seus clientes para que eles consultem o frete sozinhos no WhatsApp.
+              Baixe o QR Code permanente da sua loja para impressão em balcões, cartões ou embalagens de entrega.
             </p>
             <Link
-              href={`/${storeSlug}`}
-              target="_blank"
+              href={`/${storeSlug}/admin/resources`}
               className="text-xs font-bold text-[#FF8A65] hover:text-[#E0533C] transition-colors inline-block mt-2"
             >
-              Acessar site público →
+              Baixar QR Code →
             </Link>
           </div>
         </div>
