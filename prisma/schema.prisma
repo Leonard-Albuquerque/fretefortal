@@ -29,12 +29,24 @@ model Store {
   deliveryUnavailableMsg String?
   sameDayCutoff          String?
   cutoffMessage          String?
+  lineOfBusiness         String?
+  customLineOfBusiness   String?
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   
   neighborhoods          Neighborhood[]
   searchEvents           SearchEvent[]
   pickupPoints           PickupPoint[]
+}
+
+model LineOfBusiness {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PickupPoint {

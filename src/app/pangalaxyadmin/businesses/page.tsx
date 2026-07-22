@@ -19,10 +19,15 @@ export const metadata = {
 };
 
 export default async function PangalaxyBusinessesPage() {
-  // Fetch all stores
-  const stores = await prisma.store.findMany({
-    orderBy: { name: 'asc' }
-  });
+  // Fetch all stores and lines of business
+  const [stores, linesOfBusiness] = await Promise.all([
+    prisma.store.findMany({
+      orderBy: { name: 'asc' }
+    }),
+    prisma.lineOfBusiness.findMany()
+  ]);
+
+  const lobMap = new Map(linesOfBusiness.map(lob => [lob.code, lob.name]));
 
   // Fetch metrics for each store
   const storeMetrics = await Promise.all(stores.map(async (store) => {
@@ -73,6 +78,13 @@ export default async function PangalaxyBusinessesPage() {
       count: n._count.id
     }));
 
+    let businessLineLabel = 'Não especificado';
+    if (store.lineOfBusiness === 'other') {
+      businessLineLabel = store.customLineOfBusiness ? `Outro (${store.customLineOfBusiness})` : 'Outro';
+    } else if (store.lineOfBusiness && lobMap.has(store.lineOfBusiness)) {
+      businessLineLabel = lobMap.get(store.lineOfBusiness)!;
+    }
+
     return {
       store,
       totalSearches,
@@ -81,7 +93,8 @@ export default async function PangalaxyBusinessesPage() {
       failedDeliveries,
       avgResponseTime,
       successRate,
-      topNeighborhoods
+      topNeighborhoods,
+      businessLineLabel
     };
   }));
 
@@ -102,7 +115,7 @@ export default async function PangalaxyBusinessesPage() {
 
       {/* Grid of Store Cards */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {storeMetrics.map(({ store, totalSearches, uniqueVisitors, successfulDeliveries, failedDeliveries, avgResponseTime, successRate, topNeighborhoods }) => (
+        {storeMetrics.map(({ store, totalSearches, uniqueVisitors, successfulDeliveries, failedDeliveries, avgResponseTime, successRate, topNeighborhoods, businessLineLabel }) => (
           <div 
             key={store.id} 
             className="group relative bg-white border border-[#F1ECE6] rounded-2xl p-8 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:border-[#0D9488]/30 overflow-hidden text-slate-800"
@@ -121,9 +134,14 @@ export default async function PangalaxyBusinessesPage() {
                     <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-[#0D9488] transition-colors">
                       {store.name}
                     </h2>
-                    <span className="text-[10px] text-slate-400 font-mono block mt-0.5 font-bold">
-                      SLUG: {store.slug}
-                    </span>
+                    <div className="flex items-center space-x-2 mt-0.5">
+                      <span className="text-[10px] text-slate-400 font-mono font-bold">
+                        SLUG: {store.slug}
+                      </span>
+                      <span className="text-[10px] bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1] font-bold px-2 py-0.5 rounded-full">
+                        {businessLineLabel}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">

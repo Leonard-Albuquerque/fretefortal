@@ -53,6 +53,35 @@ export async function updateStoreSettings(formData: FormData, storeSlug: string)
   const sameDayCutoff = formData.get('sameDayCutoff') as string;
   const cutoffMessage = formData.get('cutoffMessage') as string;
 
+  // Line of business fields & validation
+  const rawLineOfBusiness = formData.get('lineOfBusiness') as string | null;
+  const rawCustomLineOfBusiness = formData.get('customLineOfBusiness') as string | null;
+
+  let finalLineOfBusiness: string | null = null;
+  let finalCustomLineOfBusiness: string | null = null;
+
+  if (rawLineOfBusiness && rawLineOfBusiness.trim() !== '') {
+    const trimmedLob = rawLineOfBusiness.trim();
+    if (trimmedLob === 'other') {
+      const trimmedCustom = rawCustomLineOfBusiness ? rawCustomLineOfBusiness.trim() : '';
+      if (!trimmedCustom) {
+        throw new Error('É necessário preencher o ramo de atuação personalizado para a opção "Outro".');
+      }
+      finalLineOfBusiness = 'other';
+      finalCustomLineOfBusiness = trimmedCustom;
+    } else {
+      // Validate that code exists in LineOfBusiness and is active
+      const validLob = await prisma.lineOfBusiness.findFirst({
+        where: { code: trimmedLob, isActive: true },
+      });
+      if (!validLob) {
+        throw new Error(`Ramo de atuação inválido ("${trimmedLob}"). Selecione uma opção válida da lista.`);
+      }
+      finalLineOfBusiness = validLob.code;
+      finalCustomLineOfBusiness = null;
+    }
+  }
+
   // JSON structured arrays passed as strings
   const operatingHoursJsonStr = formData.get('operatingHoursJson') as string;
   const pickupPointsJsonStr = formData.get('pickupPoints') as string;
@@ -110,6 +139,8 @@ export async function updateStoreSettings(formData: FormData, storeSlug: string)
         deliveryUnavailableMsg: deliveryUnavailableMsg || null,
         sameDayCutoff: sameDayCutoff || null,
         cutoffMessage: cutoffMessage || null,
+        lineOfBusiness: finalLineOfBusiness,
+        customLineOfBusiness: finalCustomLineOfBusiness,
       },
     });
 

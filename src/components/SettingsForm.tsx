@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import AddressAutocomplete from './AddressAutocomplete';
+import LineOfBusinessSelect from './LineOfBusinessSelect';
 
 interface PickupPoint {
   id?: string;
@@ -57,6 +58,8 @@ interface Store {
   sameDayCutoff?: string | null;
   cutoffMessage?: string | null;
   pickupPoints?: PickupPoint[];
+  lineOfBusiness?: string | null;
+  customLineOfBusiness?: string | null;
 }
 
 const DEFAULT_HOURS: OperatingHourDay[] = [
@@ -99,6 +102,9 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
   const [deliveryUnavailableMsg, setDeliveryUnavailableMsg] = useState(initialStore.deliveryUnavailableMsg || '');
   const [sameDayCutoff, setSameDayCutoff] = useState(initialStore.sameDayCutoff || '');
   const [cutoffMessage, setCutoffMessage] = useState(initialStore.cutoffMessage || '');
+
+  const [lineOfBusiness, setLineOfBusiness] = useState<string | null>(initialStore.lineOfBusiness || null);
+  const [customLineOfBusiness, setCustomLineOfBusiness] = useState<string | null>(initialStore.customLineOfBusiness || null);
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -246,6 +252,9 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
     formData.append('sameDayCutoff', sameDayCutoff);
     formData.append('cutoffMessage', cutoffMessage);
 
+    formData.append('lineOfBusiness', lineOfBusiness || '');
+    formData.append('customLineOfBusiness', customLineOfBusiness || '');
+
     formData.append('operatingHoursJson', JSON.stringify(operatingHours));
     formData.append('pickupPoints', JSON.stringify(pickupPoints));
 
@@ -257,7 +266,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
       }
     } catch (error: any) {
       console.error(error);
-      setMessage({ type: 'error', text: 'Ocorreu um erro ao salvar as configurações.' });
+      setMessage({ type: 'error', text: error.message || 'Ocorreu um erro ao salvar as configurações.' });
     } finally {
       setLoading(false);
     }
@@ -392,6 +401,15 @@ export default function SettingsForm({ initialStore }: { initialStore: Store }) 
                 placeholder="Ex.: A melhor hamburgueria artesanal do Cocó. Peça agora!"
               />
             </div>
+
+            <LineOfBusinessSelect
+              value={lineOfBusiness}
+              customValue={customLineOfBusiness}
+              onChange={(code, customText) => {
+                setLineOfBusiness(code);
+                setCustomLineOfBusiness(customText);
+              }}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
               {/* Logo Upload */}
